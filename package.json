@@ -1,0 +1,22 @@
+{
+	"name": "@plugdata/core",
+	"version": "0.0.1",
+	"description": "Plugdata.io core utilities",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/plugdata/plugdata-core.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/plugdata/plugdata-core/issues"
+	},
+	"homepage": "https://github.com/plugdata/plugdata-core#readme",
+	"dependencies": {
+		"reflect-metadata": "^0.1.13"
+	},
+	"devDependencies": {
+		"@types/node": "^12.0.3"
+	}
+}
