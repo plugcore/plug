@@ -13,6 +13,11 @@
 		"url": "https://github.com/plugdata/plugdata-core/issues"
 	},
 	"homepage": "https://github.com/plugdata/plugdata-core#readme",
+	"scripts": {
+		"test": "node dist/src/test/test.cli.js test ./dist/test",
+		"test:info": "node dist/src/test/test.cli.js info ./dist/test",
+		"dev": "tsc -w"
+	},
 	"dependencies": {
 		"reflect-metadata": "^0.1.13"
 	},

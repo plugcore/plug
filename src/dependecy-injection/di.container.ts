@@ -28,7 +28,6 @@ export class Container {
 	 */
 	public static registrerService(id: IServiceIdentifier, clazz: Function, params?: Function[], ctx?: string) {
 
-		
 		const serviceId = DiService.genServiceId(id);
 		const entry = DiService.getTmpEnrySafely(serviceId, clazz);
 
@@ -54,7 +53,6 @@ export class Container {
 	 */
 	public static set(serviceClass: Function, instance: Object, id?: string, ctx?: string) {
 
-		
 		const serviceId = id || serviceClass;
 
 		this.setServiceMetadata(serviceClass, serviceId, ctx);
@@ -76,7 +74,6 @@ export class Container {
 	 */
 	public static async get<T>(serviceId: IServiceIdentifier, ctx?: string): Promise<T> {
 
-		
 		const serviceName = DiService.genServiceId(serviceId);
 		const entry = DiService.getEntry(serviceName, ctx);
 
@@ -97,7 +94,6 @@ export class Container {
 	 */
 	public static registerDepLeft(serviceId: IServiceIdentifier, targetServiceId: IServiceIdentifier, targetCtx?: string, update?: boolean) {
 
-		
 		const serviceName = DiService.genServiceId(serviceId);
 		const targetServiceName = DiService.genServiceId(targetServiceId);
 		let entry = DiService.getTmpEnrySafely(serviceName);
@@ -123,7 +119,6 @@ export class Container {
 		id: IServiceIdentifier, targetId: IServiceIdentifier, index: number, targetCtx?: string, udate?: boolean
 	) {
 
-		
 		const serviceName = DiService.genServiceId(id);
 		const targetServiceName = DiService.genServiceId(targetId);
 
@@ -142,7 +137,7 @@ export class Container {
 	 * @param deps
 	 */
 	public static async waitFor(deps: IDiServiceMetadata[]): Promise<void> {
-		
+
 		if (deps && deps.length > 0) {
 
 			const contDeps: Promise<any>[] = [];
@@ -179,8 +174,6 @@ export class Container {
 	// -------------------------------------------------------------------------
 
 	private static registerEntryDepLeft(entry: IDiEntry, targetServiceName: string, targetCtx?: string): IDiEntry {
-
-		
 
 		const newDepLeft = {
 			targetServiceId: targetServiceName,
@@ -224,7 +217,6 @@ export class Container {
 
 	private static initConstructorService(entry: IDiEntry, params: Function[], ctx?: string) {
 
-		
 		params.forEach((targetClass, index) => {
 			const targetServiceName = DiService.genServiceId(targetClass);
 			entry = this.updateConstructorHandler(entry, index, targetServiceName, ctx);
@@ -245,8 +237,6 @@ export class Container {
 
 	private static initService(entry: IDiEntry, ctx?: string) {
 
-		
-
 		if (!entry.object && entry.serviceClass) {
 			const clazz = entry.serviceClass;
 			entry.object = new (clazz.bind(clazz).apply(clazz))();
@@ -259,8 +249,6 @@ export class Container {
 	}
 
 	private static setServiceAsReady(entry: IDiEntry, ctx?: string) {
-
-		
 
 		if (entry.isReady) { return; }
 
@@ -292,7 +280,6 @@ export class Container {
 
 	private static async processReadyService(entry: IDiEntry, ctx?: string) {
 
-		
 		const servicesToSetAsReady: { entry: IDiEntry, ctx: string }[] = [];
 
 		if (entry.serviceClass && this.hasOnInit(entry.object)) {
@@ -340,7 +327,6 @@ export class Container {
 	 */
 	private static async waitForDep<T>(serviceName: string, ctx?: string) {
 
-		
 		const entry = DiService.getEnrySafely(serviceName, undefined, ctx);
 
 		return new Promise<T>((resolve, reject) => {
@@ -365,7 +351,6 @@ export class Container {
 
 	private static hasAllDeps(entry: IDiEntry): boolean {
 
-		
 		let result = false;
 
 		if (entry.depsLeft && entry.depsClosed) {
@@ -386,8 +371,6 @@ export class Container {
 	}
 
 	private static checkIfReady(entry: IDiEntry, ctx?: string) {
-
-		
 
 		if (this.hasAllDeps(entry)) {
 			this.setServiceAsReady(entry, ctx);

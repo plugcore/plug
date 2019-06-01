@@ -18,13 +18,13 @@ export class JsStackUtils {
 		return stack[1].getFileName() || undefined;
 	}
 
-	private static getStack() {
+	public static getStack() {
 
 		// Save original Error.prepareStackTrace
 		const origPrepareStackTrace = Error.prepareStackTrace;
 
 		// Override with function that just returns `stack`
-		Error.prepareStackTrace = function (_, inStack) {
+		Error.prepareStackTrace = (_, inStack) => {
 			return inStack;
 		};
 
