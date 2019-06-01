@@ -1,3 +1,12 @@
+import { Asserter } from './test.asserter';
+
+//
+// Public classes
+//
+
+export class PlugTest {
+	protected assert: Asserter;
+}
 
 //
 // Interal implementation Interfaces
@@ -16,8 +25,9 @@ export interface ITestClass {
 	clazz: Function;
 	name: string;
 	testMethods: ITestMethod[];
+	beforeTestMethods: ITestMethod[];
+	afterTestMethods: ITestMethod[];
 	testThisOnly?: boolean;
-	dependsOn?: Function[];
 }
 
 export interface ITestMethod {

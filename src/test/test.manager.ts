@@ -1,6 +1,6 @@
 import { FsUtils } from '../io/fs.utils';
 import { ConsoleColors } from '../logs/log.enums';
-import { Asserter } from './test.assert';
+import { Asserter } from './test.asserter';
 import { ITestClass, ITestClassArgs, ITestMethod, ITestMethodArgs, ITestStats, TTestClassItFunc, TTestMethodItFunc } from './test.shared';
 
 export class TestManager {
@@ -10,6 +10,8 @@ export class TestManager {
 
 	// Contains a temporal version for the methods until the antation from class executes
 	private static tmpMethods: { [key: string /* Class name */]: ITestMethod[] } = {};
+	private static tmpBeforeMethods: { [key: string /* Class name */]: ITestMethod[] } = {};
+	private static tmpAfterMethods: { [key: string /* Class name */]: ITestMethod[] } = {};
 
 	// Keeps a register of the result of all the executed tests
 	private static executionStats: ITestStats[] = [];
@@ -62,6 +64,8 @@ export class TestManager {
 			clazz,
 			name: clazz.name,
 			testMethods: this.tmpMethods[clazz.name],
+			beforeTestMethods: this.tmpBeforeMethods[clazz.name],
+			afterTestMethods: this.tmpAfterMethods[clazz.name],
 			testThisOnly: decoratorArgs.testThisOnly
 		});
 	}
@@ -71,6 +75,18 @@ export class TestManager {
 			methodName,
 			methodFunc,
 			testThisOnly: decoratorArgs.testThisOnly
+		});
+	}
+
+	public static registerBeforeTestMethod(testClass: string, methodName: string, methodFunc: Function) {
+		this.tmpBeforeMethods[testClass] = (this.tmpBeforeMethods[testClass] || []).concat(<ITestMethod>{
+			methodName, methodFunc
+		});
+	}
+
+	public static registerAfterTestMethod(testClass: string, methodName: string, methodFunc: Function) {
+		this.tmpAfterMethods[testClass] = (this.tmpAfterMethods[testClass] || []).concat(<ITestMethod>{
+			methodName, methodFunc
 		});
 	}
 
@@ -254,6 +270,16 @@ export class TestManager {
 			const testObj = new (<any>testClass.clazz)();
 			testObj.assert = asserter;
 
+			// Check if there is a before tests func
+			if (testClass.beforeTestMethods) {
+				try {
+					await Promise.all(testClass.beforeTestMethods.map(btm => testObj[btm.methodName]()));
+				} catch (error) {
+					console.log(`${ConsoleColors.fgRed}Unexpected error while executing beforeTest functions`, ConsoleColors.reset);
+					console.log(`${ConsoleColors.fgRed}${error.stack || (new Error()).stack}`, ConsoleColors.reset);
+				}
+			}
+
 			// Test only focused methods or all of them if there is no focus
 			const testOnlyMethods = testClass.testMethods.filter(m => m.testThisOnly);
 			if (testOnlyMethods.length === 0) {
@@ -271,6 +297,16 @@ export class TestManager {
 
 			// Calc stadistics
 			this.finishedTestClass(testClass.name);
+
+			// Check if there is a after tests func
+			if (testClass.afterTestMethods) {
+				try {
+					await Promise.all(testClass.afterTestMethods.map(btm => testObj[btm.methodName]()));
+				} catch (error) {
+					console.log(`${ConsoleColors.fgRed}Unexpected error while executing afterTest functions`, ConsoleColors.reset);
+					console.log(`${ConsoleColors.fgRed}${error.stack || (new Error()).stack}`, ConsoleColors.reset);
+				}
+			}
 
 		}
 	}
