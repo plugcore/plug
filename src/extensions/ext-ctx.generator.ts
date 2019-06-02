@@ -33,9 +33,7 @@ export class ExtCtxGenerator {
 	 */
 	public static generateCtx(folderPath: string): string | undefined {
 
-		
 		let result;
-
 		let maxLength = 0;
 		this.extFolders.forEach(extFolder => {
 

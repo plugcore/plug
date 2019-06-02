@@ -20,7 +20,7 @@ export class FsUtils {
 	 * @param resultFiles
 	 */
 	public static async getAllFilesFromFolder(folderPath: string, recursive?: boolean, resultFiles?: string[]) {
-		
+
 		const folderFiles = await this.getFolderFiles(folderPath);
 
 		if (folderFiles && folderFiles.length > 0) {
@@ -303,7 +303,7 @@ export class FsUtils {
 
 		folderFiles.forEach(file => {
 			if (FsUtils.isJsFile(file)) {
-				jsImports.push(import(file));
+				jsImports.push(import(file.replace(/\\/g, '/')));
 			}
 		});
 

@@ -239,7 +239,7 @@ export class Container {
 
 		if (!entry.object && entry.serviceClass) {
 			const clazz = entry.serviceClass;
-			entry.object = new (clazz.bind(clazz).apply(clazz))();
+			entry.object = new (<any>clazz)();
 		}
 
 		entry.depsClosed = true;
@@ -267,7 +267,7 @@ export class Container {
 
 			if (entry.serviceClass) {
 				const clazz = entry.serviceClass;
-				entry.object = new (clazz.bind(clazz).apply(clazz))(...params);
+				entry.object = new (<any>clazz)(...params);
 			}
 
 		}
@@ -283,7 +283,7 @@ export class Container {
 		const servicesToSetAsReady: { entry: IDiEntry, ctx: string }[] = [];
 
 		if (entry.serviceClass && this.hasOnInit(entry.object)) {
-			await (<IDiOnInit>entry.object).onInit();
+			await entry.object.onInit();
 		}
 
 		const matchedDeps = DiService.getAllRelatedDeps(entry.serviceId, ctx);
@@ -331,7 +331,7 @@ export class Container {
 
 		return new Promise<T>((resolve, reject) => {
 
-			const callBack = (resulutObj: any) => resolve(resulutObj);
+			const callBack = (resulutObj: any) => { resolve(resulutObj); } ;
 
 			if (entry.cbWaiting) {
 				entry.cbWaiting.push(callBack);

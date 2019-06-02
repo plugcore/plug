@@ -26,7 +26,6 @@ export class TestManager {
 		// 1: Force an execution on all decorators from the test folder
 		this.initialExecutionTime = Date.now();
 		await this.loadTests(testFolder);
-
 		// 2: Print test classes and methods
 		await this.printTestsStart();
 		this.printTestsExec();
@@ -36,7 +35,7 @@ export class TestManager {
 			.filter(tc => tc.testThisOnly || tc.testMethods.findIndex(m => m.testThisOnly === true) >= 0)
 			.map(tc => tc.name);
 
-		// 3: Execute all tests at the same time
+			// 3: Execute all tests at the same time
 		await Promise.all(
 			this.testClasses.map(tc => this.executeTestClass(tc, testOnlyClasses))
 		);
@@ -309,6 +308,7 @@ export class TestManager {
 			}
 
 		}
+
 	}
 
 	private static async executeTestMethod(method: ITestMethod, testObj: any, clazz: ITestClass): Promise<boolean> {

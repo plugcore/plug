@@ -14,10 +14,9 @@ export function Service({ ctx, sId }: IServiceArgs = {}): Function {
 	return (target: Function) => {
 
 		// If arguments size is 1 it means its a class definition
-		if (arguments.length === 1) {
+		if (typeof target === 'function') {
 
 			const constructorParms = Reflect.getMetadata(RmdConstats.constructorParams, target);
-
 			ctx = ctx || ExtCtxGenerator.generateCtx(JsStackUtils.getLastCallFromStack(3));
 
 			// We can register the service either by its Class or by a custom name
@@ -53,30 +52,26 @@ export function Inject({ sId, ctx }: IServiceArgs = {}): Function {
 		if (sId) {
 
 			if (target instanceof Function && index !== undefined) {
-
 				// Constructor inject
 
 				Container.registrerConstructorHandler(
 					target.name, sId, index, ctx, true);
 
-			} else
-				if (target instanceof Object) {
+			} else if (target instanceof Object) {
+				// Property inject
 
-					// Property inject
-
-					Container.registerDepLeft(target.constructor.name, sId, ctx, true);
-					Container.get(sId, ctx).then(dep => {
-						Object.defineProperty(target, propertyName, {
-							enumerable: true,
-							writable: true,
-							configurable: true,
-							value: dep
-						});
-
+				Container.registerDepLeft(target.constructor.name, sId, ctx, true);
+				Container.get(sId, ctx).then(dep => {
+					Object.defineProperty(target, propertyName, {
+						enumerable: true,
+						writable: true,
+						configurable: true,
+						value: dep
 					});
 
-				}
+				});
 
+			}
 		}
 
 	};
