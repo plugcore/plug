@@ -10,7 +10,7 @@ export class StringUtils {
 	 * @param inp
 	 * @param depth
 	 */
-	public static objToStr(inp: Object, depth?: number): string {
+	public static objToStr(inp: Record<string, any>, depth?: number): string {
 		return inspect(inp, { showHidden: false, depth: depth || 2 });
 	}
 
@@ -19,7 +19,7 @@ export class StringUtils {
 	 * separated by commas
 	 * @param inp
 	 */
-	public static arrayToString(inp: Object[]): String {
+	public static arrayToString(inp: Record<string, any>[]): string {
 		return (inp && inp.length) ? inp.join(', ') : StringConstants.blank;
 	}
 

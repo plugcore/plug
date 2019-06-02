@@ -1,6 +1,4 @@
 import { setTimeout } from 'timers';
-import { CronStatus, ExecutedJob } from './schedule.structure';
-
 
 export class CronUtils {
 
@@ -76,9 +74,7 @@ export class CronUtils {
 
 	private static async manageCronExecution(expression: string, method: Function, clazzName: string): Promise<any> {
 
-		
-
-		const initDate = new Date().getTime();
+		/* const initDate = new Date().getTime();
 
 		let result;
 		let status;
@@ -91,9 +87,9 @@ export class CronUtils {
 			status = CronStatus.ERROR;
 		}
 
-		const endDate = new Date().getTime();
+		const endDate = new Date().getTime(); */
 
-		const executedJob: ExecutedJob = {
+		/* const executedJob: ExecutedJob = {
 			initialDate: initDate,
 			endDate: endDate,
 			outputLog: result,
@@ -101,7 +97,7 @@ export class CronUtils {
 			idJob: method.name,
 			data: undefined,
 			executionCron: expression
-		};
+		}; */
 
 		// TODO: Persist another way
 		/* this.contentService.updateWithQuery<RegisteredJob>({ lastTimeExecuted: initDate }, RegisteredJob,
@@ -112,9 +108,7 @@ export class CronUtils {
 		this.createCronJob(expression, method, clazzName);
 	}
 
-	public static getTimeInMs(cronExp: number[][], previousDate?: any): number {
-
-		
+	public static getTimeInMs(cronExp: number[][]): number {
 
 		const actualDate: Date = new Date();
 		actualDate.setMinutes(actualDate.getMinutes() + 1);
@@ -161,18 +155,13 @@ export class CronUtils {
 		}
 	}
 
-
 	public static validateCron(expression: string) {
-
-		
 
 		const fields = expression.split(' ');
 		const parsedExp = [];
 		try {
 
-			/**
-			 if regex de mirar si es mes o día no numerico, entrar en la verificacion de meses y dias a numeros
-			 */
+			// if regex de mirar si es mes o día no numerico, entrar en la verificacion de meses y dias a numeros
 
 			parsedExp[3] = CronUtils.replaceWildCard(fields[0], 'minute');
 			parsedExp[2] = CronUtils.replaceWildCard(fields[1], 'hour');
@@ -227,21 +216,19 @@ export class CronUtils {
 	 */
 	private static replaceRanges(value: string, field: string): number[] {
 
-		
-
 		const listSeparated: string[] = value.split(this.comma);
 		const ranges: number[] = [];
 
-		listSeparated.forEach((value, index) => {
+		listSeparated.forEach(lvalue => {
 
-			if (this.rangeRegex.test(value)) {
+			if (this.rangeRegex.test(lvalue)) {
 
-				const splitValues = value.split(this.hyphen);
+				const splitValues = lvalue.split(this.hyphen);
 
 				this.parseRanges(+splitValues[0], +splitValues[1], field).forEach(val => { ranges.push(val); });
 
 			} else {
-				ranges.push(+value);
+				ranges.push(+lvalue);
 
 			}
 		});
@@ -251,8 +238,6 @@ export class CronUtils {
 	}
 
 	private static parseRanges(firstRange: number, secondRange: number, field: string) {
-
-		
 
 		if (firstRange > secondRange) {
 			throw new Error(`Unnacepted relation of range values  ${field}`);

@@ -14,11 +14,17 @@
 	},
 	"homepage": "https://github.com/plugdata/plugdata-core#readme",
 	"scripts": {
+		"install:global": "npm i -g typescript eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin",
 		"test": "node dist/src/test/test.cli.js test ./dist/test",
 		"test:info": "node dist/src/test/test.cli.js info ./dist/test",
-		"dev": "tsc -w"
+		"dev": "tsc -w",
+		"lint": "eslint src/**/*.ts",
+		"lint:fix": "eslint src/**/*.ts --fix"
 	},
 	"dependencies": {
+		"eslint-config-prettier": "^4.3.0",
+		"eslint-plugin-prettier": "^3.1.0",
+		"prettier": "^1.17.1",
 		"reflect-metadata": "^0.1.13"
 	},
 	"devDependencies": {

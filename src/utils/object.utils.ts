@@ -205,7 +205,7 @@ export class ObjectUtils {
 	 * @param obj Object to clone
 	 * @param hash internal ussage hash
 	 */
-	public static deepClone<T extends Object>(obj: T, hash = new WeakMap()): T  {
+	public static deepClone<T extends Record<string, any>>(obj: T, hash = new WeakMap()): T  {
 
 		if (Object(obj) !== obj)  { return obj; } // primitives
 		if (obj instanceof Set) { return <any>(new Set(obj)); }

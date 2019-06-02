@@ -1,4 +1,4 @@
-interface ExtFolder { id: string; path: string; length: number; }
+interface ExtFolder { id: string; path: string; length: number }
 
 export class ExtCtxGenerator {
 

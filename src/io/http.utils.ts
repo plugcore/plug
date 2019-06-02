@@ -44,7 +44,7 @@ export class HttpUtils {
 							reject(error);
 						});
 
-				});
+					});
 				req.on('error', error => {
 					reject(error);
 				});

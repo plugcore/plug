@@ -45,10 +45,10 @@ export class FsUtils {
 	 * @param folderFiles
 	 */
 	public static getFilesStats(baseFolder: string, folderFiles: string[]): Promise<IFileStats>[] {
-		
+
 		const result: Promise<IFileStats>[] = [];
 		for (const folderFile of folderFiles) {
-			result.push(new Promise<IFileStats>((resolve, reject) => {
+			result.push(new Promise<IFileStats>((resolve) => {
 				const realPath = join(baseFolder, folderFile);
 				resolve(this.getStats(realPath).then(stats => {
 					return <IFileStats>{
@@ -115,23 +115,23 @@ export class FsUtils {
 	 */
 	public static async openLogFile(filePath: string): Promise<number> {
 
-		return new Promise<number>((resolve, reject) => {
+		return new Promise<number>((resolve) => {
 
-			stat(filePath, (err, stats) => {
+			stat(filePath, (err) => {
 				if (err == null) {
-					open(filePath, 'r+', (err, fd) => {
+					open(filePath, 'r+', (_, fd) => {
 						resolve(fd);
 					});
 				} else {
 
-					open(filePath, 'w', (err, fd) => {
+					open(filePath, 'w', (_, fd) => {
 						const initLog = '[Creating log file]';
 
-						write(fd, initLog, (err, fd) => {
-							close(fd, () => { });
+						write(fd, initLog, (__, fdw) => {
+							close(fdw, () => { /* just close */ });
 
-							open(filePath, 'r+', (err, fd) => {
-								resolve(fd);
+							open(filePath, 'r+', (___, fdr) => {
+								resolve(fdr);
 							});
 						});
 
@@ -141,25 +141,24 @@ export class FsUtils {
 		});
 	}
 
-
 	public static async openNormalFile(filePath: string): Promise<number> {
 
-		return new Promise<number>((resolve, reject) => {
+		return new Promise<number>((resolve) => {
 
-			stat(filePath, (err, stats) => {
+			stat(filePath, (err) => {
 				if (err == null) {
-					open(filePath, 'r+', (err, fd) => {
+					open(filePath, 'r+', (_, fd) => {
 						resolve(fd);
 					});
 				} else {
 
-					open(filePath, 'w', (err, fd) => {
+					open(filePath, 'w', (_, fd) => {
 
-						write(fd, 'val,', (err, fd) => {
-							close(fd, () => { });
+						write(fd, 'val,', (__, fdw) => {
+							close(fdw, () => { /**/ });
 
-							open(filePath, 'r+', (err, fd) => {
-								resolve(fd);
+							open(filePath, 'r+', (___, fdo) => {
+								resolve(fdo);
 							});
 						});
 
@@ -188,12 +187,11 @@ export class FsUtils {
 		});
 	}
 
-
 	/**
-     * Copy a folder with its content
-     * @param source
-     * @param target
-     */
+	 * Copy a folder with its content
+	 * @param source
+	 * @param target
+	 */
 	public static copyFolderRecursiveSync(source: string, target: string) {
 		const fs = require('fs');
 		const path = require('path');
@@ -203,7 +201,7 @@ export class FsUtils {
 			fs.mkdirSync(targetFolder);
 			if (fs.lstatSync(source).isDirectory()) {
 				files = fs.readdirSync(source);
-				files.forEach(function (file: any) {
+				files.forEach((file: any) => {
 					const curSource = path.join(source, file);
 					if (fs.lstatSync(curSource).isDirectory()) {
 						FsUtils.copyFolderRecursiveSync(curSource, targetFolder);
@@ -218,10 +216,10 @@ export class FsUtils {
 	}
 
 	/**
-     * Copy a file
-     * @param source
-     * @param target
-     */
+	 * Copy a file
+	 * @param source
+	 * @param target
+	 */
 	public static copyFileSync(source: string, target: string) {
 		const fs = require('fs');
 		const path = require('path');
@@ -245,8 +243,8 @@ export class FsUtils {
 	}
 
 	public static removeDir(path: any, callback: any): any {
-		
-		readdir(path, function (err, files) {
+
+		readdir(path, (err, files) => {
 			if (err) {
 				// Pass the error on to callback
 				callback(err, []);
@@ -254,10 +252,10 @@ export class FsUtils {
 			}
 			const wait = files.length;
 			let count = 0;
-			const folderDone = function (err?: any) {
+			const folderDone = (errFd?: any) => {
 				count++;
 				// If we cleaned out all the files, continue
-				if (count >= wait || err) {
+				if (count >= wait || errFd) {
 					rmdir(path, callback);
 				}
 			};
@@ -269,11 +267,11 @@ export class FsUtils {
 
 			// Remove one or more trailing slash to keep from doubling up
 			path = path.replace(/\/+$/, '');
-			files.forEach(function (file) {
+			files.forEach((file) =>  {
 				const curPath = path + '/' + file;
-				lstat(curPath, function (err, stats) {
-					if (err) {
-						callback(err, []);
+				lstat(curPath, (errls, stats) => {
+					if (errls) {
+						callback(errls, []);
 						return;
 					}
 					if (stats.isDirectory()) {
@@ -297,7 +295,6 @@ export class FsUtils {
 	 */
 	public static async loadJsFolder(folderPath: string, recursive?: boolean): Promise<any[]> {
 
-		
 		const jsImports: Promise<void>[] = [];
 		const folderFiles = await FsUtils.getAllFilesFromFolder(folderPath, recursive);
 

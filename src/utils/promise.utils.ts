@@ -68,7 +68,7 @@ export class PromiseUtils {
 	 * @param milsToWait
 	 */
 	public static async wait(milsToWait: number) {
-		return new Promise((resolve, reject) => {
+		return new Promise(resolve => {
 			setTimeout(() => {
 				resolve();
 			}, milsToWait);

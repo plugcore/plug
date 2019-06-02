@@ -35,7 +35,7 @@ export class TestManager {
 			.filter(tc => tc.testThisOnly || tc.testMethods.findIndex(m => m.testThisOnly === true) >= 0)
 			.map(tc => tc.name);
 
-			// 3: Execute all tests at the same time
+		// 3: Execute all tests at the same time
 		await Promise.all(
 			this.testClasses.map(tc => this.executeTestClass(tc, testOnlyClasses))
 		);
@@ -168,7 +168,7 @@ export class TestManager {
 		console.log(`${ConsoleColors.fgYellow}${clazz.name}${clazz.testThisOnly ? ' (Focused test)' : ''}`, ConsoleColors.reset);
 	}
 
-	private static async logTestMethod(method: ITestMethod, clazz: ITestClass) {
+	private static async logTestMethod(method: ITestMethod) {
 		console.log(`${ConsoleColors.fgCyan}- ${method.methodName}${method.testThisOnly ? ' (Focused test)' : ''}`, ConsoleColors.reset);
 	}
 
@@ -208,7 +208,7 @@ export class TestManager {
 			const numOfTestsWithErrors = classStat.methods.filter(m => !m.success).length;
 			const classPrefix = (numOfTestsWithErrors === 0) ? ConsoleColors.fgGreen :
 				numOfTestsWithErrors < numOfTests ? ConsoleColors.fgYellow :
-				ConsoleColors.fgRed;
+					ConsoleColors.fgRed;
 			const successMethods = numOfTests - numOfTestsWithErrors;
 			console.log(
 				`${classPrefix}${classStat.className}: ` +
@@ -223,7 +223,7 @@ export class TestManager {
 				// Method stat log
 				const methodPrefix = (methodStat.errorAsserts === 0) ? ConsoleColors.fgGreen :
 					(methodStat.errorAsserts > 0 && methodStat.successAsserts > 0) ? ConsoleColors.fgYellow :
-					ConsoleColors.fgRed;
+						ConsoleColors.fgRed;
 				console.log(
 					`${methodPrefix}- ${methodStat.methodName}: ` +
 					`( ${methodStat.successAsserts} sucess asserts ) and ( ${methodStat.errorAsserts} asserts with errors )`,

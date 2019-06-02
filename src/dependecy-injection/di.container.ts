@@ -51,7 +51,7 @@ export class Container {
 	 * @param serviceId
 	 * @param ctx
 	 */
-	public static set(serviceClass: Function, instance: Object, id?: string, ctx?: string) {
+	public static set(serviceClass: Function, instance: Record<string, any>, id?: string, ctx?: string) {
 
 		const serviceId = id || serviceClass;
 
@@ -280,7 +280,7 @@ export class Container {
 
 	private static async processReadyService(entry: IDiEntry, ctx?: string) {
 
-		const servicesToSetAsReady: { entry: IDiEntry, ctx: string }[] = [];
+		const servicesToSetAsReady: { entry: IDiEntry; ctx: string }[] = [];
 
 		if (entry.serviceClass && this.hasOnInit(entry.object)) {
 			await entry.object.onInit();
@@ -329,9 +329,9 @@ export class Container {
 
 		const entry = DiService.getEnrySafely(serviceName, undefined, ctx);
 
-		return new Promise<T>((resolve, reject) => {
+		return new Promise<T>((resolve) => {
 
-			const callBack = (resulutObj: any) => { resolve(resulutObj); } ;
+			const callBack = (resulutObj: any) => { resolve(resulutObj); };
 
 			if (entry.cbWaiting) {
 				entry.cbWaiting.push(callBack);
@@ -345,7 +345,7 @@ export class Container {
 
 	}
 
-	private static hasOnInit(arg: Object): arg is IDiOnInit {
+	private static hasOnInit(arg: Record<string, any>): arg is IDiOnInit {
 		return arg && (arg as IDiOnInit).onInit !== undefined;
 	}
 
@@ -361,10 +361,9 @@ export class Container {
 				}
 			});
 			result = allPropsAreTrue;
-		} else
-			if (!entry.depsLeft) {
-				result = true;
-			}
+		} else if (!entry.depsLeft) {
+			result = true;
+		}
 
 		return result;
 

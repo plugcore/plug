@@ -39,7 +39,7 @@ export function Service({ ctx, sId }: IServiceArgs = {}): Function {
  * @param sId
  */
 export function Inject({ sId, ctx }: IServiceArgs = {}): Function {
-	return (target: Object | Function, propertyName: string, index?: number) => {
+	return (target: Record<string, any> | Function, propertyName: string, index?: number) => {
 
 		const type = Reflect.getMetadata(RmdConstats.objectClass, target, propertyName);
 

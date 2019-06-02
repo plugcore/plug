@@ -36,7 +36,7 @@ export class DiUtils {
 						`No dependencies has been found for service: ${serviceId} ` +
 						`in context: ${service.ctx}`);
 				} else if (!entry.isReady) {
-					const depsLeft = entry.depsLeft || <{ targetServiceId: string; depMet: boolean; }[]> [];
+					const depsLeft = entry.depsLeft || <{ targetServiceId: string; depMet: boolean }[]> [];
 					const missingDeps = depsLeft.filter(dep => !dep.depMet).map(dl => dl.targetServiceId);
 					console.error(
 						`The following dependencies couldn't be found for service: ${serviceId} ` +

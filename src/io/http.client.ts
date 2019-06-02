@@ -5,8 +5,7 @@ export class HttpClient {
 
 	private domain: string;
 
-	constructor(domain: string, username?: string, password?: string) {
-
+	constructor(domain: string) {
 		this.domain = domain;
 	}
 

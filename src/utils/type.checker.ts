@@ -1,19 +1,19 @@
 
 export class TypeChecker {
 
-	public static isString(arg: any): arg is String {
+	public static isString(arg: any): arg is string {
 		return arg && (arg instanceof String || typeof arg === 'string');
 	}
 
-	public static isNumber(arg: any): arg is Number {
+	public static isNumber(arg: any): arg is number {
 		return arg && (arg instanceof Number || typeof arg === 'number');
 	}
 
-	public static isBoolean(arg: any): arg is Boolean {
+	public static isBoolean(arg: any): arg is boolean {
 		return arg && (arg instanceof Boolean || typeof arg === 'boolean');
 	}
 
-	public static isObject(arg: any): arg is Object {
+	public static isObject(arg: any): arg is Record<string, any> {
 		return arg && (arg instanceof Object || typeof arg === 'object');
 	}
 

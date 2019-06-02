@@ -76,12 +76,12 @@ async function runScheduledJobs(serviceId: IServiceIdentifier, ctx?: string) {
 	if (metadata && metadata instanceof Array) {
 		metadata.forEach(async (element: IMetadata) => {
 
-			const idJob = `${element.clazz.constructor.name}.${element.funcName}`;
+			/* const idJob = `${element.clazz.constructor.name}.${element.funcName}`;
 
 			const registeredJob: any = {
 				idJob,
 				defaultCron: element.cronExpression
-			};
+			}; */
 
 			// TODO persist another way
 			// await contentService.create(registeredJob, 'Jander', '0000000cb430c320689f0897', RegisteredJob, idJob);

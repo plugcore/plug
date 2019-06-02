@@ -23,7 +23,7 @@ export function TestClass(decoratorArgs: ITestClassArgs = {}): Function {
  * execute it while testing. It can by an async or normal function.
  */
 export function Test(decoratorArgs: ITestMethodArgs = {}): Function {
-	return (object: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
+	return (object: Record<string, any>, propertyKey: string, descriptor: PropertyDescriptor) => {
 
 		// Check if decorator has been used in a method
 		if (
@@ -44,7 +44,7 @@ export function Test(decoratorArgs: ITestMethodArgs = {}): Function {
  * It can by an async or normal function.
  */
 export function BeforeTests(): Function {
-	return (object: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
+	return (object: Record<string, any>, propertyKey: string, descriptor: PropertyDescriptor) => {
 
 		// Check if decorator has been used in a method
 		if (
@@ -65,7 +65,7 @@ export function BeforeTests(): Function {
  * It can by an async or normal function.
  */
 export function AfterTests(): Function {
-	return (object: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
+	return (object: Record<string, any>, propertyKey: string, descriptor: PropertyDescriptor) => {
 
 		// Check if decorator has been used in a method
 		if (
