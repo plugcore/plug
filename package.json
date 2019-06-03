@@ -14,6 +14,7 @@
 	},
 	"homepage": "https://github.com/plugdata/plugdata-core#readme",
 	"scripts": {
+		"build": "tsc",
 		"test": "node dist/src/test/test.cli.js test ./dist/test",
 		"test:info": "node dist/src/test/test.cli.js info ./dist/test",
 		"dev": "tsc -w"

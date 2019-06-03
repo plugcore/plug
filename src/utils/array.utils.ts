@@ -1,9 +1,19 @@
 
 export class ArrayUtils {
 
-	public static append<T>(val: object, arr?: any[]): T[] {
+	/**
+	 * Pushes the value/s to an existing array, or creates a
+	 * new one
+	 * @param val
+	 * @param arr
+	 */
+	public static append<T>(val: T | T[], arr?: any[]): T[] {
 		arr = arr || [];
-		arr.push(val);
+		if (Array.isArray(val)) {
+			arr = arr.concat(val);
+		} else {
+			arr.push(val);
+		}
 		return arr;
 	}
 
@@ -20,7 +30,7 @@ export class ArrayUtils {
 	}
 
 	/**
-	 * Safely flattens an "N" lelvs deep array of arrays
+	 * Safely flattens an "N" levels deep array of arrays
 	 * @param arr
 	 */
 	public static flat<T>(arr: T[][]): T[] {
@@ -31,7 +41,7 @@ export class ArrayUtils {
 	}
 
 	/**
-	 * Flats an array of arrays and removes all dplicate entries
+	 * Flats an array of arrays and removes all duplicate entries
 	 * @param inp
 	 */
 	public static flatAndRemoveDuplicates<T>(inp: T[][]): T[] {
@@ -51,9 +61,11 @@ export class ArrayUtils {
 	 * Example: `ArrayUtils.countOcurrences([1, 1, 2]).get(1) // Returns 2 `
 	 * @param array
 	 */
-	public static countOcurrences(array: string[]): { [key: string]: number } {
+	public static countOcurrences<T extends string | number>(
+		array: T[]
+	): T extends string ? { [key: string]: number } : { [key: number]: number } {
 		const diffrenetElements = Array.from(new Set(array));
-		const emptyObj: { [key: string]: number } = {};
+		const emptyObj: any = {};
 		return diffrenetElements.reduce((prev, curr) => {
 			prev[curr] = array.filter(y => y === curr).length;
 			return prev;
@@ -61,13 +73,13 @@ export class ArrayUtils {
 	}
 
 	/**
-	 * Safely filters outs all of the strings of the original array from
-	 * the filter one
+	 * Filters out all of the values from the original array that also
+	 * appears in the second array, es: `([1, 2], [1]) = [2]`
 	 * @param original
 	 * @param toFilter
 	 */
-	public static filterArrs(original: string[], toFilter: string[]) {
-		return (original || []).filter(f => !(toFilter || []).includes(f));
+	public static filterArrs<T>(original: T[], toFilter: T[]): T[] {
+		return original.filter(f => !toFilter.includes(f));
 	}
 
 	/**
@@ -79,7 +91,6 @@ export class ArrayUtils {
 				: ((!arr1 && arr2) || (arr1 && !arr2)) ? false
 					: arr1.length !== arr2.length ? false
 						: arr1.every(el1 => arr2.includes(el1));
-
 	}
 
 	/**
@@ -105,21 +116,29 @@ export class ArrayUtils {
 	}
 
 	/**
-	 * Creates an object witch keys are dediffernt types of values of
-	 * the field, and inside it has all the objects that have the same value.
+	 * Creates an object which keys are different types of values of the field,
+	 * and inside it has all the objects that have the same value.
 	 * Example: `[{a: 1}, {a: 2}, {a:1}]` = `{ 1: [{a: 1}, {a: 1}], 2: [{a: 2}]}`
+	 * The `null` return type is there to prevent using keys wich value is not
+	 * string or number, but it will allways try to return an object
 	 * @param arr
 	 * @param field
 	 */
-	public static groupBy<T>(arr: T[], field: keyof T): { [key: string]: T[] } {
-		return (arr || []).reduce((prev, curr) => {
-			prev[<any>curr[field]] = (prev[<any>curr[field]] || []).concat(curr);
+	public static groupBy<T, K extends keyof T>(
+		arr: T[], field: K
+	): (
+		T[K] extends string ? { [key: string]: T[] } :
+		T[K] extends number ? { [key: number]: T[] } :
+		null
+	) {
+		return arr.reduce((prev, curr) => {
+			prev[curr[field]] = (prev[curr[field]] || []).concat(curr);
 			return prev;
-		}, <{ [key: string]: T[] }>{});
+		}, <any>{});
 	}
 
 	/**
-	 * Puts the value of the field as an property of the object.
+	 * Puts the value of the field as a property of the object.
 	 * Be sure that every object in the array has differente values.
 	 * @param arr
 	 * @param field
@@ -130,14 +149,6 @@ export class ArrayUtils {
 			return prev;
 		}, <{ [key: string]: T }>{});
 
-	}
-
-	/**
-	 * Creates an array from 0 to n, ex: `[0, 1, 2, 3, ...n]`
-	 * @param length
-	 */
-	public static from0toN(length: number): number[] {
-		return <number[]>Array.apply(null, <any>{ length }).map(Number.call, Number);
 	}
 
 }

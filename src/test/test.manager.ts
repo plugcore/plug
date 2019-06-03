@@ -1,7 +1,10 @@
 import { FsUtils } from '../io/fs.utils';
 import { ConsoleColors } from '../logs/log.enums';
 import { Asserter } from './test.asserter';
-import { ITestClass, ITestClassArgs, ITestMethod, ITestMethodArgs, ITestStats, TTestClassItFunc, TTestMethodItFunc } from './test.shared';
+import {
+	ITestClass, ITestClassArgs, ITestMethod, ITestMethodArgs, ITestStats,
+	TestTypeDetector, TTestClassItFunc, TTestMethodItFunc
+} from './test.shared';
 
 export class TestManager {
 
@@ -35,7 +38,7 @@ export class TestManager {
 			.filter(tc => tc.testThisOnly || tc.testMethods.findIndex(m => m.testThisOnly === true) >= 0)
 			.map(tc => tc.name);
 
-			// 3: Execute all tests at the same time
+		// 3: Execute all tests at the same time
 		await Promise.all(
 			this.testClasses.map(tc => this.executeTestClass(tc, testOnlyClasses))
 		);
@@ -212,7 +215,7 @@ export class TestManager {
 			const successMethods = numOfTests - numOfTestsWithErrors;
 			console.log(
 				`${classPrefix}${classStat.className}: ` +
-				`( ${successMethods} sucess tests ) and ( ${numOfTestsWithErrors} test with errors )`,
+				`( ${successMethods} sucessful tests ) and ( ${numOfTestsWithErrors} test with errors )`,
 				ConsoleColors.reset
 			);
 
@@ -226,7 +229,7 @@ export class TestManager {
 					ConsoleColors.fgRed;
 				console.log(
 					`${methodPrefix}- ${methodStat.methodName}: ` +
-					`( ${methodStat.successAsserts} sucess asserts ) and ( ${methodStat.errorAsserts} asserts with errors )`,
+					`( ${methodStat.successAsserts} sucessful assertions ) and ( ${methodStat.errorAsserts} assertions with errors )`,
 					ConsoleColors.reset
 				);
 			}
@@ -317,9 +320,11 @@ export class TestManager {
 			this.finishedTestMethod(clazz.name, method.methodName);
 			return true;
 		} catch (error) {
-			this.unexpectedAssertErrorOnTestMethod(clazz.name, method.methodName);
-			console.log(`${ConsoleColors.fgMagenta}An error ocureed while executing the test: ${clazz.name} - ${method.methodName}`);
-			console.log(`${ConsoleColors.fgRed}${error.stack || (new Error()).stack}`, ConsoleColors.reset);
+			if (!TestTypeDetector.isTestMethodErrorToIgnore(error)) {
+				this.unexpectedAssertErrorOnTestMethod(clazz.name, method.methodName);
+				console.log(`${ConsoleColors.fgMagenta}An error ocureed while executing the test: ${clazz.name} - ${method.methodName}`);
+				console.log(`${ConsoleColors.fgRed}${error.stack || (new Error()).stack}`, ConsoleColors.reset);
+			}
 			return false;
 		}
 	}
