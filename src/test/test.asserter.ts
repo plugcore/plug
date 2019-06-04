@@ -2,7 +2,7 @@ import { deepStrictEqual, doesNotReject, doesNotThrow, notDeepStrictEqual, notSt
 import { ConsoleColors } from '../logs/log.enums';
 import { JsStackUtils } from '../utils/js-stack.utils';
 import { TestManager } from './test.manager';
-import { ITestClass } from './test.shared';
+import { IAssertOptions, ITestClass } from './test.shared';
 
 export class Asserter {
 
@@ -19,91 +19,91 @@ export class Asserter {
 	/**
 	 * Tests for deep equality between the actual and expected parameters.
 	 */
-	public deepEqual(actual: any, expected: any) {
+	public deepEqual(actual: any, expected: any, { message, stopOnError }: IAssertOptions = {}) {
 		this.controledExec(() => {
-			deepStrictEqual(actual, expected);
-		});
+			deepStrictEqual(actual, expected, message);
+		}, stopOnError);
 	}
 
 	/**
 	 * Awaits the asyncFn promise or, if asyncFn is a function, immediately calls the function and awaits the returned
 	 * promise to complete. It will then check that the promise is not rejected.
 	 */
-	public async doesNotReject(func: Promise<any> | (() => Promise<any>)) {
+	public async doesNotReject(func: Promise<any> | (() => Promise<any>), { message, stopOnError }: IAssertOptions = {}) {
 		this.controledAsyncExec(async () => {
-			await doesNotReject(func);
-		});
+			await doesNotReject(func, message);
+		}, stopOnError);
 	}
 
 	/**
 	 * Asserts that the function fn does not throw an error.
 	 */
-	public doesNotThrow(func: () => any) {
+	public doesNotThrow(func: () => any, { message, stopOnError }: IAssertOptions = {}) {
 		this.controledExec(() => {
-			doesNotThrow(func);
-		});
+			doesNotThrow(func, message);
+		}, stopOnError);
 	}
 
 	/**
 	 * Tests for deep strict inequality. Opposite of `assert.deepEqual()`
 	 */
-	public notDeepEqual(actual: any, expected: any) {
+	public notDeepEqual(actual: any, expected: any, { message, stopOnError }: IAssertOptions = {}) {
 		this.controledExec(() => {
-			notDeepStrictEqual(actual, expected);
-		});
+			notDeepStrictEqual(actual, expected, message);
+		}, stopOnError);
 	}
 
 	/**
 	 * Tests strict inequality between the actual and expected parameters as determined by the `SameValue Comparison`.
 	 */
-	public notEqual(actual: any, expected: any) {
+	public notEqual(actual: any, expected: any, { message, stopOnError }: IAssertOptions = {}) {
 		this.controledExec(() => {
-			notStrictEqual(actual, expected);
-		});
+			notStrictEqual(actual, expected, message);
+		}, stopOnError);
 	}
 
 	/**
 	 * Tests if value is truthy. It is equivalent to `assert.equal(!value, true)`
 	 */
-	public ok(val?: any) {
+	public ok(val?: any, { message, stopOnError }: IAssertOptions = {}) {
 		this.controledExec(() => {
-			ok(val);
-		});
+			ok(val, message);
+		}, stopOnError);
 	}
 
 	/**
 	 * Awaits the asyncFn promise or, if asyncFn is a function, immediately calls the function and awaits the
 	 * returned promise to complete. It will then check that the promise is rejected.
 	 */
-	public rejects(func: Promise<any> | (() => Promise<any>)) {
+	public rejects(func: Promise<any> | (() => Promise<any>), { message, stopOnError }: IAssertOptions = {}) {
 		this.controledAsyncExec(async () => {
-			await rejects(func);
-		});
+			await rejects(func, message);
+		}, stopOnError);
 	}
 
 	/**
 	 * Tests strict equality between the actual and expected parameters as determined by the `SameValue Comparison`.
 	 */
-	public equal(actual: any, expected: any) {
+	public equal(actual: any, expected: any, { message, stopOnError }: IAssertOptions = {}) {
 		this.controledExec(() => {
-			strictEqual(actual, expected);
-		});
+			strictEqual(actual, expected, message);
+		}, stopOnError);
 	}
 
 	/**
 	 * Expects the function fn to throw an error.
 	 */
-	public throws(func: () => any) {
+	public throws(func: () => any, { message, stopOnError }: IAssertOptions = {}) {
 		this.controledExec(() => {
-			throws(func);
-		});
+			throws(func, message);
+		}, stopOnError);
 	}
 
 	//
 	// Private methods
 	//
 
-	private controledExec(fn: () => void) {
+	private controledExec(fn: () => void, stopOnError?: boolean) {
 		const methodAndClass = this.getMethodAndClass();
 		try {
 			fn();
@@ -121,10 +121,13 @@ export class Asserter {
 			}
 			console.log(`${ConsoleColors.fgMagenta}${errorMsg}`);
 			console.log(`${ConsoleColors.fgRed}${error.stack || (new Error()).stack}`, ConsoleColors.reset);
+			if (stopOnError) {
+				throw { ignoreTestError: true };
+			}
 		}
 	}
 
-	private async controledAsyncExec(fn: () => Promise<void>) {
+	private async controledAsyncExec(fn: () => Promise<void>, stopOnError?: boolean) {
 		const methodAndClass = this.getMethodAndClass();
 		try {
 			await fn();
@@ -142,6 +145,9 @@ export class Asserter {
 			}
 			console.log(`${ConsoleColors.fgMagenta}${errorMsg}`);
 			console.log(`${ConsoleColors.fgRed}${error.stack || (new Error()).stack}`, ConsoleColors.reset);
+			if (stopOnError) {
+				throw { ignoreTestError: true };
+			}
 		}
 	}
 

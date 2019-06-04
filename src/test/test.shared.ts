@@ -9,6 +9,15 @@ export class PlugTest {
 }
 
 //
+// Public interfaces
+//
+
+export interface IAssertOptions {
+	stopOnError?: boolean;
+	message?: string;
+}
+
+//
 // Interal implementation Interfaces
 //
 
@@ -51,9 +60,25 @@ export interface ITestMethodStats {
 	unexpectedError: boolean;
 }
 
+export interface ITestMethodErrorToIgnore {
+	ignoreTestError: boolean;
+}
+
 //
 // Types
 //
 
 export type TTestClassItFunc = (clazz: ITestClass) => Promise<void>;
 export type TTestMethodItFunc = (method: ITestMethod, clazz: ITestClass) => Promise<void>;
+
+//
+// Type checkers
+//
+
+export class TestTypeDetector {
+
+	public static isTestMethodErrorToIgnore(error: any): error is ITestMethodErrorToIgnore {
+		return error && error.ignoreTestError === true;
+	}
+
+}
