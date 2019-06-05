@@ -2,7 +2,7 @@
 export enum LogLevels {
 	fatal = 'FATAL',
 	error = 'ERROR',
-	warning = 'WARNING',
+	warn = 'warn',
 	info = 'INFO',
 	debug = 'DEBUG',
 }

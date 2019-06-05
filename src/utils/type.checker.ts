@@ -20,6 +20,9 @@ export class TypeChecker {
 	public static isArray<T>(arg: any): arg is T[] {
 		return (this.hasValue(arg) && Array.isArray(arg));
 	}
+	public static isError(arg: any): arg is Error {
+		return (this.hasValue(arg) && arg instanceof Error );
+	}
 
 	public static typeIsString(arg: Function): boolean {
 		return (this.hasValue(arg) && arg === String);

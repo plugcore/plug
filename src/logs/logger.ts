@@ -1,9 +1,10 @@
 import { Service } from '../dependecy-injection/di.decorators';
+import { FsUtils } from '../io/fs.utils';
 import { JsStackUtils } from '../utils/js-stack.utils';
 import { StringUtils } from '../utils/string.utils';
 import { TypeChecker } from '../utils/type.checker';
 import { ConsoleColors, LogLevels } from './log.enums';
-import { LogEntry } from './log.interefaces';
+import { LogQueueEntry } from './log.interefaces';
 
 export type inMsg = (string | object)[];
 
@@ -13,7 +14,9 @@ export type inMsg = (string | object)[];
 @Service()
 export class Logger {
 
-	private queue: LogEntry[] = [];
+	private queueIsProcessing = false;
+	private queue: LogQueueEntry[] = [];
+	private readonly fileDescriptors: Record<string/* File path */, number/* File descriptor */> = {};
 
 	constructor(
 		private logFilePath?: string
@@ -27,8 +30,8 @@ export class Logger {
 		this.processMsg(LogLevels.info, inMsgs);
 	}
 
-	public warning(...inMsgs: inMsg) {
-		this.processMsg(LogLevels.warning, inMsgs);
+	public warn(...inMsgs: inMsg) {
+		this.processMsg(LogLevels.warn, inMsgs);
 	}
 
 	public error(...inMsgs: inMsg) {
@@ -55,7 +58,9 @@ export class Logger {
 
 		this.showLog(lvl, result);
 
-		this.prepareJson(lvl, result);
+		if (this.logFilePath) {
+			this.writeLog(lvl, inMsgs, this.logFilePath);
+		}
 	}
 
 	private showLog(lvl: LogLevels, result: string): void {
@@ -65,7 +70,7 @@ export class Logger {
 			cColor = ConsoleColors.fgCyan;
 		} else if (lvl === LogLevels.info) {
 			cColor = ConsoleColors.fgGreen;
-		} else if (lvl === LogLevels.warning) {
+		} else if (lvl === LogLevels.warn) {
 			cColor = ConsoleColors.fgYellow;
 		} else if (lvl === LogLevels.error) {
 			cColor = ConsoleColors.fgRed;
@@ -76,28 +81,31 @@ export class Logger {
 		console.log(`${cColor}${lvl}:\t${result}${ConsoleColors.reset}`);
 	}
 
-	private prepareJson(lvl: LogLevels, result: string): void {
+	private writeLog(lvl: LogLevels, inMsgs: inMsg, filePath: string): void {
 
 		const caller: string = JsStackUtils.getLastCallFromStack(2);
 		const callerFormatted: string = caller.substring(caller.indexOf('plugcms'));
 
-		const log = <LogEntry>{
-			level: lvl,
-			message: result,
-			timestamp: new Date().getTime(),
-			clazz: callerFormatted,
-			ext: ''
-		};
+		const logs = inMsgs.map(msg => (<LogQueueEntry>{
+			entry: {
+				message: JSON.stringify(TypeChecker.isError(msg) ? msg.stack || '' : msg),
+				level: lvl,
+				timestamp: new Date().getTime(),
+				clazz: callerFormatted
+			},
+			filePath
+		}));
 
-		this.queueLog(log);
+		logs.forEach(log => { this.queueLog(log); });
+
 	}
 
-	private queueLog(log: LogEntry): void {
+	private queueLog(log: LogQueueEntry): void {
 
 		this.queue.push(log);
 
-		if (this.queue.length === 1) {
-
+		if (this.queue.length === 1 && !this.queueIsProcessing) {
+			this.queueIsProcessing = true;
 			this.processLog();
 		}
 	}
@@ -110,21 +118,29 @@ export class Logger {
 
 		if (this.queue.length !== 0) {
 			this.processLog();
+		} else {
+			this.queueIsProcessing = false;
 		}
 	}
 
-	private async saveLogJson(_: LogEntry) {
-		/* 
-		if (!this.isLogFile) {
-			this.logFileDescriptor = await FsUtils.openLogFile(this.logFileName);
-			this.isLogFile = true;
+	// TODO Improve readibility
+	private async saveLogJson(log: LogQueueEntry) {
+
+		const filePath = log.filePath;
+		const logString = JSON.stringify(log.entry) + '\n]';
+
+		let fileDescriptor = this.fileDescriptors[filePath];
+		if (!fileDescriptor) {
+			fileDescriptor = await FsUtils.openLogFile(filePath);
+			this.fileDescriptors[filePath] = fileDescriptor;
+		}
+		const logFileStats = await FsUtils.getStats(filePath);
+		if (logFileStats.size === 0) {
+			await FsUtils.writeToFile(fileDescriptor, '[\n' + logString, 0);
+		} else {
+			await FsUtils.writeToFile(fileDescriptor, ',' + logString, logFileStats.size - 1);
 		}
 
-		const logString = ',' + JSON.stringify(entry, null, 2) + ']';
-
-		const logFileStats = await FsUtils.getStats(this.logFileName);
-
-		await FsUtils.writeToFile(this.logFileDescriptor, logString, logFileStats.size - 1); */
 	}
 
 }

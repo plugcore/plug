@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { Service } from '../dependecy-injection/di.decorators';
 import { DiUtils } from '../dependecy-injection/di.utils';
-import { Logger } from '../logs/logger.utils';
+import { Logger } from '../logs/logger';
 import { ExtConfiguration } from './configuration/ext-configuration.interface';
 import { ExtsConfigurationChecker } from './configuration/exts-configuration.checker';
 import { ExtCtxGenerator } from './ext-ctx.generator';

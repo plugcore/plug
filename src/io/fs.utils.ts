@@ -125,9 +125,7 @@ export class FsUtils {
 				} else {
 
 					open(filePath, 'w', (_, fd) => {
-						const initLog = '[Creating log file]';
-
-						write(fd, initLog, (__, fdw) => {
+						write(fd, '', (__, fdw) => {
 							close(fdw, () => { /* just close */ });
 
 							open(filePath, 'r+', (___, fdr) => {
