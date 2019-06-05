@@ -10,7 +10,8 @@ module.exports = {
 	rules: {
 		['@typescript-eslint/indent']: [
 			'error',
-			'tab'
+			'tab',
+			{ "flatTernaryExpressions": true }
 		],
 		['quotes']: [
 			'error',

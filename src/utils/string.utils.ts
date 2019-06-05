@@ -4,9 +4,10 @@ import { StringConstants } from '../constants/string.constants';
 export class StringUtils {
 
 	/**
-	 * Shows the sctring version of the given object with 2 levels
+	 * Shows the string version of the given object with 2 levels
 	 * of properties depth, but it can be changed with the depth
-	 * parameter
+	 * parameter. It uses the same format that `console.log`, it's
+	 * not a valid JSON
 	 * @param inp
 	 * @param depth
 	 */
@@ -19,7 +20,7 @@ export class StringUtils {
 	 * separated by commas
 	 * @param inp
 	 */
-	public static arrayToString(inp: Record<string, any>[]): string {
+	public static arrayToString(inp: any[]): string {
 		return (inp && inp.length) ? inp.join(', ') : StringConstants.blank;
 	}
 
@@ -28,7 +29,7 @@ export class StringUtils {
 	 * @param inp
 	 */
 	public static normalizeText(inp: string, toLowerCase?: boolean, replaceSpaces?: boolean): string {
-		let result = (inp || '').normalize('NFKD').replace(/[\u0300-\u036F]/g, '');
+		let result = (inp || '').normalize('NFKD').replace(/[\u0300-\u036F]/g, '').replace(/[^0-9a-zA-Z ]/g, '');
 		result = toLowerCase ? result.toLocaleLowerCase() : result;
 		result = replaceSpaces ? result.replace(/ /g, '-') : result;
 		return result;
@@ -54,7 +55,7 @@ export class StringUtils {
 	 * @param inp
 	 */
 	public static isBlank(inp?: string) {
-		return inp === null || inp === undefined || inp === '';
+		return inp === null || inp === undefined || inp.trim() === '';
 	}
 
 }

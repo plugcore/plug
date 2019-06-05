@@ -30,7 +30,7 @@ export class Asserter {
 	 * promise to complete. It will then check that the promise is not rejected.
 	 */
 	public async doesNotReject(func: Promise<any> | (() => Promise<any>), { message, stopOnError }: IAssertOptions = {}) {
-		this.controledAsyncExec(async () => {
+		return this.controledAsyncExec(async () => {
 			await doesNotReject(func, message);
 		}, stopOnError);
 	}
@@ -76,7 +76,7 @@ export class Asserter {
 	 * returned promise to complete. It will then check that the promise is rejected.
 	 */
 	public rejects(func: Promise<any> | (() => Promise<any>), { message, stopOnError }: IAssertOptions = {}) {
-		this.controledAsyncExec(async () => {
+		return this.controledAsyncExec(async () => {
 			await rejects(func, message);
 		}, stopOnError);
 	}

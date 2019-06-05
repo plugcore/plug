@@ -1,6 +1,4 @@
-
 import { Service } from '../dependecy-injection/di.decorators';
-import { FsUtils } from '../io/fs.utils';
 import { JsStackUtils } from '../utils/js-stack.utils';
 import { StringUtils } from '../utils/string.utils';
 import { TypeChecker } from '../utils/type.checker';
@@ -15,13 +13,10 @@ export type inMsg = (string | object)[];
 @Service()
 export class Logger {
 
-	private logFileDescriptor: number;
-	private isLogFile = false;
-
 	private queue: LogEntry[] = [];
 
 	constructor(
-		private logFileName: string
+		private logFilePath?: string
 	) { }
 
 	public debug(...inMsgs: inMsg) {
@@ -118,8 +113,8 @@ export class Logger {
 		}
 	}
 
-	private async saveLogJson(entry: LogEntry) {
-
+	private async saveLogJson(_: LogEntry) {
+		/* 
 		if (!this.isLogFile) {
 			this.logFileDescriptor = await FsUtils.openLogFile(this.logFileName);
 			this.isLogFile = true;
@@ -129,7 +124,7 @@ export class Logger {
 
 		const logFileStats = await FsUtils.getStats(this.logFileName);
 
-		await FsUtils.writeToFile(this.logFileDescriptor, logString, logFileStats.size - 1);
+		await FsUtils.writeToFile(this.logFileDescriptor, logString, logFileStats.size - 1); */
 	}
 
 }

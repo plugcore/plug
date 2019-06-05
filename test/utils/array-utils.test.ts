@@ -35,8 +35,8 @@ export class ArrayUtilsTest extends PlugTest {
 
 	@Test()
 	public flatAndRemoveDuplicates() {
-		this.assert.deepEqual(ArrayUtils.flatAndRemoveDuplicates(
-			[[1, '1', 1, 2], [3, '4', '4']]),
+		this.assert.deepEqual(
+			ArrayUtils.flatAndRemoveDuplicates([[1, '1', 1, 2], [3, '4', '4']]),
 			[1, '1', 2, 3, '4']
 		);
 	}

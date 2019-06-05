@@ -1,6 +1,5 @@
-import { TypeChecker } from './type.checker';
 import { ArrayUtils } from './array.utils';
-
+import { TypeChecker } from './type.checker';
 
 export class ObjectUtils {
 
@@ -8,7 +7,7 @@ export class ObjectUtils {
 	 * Recursively removes all unused attributes of an object
 	 * @param inp
 	 */
-	public static deepReduction(inp: any) {
+	public static deepReduction(inp: Record<string, any>) {
 
 		Object.keys(inp).forEach(key => {
 			const val = inp[key];
@@ -45,7 +44,7 @@ export class ObjectUtils {
 	 * @param newObject
 	 * @param overrideAttrWithMissingElements
 	 */
-	public static detectChanges(origObject: any, newObject: any, overrideAttrWithMissingElements?: boolean) {
+	public static detectChanges<T, K>(origObject: T, newObject: K, overrideAttrWithMissingElements?: boolean): Partial<T & K> {
 
 		const resultObj: any = {};
 		const origKeys = Object.keys(origObject);
@@ -62,8 +61,8 @@ export class ObjectUtils {
 
 		bothKeys.forEach(key => {
 
-			const origVal = origObject[key];
-			const newVal = newObject[key];
+			const origVal = (<any>origObject)[key];
+			const newVal = (<any>newObject)[key];
 
 			if (origVal !== null && origVal !== undefined && newVal !== null && newVal !== undefined) {
 
@@ -80,8 +79,11 @@ export class ObjectUtils {
 						}
 					} else if (Array.isArray(origIsObj) || Array.isArray(newIsObj)) {
 						resultObj[key] = newVal;
-					} else {
-						resultObj[key] = ObjectUtils.detectChanges(origVal, newVal, overrideAttrWithMissingElements);
+					} else if (!(origValKeys.length === 0 && newValKeys.length === 0)) {
+						const changesObject = ObjectUtils.detectChanges(origVal, newVal, overrideAttrWithMissingElements);
+						if (Object.keys(changesObject).length > 0) {
+							resultObj[key] = changesObject;
+						}
 					}
 				} else if (!origIsObj && newIsObj) {
 					resultObj[key] = newVal;
@@ -98,7 +100,7 @@ export class ObjectUtils {
 		});
 
 		newKeys.forEach(key => {
-			resultObj[key] = newObject[key];
+			resultObj[key] = (<any>newObject)[key];
 		});
 
 		return resultObj;
@@ -120,7 +122,10 @@ export class ObjectUtils {
 				}
 			} else if (TypeChecker.isObject(varArr1) || TypeChecker.isObject(varArr2)) {
 				newArrVal.push(varArr2);
-			} else if (varArr2 !== null && varArr2 !== undefined && varArr1 !== varArr2) {
+			} else if (
+				!(Array.isArray(varArr1) && Array.isArray(varArr2) && varArr1.length === 0 && varArr2.length === 0) &&
+				(varArr2 !== null && varArr2 !== undefined && varArr1 !== varArr2)
+			) {
 				newArrVal.push(varArr2);
 			}
 		}
@@ -133,7 +138,7 @@ export class ObjectUtils {
 	 * @param target
 	 * @param sources
 	 */
-	public static deepMerge<T extends object = object>(target: T, ...sources: T[]): T {
+	public static deepMerge<T, K>(target: T, ...sources: K[]): T | T & K {
 
 		if (!sources.length) {
 			return target;
@@ -166,7 +171,7 @@ export class ObjectUtils {
 	 * @param target
 	 * @param sources
 	 */
-	public static mergeArrays<T, K>(originArr: T[], newArr: K[]): (T | K)[] | undefined {
+	public static mergeArrays<T, K>(originArr: T[], newArr: K[]): (T | K)[] {
 		if ((!originArr || originArr.length === 0) && (!newArr || newArr.length === 0)) {
 			return [];
 		}
@@ -195,7 +200,7 @@ export class ObjectUtils {
 				newArrVal = newArrVal.concat(newArr.slice(newArr.length - minLength - 1));
 			}
 		}
-		return [];
+		return newArrVal;
 	}
 
 	/**

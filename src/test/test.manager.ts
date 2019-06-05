@@ -65,7 +65,7 @@ export class TestManager {
 		this.testClasses.push({
 			clazz,
 			name: clazz.name,
-			testMethods: this.tmpMethods[clazz.name],
+			testMethods: this.tmpMethods[clazz.name] || [],
 			beforeTestMethods: this.tmpBeforeMethods[clazz.name],
 			afterTestMethods: this.tmpAfterMethods[clazz.name],
 			testThisOnly: decoratorArgs.testThisOnly
@@ -211,7 +211,7 @@ export class TestManager {
 			const numOfTestsWithErrors = classStat.methods.filter(m => !m.success).length;
 			const classPrefix = (numOfTestsWithErrors === 0) ? ConsoleColors.fgGreen :
 				numOfTestsWithErrors < numOfTests ? ConsoleColors.fgYellow :
-					ConsoleColors.fgRed;
+				ConsoleColors.fgRed;
 			const successMethods = numOfTests - numOfTestsWithErrors;
 			console.log(
 				`${classPrefix}${classStat.className}: ` +
@@ -226,7 +226,7 @@ export class TestManager {
 				// Method stat log
 				const methodPrefix = (methodStat.errorAsserts === 0) ? ConsoleColors.fgGreen :
 					(methodStat.errorAsserts > 0 && methodStat.successAsserts > 0) ? ConsoleColors.fgYellow :
-						ConsoleColors.fgRed;
+					ConsoleColors.fgRed;
 				console.log(
 					`${methodPrefix}- ${methodStat.methodName}: ` +
 					`( ${methodStat.successAsserts} sucessful assertions ) and ( ${methodStat.errorAsserts} assertions with errors )`,

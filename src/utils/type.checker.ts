@@ -2,35 +2,39 @@
 export class TypeChecker {
 
 	public static isString(arg: any): arg is string {
-		return arg && (arg instanceof String || typeof arg === 'string');
+		return (this.hasValue(arg) && typeof arg === 'string');
 	}
 
 	public static isNumber(arg: any): arg is number {
-		return arg && (arg instanceof Number || typeof arg === 'number');
+		return (this.hasValue(arg) && typeof arg === 'number');
 	}
 
 	public static isBoolean(arg: any): arg is boolean {
-		return arg && (arg instanceof Boolean || typeof arg === 'boolean');
+		return (this.hasValue(arg) && typeof arg === 'boolean');
 	}
 
 	public static isObject(arg: any): arg is Record<string, any> {
-		return arg && (arg instanceof Object || typeof arg === 'object');
+		return (this.hasValue(arg) && typeof arg === 'object' && !Array.isArray(arg));
 	}
 
 	public static isArray<T>(arg: any): arg is T[] {
-		return arg && Array.isArray(arg);
+		return (this.hasValue(arg) && Array.isArray(arg));
 	}
 
 	public static typeIsString(arg: Function): boolean {
-		return arg && arg === String;
+		return (this.hasValue(arg) && arg === String);
 	}
 
 	public static typeIsNumber(arg: Function): boolean {
-		return arg && arg === Number;
+		return (this.hasValue(arg) && arg === Number);
 	}
 
 	public static typeIsBoolean(arg: Function): boolean {
-		return arg && arg === Boolean;
+		return (this.hasValue(arg) && arg === Boolean);
+	}
+
+	private static hasValue(val: any) {
+		return val !== null && val !== undefined;
 	}
 
 }

@@ -88,9 +88,9 @@ export class ArrayUtils {
 	public static contentsAreTheSame<T>(arr1: T[], arr2: T[]) {
 		return arr1 === arr2 ? true
 			: !arr1 && !arr2 ? true
-				: ((!arr1 && arr2) || (arr1 && !arr2)) ? false
-					: arr1.length !== arr2.length ? false
-						: arr1.every(el1 => arr2.includes(el1));
+			: ((!arr1 && arr2) || (arr1 && !arr2)) ? false
+			: arr1.length !== arr2.length ? false
+			: arr1.every(el1 => arr2.includes(el1));
 	}
 
 	/**
@@ -99,8 +99,8 @@ export class ArrayUtils {
 	public static someContentsAreTheSame<T>(arr1: T[], arr2: T[]) {
 		return arr1 === arr2 ? true
 			: !arr1 && !arr2 ? true
-				: ((!arr1 && arr2) || (arr1 && !arr2)) ? false
-					: arr1.some(el1 => arr2.some(el2 => el1 === el2));
+			: ((!arr1 && arr2) || (arr1 && !arr2)) ? false
+			: arr1.some(el1 => arr2.some(el2 => el1 === el2));
 
 	}
 
@@ -129,8 +129,7 @@ export class ArrayUtils {
 	): (
 		T[K] extends string ? { [key: string]: T[] } :
 		T[K] extends number ? { [key: number]: T[] } :
-		null
-	) {
+		null) {
 		return arr.reduce((prev, curr) => {
 			prev[curr[field]] = (prev[curr[field]] || []).concat(curr);
 			return prev;
