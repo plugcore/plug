@@ -1,2 +1,2 @@
 
-export * from './types/src/shared-types';
+export * from './types';
