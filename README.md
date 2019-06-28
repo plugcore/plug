@@ -1,6 +1,6 @@
 
 
-![Plugdata.io](https://github.com/plugdata/plugdata-framework/tree/master/_docs/logo.png)
+![Plugdata.io](https://drive.google.com/file/d/1AFrsUWNW_wLMONMsKkEG9PZ4DZpKJC5a/view?usp=sharing)
 
 # Pludata.io Framework
 

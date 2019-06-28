@@ -1,0 +1,30 @@
+{
+	"name": "@plugdata/web",
+	"version": "0.0.1",
+	"description": "Plugdata.io web utilities",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/plugdata/plugdata-framework.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/plugdata/plugdata-framework/issues"
+	},
+	"homepage": "https://github.com/plugdata/plugdata-framework/web/#readme",
+	"scripts": {
+		"install:global": "npm i -g typescript eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin",
+		"build": "tsc",
+		"dev": "tsc -w",
+		"test": "node dist/src/test/test.cli.js test ./dist/test",
+		"test:info": "node dist/src/test/test.cli.js info ./dist/test",
+		"lint": "eslint src/**/*.ts",
+		"lint:fix": "eslint src/**/*.ts --fix"
+	},
+	"dependencies": {
+	},
+	"devDependencies": {
+		"@types/node": "^12.0.3"
+	}
+}
