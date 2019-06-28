@@ -2,7 +2,7 @@
 
 # Pludata.io Framework
 
-![Plugdata.io](https://lh3.googleusercontent.com/UVLeMfX2sVYgt3tQ_mtofextGnDP_aTUD-gjySwf5YK62SyEXyym96PlB_AdoaiueDAHNEPGS91aa26C4--o=w1920-h978)
+![Plugdata.io](_docs/logo.png?raw=true "Plugdata.io")
 
 This repository contains all the main node modules used in Plugdata.io products and is aimed to be help anybody who wants to easily create robust and performant web applications.
 
@@ -31,11 +31,11 @@ Contains the main functionality that any Node JS might need, some of it would be
 
 - __Configuration__: There will be a main configuration file which will have everything needed for other packages configuration, custom implementations and future products. It's based on JSONs files, which will be able to reference environment variables and have different versions for different environments (productio, development, etc.).
 
-- __Logs__: For all our logging we'll use [pino](https://github.com/pinojs/pino) since it fits our philosophy and has a great connectivity with other products such as (Elastic logs](https://www.elastic.co/es/solutions/logging)
+- __Logs__: For all our logging we'll use [pino](https://github.com/pinojs/pino) since it fits our philosophy and has a great connectivity with other products such as [Elastic logs](https://www.elastic.co/es/solutions/logging)
 
 - __Http/s Client__: We have a lightweight http/s client that is a simple promisified wrapper of Nodejs [Http/s client](https://nodejs.org/api/http.html#http_http_get_options_callback) with easy methods to make REST JSON calls.
 
-- __Events__: It's an adaptation of [EventEmitter3](https://github.com/primus/eventemitter3#readme) to our dependency injection system. It has almost the same API than the (Node JS events](https://nodejs.org/api/events.html) but with some additions like contexts, so it won't be necessary to call `.bind(this)`, and some unnecessary methods removed for better performance.
+- __Events__: It's an adaptation of [EventEmitter3](https://github.com/primus/eventemitter3#readme) to our dependency injection system. It has almost the same API than the [Node JS events](https://nodejs.org/api/events.html) but with some additions like contexts, so it won't be necessary to call `.bind(this)`, and some unnecessary methods removed for better performance.
 
 - __Scheduled jobs__: For job scheduling we have adapted a simple [cron](https://www.npmjs.com/package/cron) library to our dependency injection and event system so you can easily create them and listen for all events if some logging or database insertion is needed.
 
