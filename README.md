@@ -17,7 +17,7 @@ This repository contains all the main node modules used in Plugdata.io products 
 - __Performance__: This connects directly to our low overhead philosophy, in all our decisions we always take performance as a high priority point. We'll keep track of it by constantly updating and running benchmarks against other libraries and ourselves.
 
 - __Versioning__: As it is a common practice in npm packages we'll use a [semantic versioning](https://semver.org/) for all our packages, and all the packages will have the same version. This means if the current version is 2.0.1 and a new patch is released, then all the packages will upgrade to version 2.0.2. This also means that we'll have to coordinate all our projects when deciding to release a new minor o major version, so all of them take advantage of it.
-- __ Security__: // TODO
+- __Security__: // TODO
 
 # Modules
 
@@ -39,7 +39,7 @@ Contains the main functionality that any Node JS might need, some of it would be
 
 - __Scheduled jobs__: For job scheduling we have adapted a simple [cron](https://www.npmjs.com/package/cron) library to our dependency injection and event system so you can easily create them and listen for all events if some logging or database insertion is needed.
 
-- __Object validator__: An extensible and lightweight object validator based on [superstruct](https://github.com/ianstormtaylor/superstruct) modified to have a more comprehensive API
+- __Object validator__: An integration with our dependency injection of [AJV](https://github.com/epoberezkin/ajv) wich supports [draft-07 of JSON Schema](http://json-schema.org/latest/json-schema-validation.html) and is one of the fastest a better mantanind libraries for this porpuse
 
 - __Object transformation__: Another common task is object transformation when you are dealing with different integrations and internal business logic, so we have created an utility with a similar API than [json-map-transform](https://github.com/edudavid/json-map-transform) for common and repetitive object transformations with precompiled templates.
 
