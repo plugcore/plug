@@ -3,7 +3,7 @@ import { PlugTest } from '../../src/test/test.shared';
 import { ConfigurationLoader } from '../../src/configuration/configuration.loader';
 import { join } from 'path';
 
-@TestClass({ testThisOnly: true })
+@TestClass()
 export class ConfigurationLoaderTest extends PlugTest {
 
 	private readonly testFilesFolder = join(__dirname, '..', '..', '..', 'test', 'configuration', 'test-files');
@@ -16,7 +16,8 @@ export class ConfigurationLoaderTest extends PlugTest {
 
 	@Test()
 	public async loadApp() {
-		const importedAppCfg = await ConfigurationLoader.loadApp(this.testFilesFolder);
+
+		const importedAppCfg = await ConfigurationLoader.loadProject(this.testFilesFolder);
 		const appCfg = {
 			'init': { 'distFolder': 'dist' },
 			'custom': {
@@ -32,9 +33,11 @@ export class ConfigurationLoaderTest extends PlugTest {
 					'a': 1, 'b': { 'c': 2, 'd': ['3', '4'] },
 					'e': 'Only env'
 				}
-			}
+			},
+			'log': {}
 		};
 		this.assert.deepEqual(importedAppCfg, appCfg);
+
 	}
 
 	@Test()
@@ -58,7 +61,7 @@ export class ConfigurationLoaderTest extends PlugTest {
 			}
 		};
 		this.assert.deepEqual(importedCfg, cfg);
-		console.log(JSON.stringify(importedCfg));
+
 	}
 
 }

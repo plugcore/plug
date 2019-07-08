@@ -6,6 +6,8 @@ export class PlugConfiguration {
 		init: {
 			distFolder: 'dist'
 		},
+		log: {
+		},
 		custom: undefined
 	};
 

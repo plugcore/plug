@@ -300,7 +300,7 @@ export class ObjectUtils {
 		for (const [key, value] of Object.entries(obj)) {
 			if (TypeChecker.isPrimitive(value)) {
 				currVals.push(<IObjectEntry>{
-					value: obj[key], 
+					value: obj[key],
 					objRef: obj,
 					key: key
 				});
@@ -331,6 +331,24 @@ export class ObjectUtils {
 		}
 
 		return <T & K>result;
+
+	}
+
+	/**
+	 * Applies `Object.freeze()` recursivley to all objects defined as properties from
+	 * the original object. See frozen objects in
+	 * [MDN documentation](https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Objetos_globales/Object/freeze).
+	 * 
+	 */
+	public static deepFreeze<T>(object: any): T {
+
+		for (const name of Object.getOwnPropertyNames(object)) {
+			const value = object[name];
+			object[name] = value && TypeChecker.isObject(value) ?
+				this.deepFreeze(value) : value;
+		}
+
+		return Object.freeze(object);
 
 	}
 

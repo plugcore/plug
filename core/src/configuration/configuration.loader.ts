@@ -23,7 +23,7 @@ export class ConfigurationLoader {
 	 * @param folder
 	 * @param environment 
 	 */
-	public static async loadApp<T>(
+	public static async loadProject<T>(
 		folder: string, options?: { environment?: string; configurationFileName?: string }
 	): Promise<IConfiguration<T>> {
 
@@ -129,7 +129,6 @@ export class ConfigurationLoader {
 					
 					// Environment variable
 					const envVarName = matchEnvironment[0];
-					console.log('enVarValue', envVarName.substring(0, envVarName.length - 1).substring(2));
 					const enVarValue = process.env[envVarName.substring(0, envVarName.length - 1).substring(2)];
 					if (enVarValue) {
 						
@@ -145,7 +144,6 @@ export class ConfigurationLoader {
 
 						// Configuration import
 						const fileName = matchImport[0];
-						console.log('fileName', fileName.substring(0, fileName.length - 1).substring(9));
 						const importFilePath = join(fileDirectory, fileName.substring(0, fileName.length -1).substring(9));
 						const importedConfiguration = await this.importConfigurationFile(importFilePath);
 						objEntry.objRef[objEntry.key] = importedConfiguration;
