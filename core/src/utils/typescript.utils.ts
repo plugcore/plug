@@ -17,3 +17,6 @@ export type ThenArg<T> = T extends Promise<infer U> ? U : T;
  * Removes properties from type
  */
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type TPrimitive = boolean | null | undefined | number | string | Symbol;

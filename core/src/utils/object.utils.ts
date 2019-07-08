@@ -1,5 +1,6 @@
 import { ArrayUtils } from './array.utils';
 import { TypeChecker } from './type.checker';
+import { IObjectEntry } from './utils.interfaces';
 
 export class ObjectUtils {
 
@@ -153,7 +154,7 @@ export class ObjectUtils {
 				const sourceAttr = (<any>source)[key];
 				const targetAttr = (<any>target)[key];
 				if (this.isMergebleObject(targetAttr)) {
-					(<any>target)[key] = this.deepMerge(targetAttr,  sourceAttr || {});
+					(<any>target)[key] = this.deepMerge(targetAttr, sourceAttr || {});
 				} else if (Array.isArray(sourceAttr) && Array.isArray(targetAttr)) {
 					(<any>target)[key] = ObjectUtils.mergeArrays(targetAttr, sourceAttr);
 				} else {
@@ -178,7 +179,7 @@ export class ObjectUtils {
 		if ((!originArr || originArr.length === 0) && (newArr && newArr.length > 0)) {
 			return newArr;
 		}
-		if (originArr  && (!newArr || newArr.length === 0)) {
+		if (originArr && (!newArr || newArr.length === 0)) {
 			return originArr;
 		}
 
@@ -210,24 +211,24 @@ export class ObjectUtils {
 	 * @param obj Object to clone
 	 * @param hash internal ussage hash
 	 */
-	public static deepClone<T extends Record<string, any>>(obj: T, hash = new WeakMap()): T  {
+	public static deepClone<T extends Record<string, any>>(obj: T, hash = new WeakMap()): T {
 
-		if (Object(obj) !== obj)  { return obj; } // primitives
+		if (Object(obj) !== obj) { return obj; } // primitives
 		if (obj instanceof Set) { return <any>(new Set(obj)); }
 		if (Buffer.isBuffer(obj)) { return obj; }
-		if (hash.has(obj)) {return hash.get(obj); } // cyclic reference
+		if (hash.has(obj)) { return hash.get(obj); } // cyclic reference
 		const result = obj instanceof Date ? new Date(obj)
-					 : obj instanceof RegExp ? new RegExp(obj.source, obj.flags)
-					 : obj.constructor ? new (<any>obj).constructor()
-					 : Object.create(null);
+			: obj instanceof RegExp ? new RegExp(obj.source, obj.flags)
+			: obj.constructor ? new (<any>obj).constructor()
+			: Object.create(null);
 		hash.set(obj, result);
 
 		if (obj instanceof Map) {
 
-			Array.from(obj, ([key, val]) => result.set(key, this.deepClone(val, hash)) );
+			Array.from(obj, ([key, val]) => result.set(key, this.deepClone(val, hash)));
 		}
-		return Object.assign(result, ...Object.keys(obj).map (
-			key => ({ [key]: this.deepClone((<any>obj)[key], hash) }) ));
+		return Object.assign(result, ...Object.keys(obj).map(
+			key => ({ [key]: this.deepClone((<any>obj)[key], hash) })));
 	}
 
 	/**
@@ -286,6 +287,51 @@ export class ObjectUtils {
 			}
 		});
 		return obj;
+	}
+
+	/**
+	 * Returns an array with an entry for every value in the object, it goes throught
+	 * all sub properties and array elements.
+	 * @param obj 
+	 * @param func 
+	 */
+	public static walkThroughObject<T extends Record<string, any>>(obj: T, currVals: IObjectEntry[] = []): IObjectEntry[] {
+
+		for (const [key, value] of Object.entries(obj)) {
+			if (TypeChecker.isPrimitive(value)) {
+				currVals.push(<IObjectEntry>{
+					value: obj[key], 
+					objRef: obj,
+					key: key
+				});
+			} else if (TypeChecker.isObject(value) || TypeChecker.isArray(value)) {
+				this.walkThroughObject(value, currVals);
+			}
+		}
+
+		return currVals;
+
+	}
+
+	/**
+	 * Behaves like `Object.assign()` but takes into account subproperties
+	 * @param base 
+	 * @param override 
+	 */
+	public static deepAssign<T extends Record<string, any>, K extends Record<string, any>>(base: T, override: K): T & K {
+
+		const result: Record<string, any> =  base;
+
+		for (const [key, value] of Object.entries(override)) {
+			if (TypeChecker.isPrimitive(value) || TypeChecker.isArray(value)) {
+				result[key] = value;
+			} else if (TypeChecker.isObject(value)) {
+				result[key] = this.deepAssign(result[key], value);
+			}
+		}
+
+		return <T & K>result;
+
 	}
 
 	private static isMergebleObject(item: any): boolean {

@@ -1,4 +1,4 @@
-import { close, lstat, open, readdir, readFile, rmdir, stat, Stats, unlink, write } from 'fs';
+import { close, lstat, open, readdir, readFile, rmdir, stat, Stats, unlink, write, promises as fsPromises } from 'fs';
 import { join } from 'path';
 import { StringConstants } from '../constants/string.constants';
 
@@ -265,7 +265,7 @@ export class FsUtils {
 
 			// Remove one or more trailing slash to keep from doubling up
 			path = path.replace(/\/+$/, '');
-			files.forEach((file) =>  {
+			files.forEach((file) => {
 				const curPath = path + '/' + file;
 				lstat(curPath, (errls, stats) => {
 					if (errls) {
@@ -303,6 +303,20 @@ export class FsUtils {
 		});
 
 		return await Promise.all(jsImports);
+	}
+
+	/**
+	 * Check if the folder exists and you have permissions over it. It doesn't throw an error
+	 * but returns it instead.
+	 * @param folderPath
+	 */	
+	public static async fileOrFolderExists(folderPath: string): Promise<{ exists: boolean; error?: Error }> {
+		try {
+			await fsPromises.access(folderPath);
+			return { exists: true };
+		} catch (error) {
+			return { exists: false, error };
+		}
 	}
 
 }

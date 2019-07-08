@@ -1,3 +1,4 @@
+import { TPrimitive } from './typescript.utils';
 
 export class TypeChecker {
 
@@ -11,6 +12,24 @@ export class TypeChecker {
 
 	public static isBoolean(arg: any): arg is boolean {
 		return (this.hasValue(arg) && typeof arg === 'boolean');
+	}
+
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	public static isSymbol(arg: any): arg is Symbol {
+		return (this.hasValue(arg) && typeof arg === 'symbol');
+	}
+
+	public static isUndefined(arg: any): arg is undefined {
+		return arg === undefined;
+	}
+
+	public static isNull(arg: any): arg is null {
+		return arg === null;
+	}
+
+	public static isPrimitive(arg: any): arg is TPrimitive {
+		return this.isBoolean(arg) || this.isNull(arg) || this.isUndefined(arg) ||
+			this.isNumber(arg) || this.isString(arg)  || this.isSymbol(arg);
 	}
 
 	public static isObject(arg: any): arg is Record<string, any> {
