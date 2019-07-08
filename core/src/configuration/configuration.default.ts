@@ -1,7 +1,12 @@
 import { IConfiguration } from './configuration.interfaces';
 
-export const defaultConfiguration = <IConfiguration<undefined>>{
-	init: {
-		distFolder: 'dist'
-	}
-};
+export class PlugConfiguration {
+
+	public static readonly default: IConfiguration<undefined> = {
+		init: {
+			distFolder: 'dist'
+		},
+		custom: undefined
+	};
+
+}

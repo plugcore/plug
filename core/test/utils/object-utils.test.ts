@@ -71,9 +71,9 @@ export class ObjectUtilsTest extends PlugTest {
 
 	@Test()
 	public detectChangesBetweenArrays() {
-		const arr1 = [1, 1, '2', '2', true, true, false, false, {}, [], {a:1}];
-		const arr2 = [1, 2, '2', '3', true, false, false, true, {}, [], {a:1}];
-		const arrDiff = ObjectUtils.detectChangesBetweenArrays(arr1,arr2);
+		const arr1 = [1, 1, '2', '2', true, true, false, false, {}, [], { a: 1 }];
+		const arr2 = [1, 2, '2', '3', true, false, false, true, {}, [], { a: 1 }];
+		const arrDiff = ObjectUtils.detectChangesBetweenArrays(arr1, arr2);
 		// TODO Improve tests
 		this.assert.deepEqual(arrDiff, [2, '3', false, true]);
 	}
@@ -105,12 +105,12 @@ export class ObjectUtilsTest extends PlugTest {
 
 	@Test()
 	public mergeArrays() {
-		const arr1 = [1, '2', {a: 1}];
-		const arr2 = [1, '3', {b: 1}];
+		const arr1 = [1, '2', { a: 1 }];
+		const arr2 = [1, '3', { b: 1 }];
 		// TODO Improve tests
 		this.assert.deepEqual(
 			ObjectUtils.mergeArrays(arr1, arr2),
-			[ 1, '3', { a: 1, b: 1 } ]
+			[1, '3', { a: 1, b: 1 }]
 		);
 	}
 
@@ -155,6 +155,60 @@ export class ObjectUtilsTest extends PlugTest {
 		};
 		// TODO Improve tests
 		this.assert.deepEqual(ObjectUtils.cleanEmptyArrays(obj), { a: 1 });
+	}
+
+
+
+	@Test()
+	public walkThroughObject() {
+		const testObj = {
+			a: [2],
+			b: {
+				c: 2,
+				d: 't'
+			},
+			e: 't2'
+		};
+		const result = [
+			{ value: 2, objRef: [2], key: '0' },
+			{ value: 2, objRef: { c: 2, d: 't' }, key: 'c' },
+			{ value: 't', objRef: { c: 2, d: 't' }, key: 'd' },
+			{ value: 't2', objRef: { a: [2], b:{
+				c: 2,
+				d: 't'
+			}, e: 't2' }, key: 'e'}
+		];
+		// TODO Improve tests
+		this.assert.deepEqual(result, ObjectUtils.walkThroughObject(testObj));
+
+	}
+
+	@Test()
+	public deepAssign() {
+		const obj1 = {
+			a: [2, 2],
+			b: {
+				c: 1,
+				d: 't'
+			}
+		};
+		const obj2 = {
+			a: [2],
+			b: {
+				c: 2,
+			},
+			e: 't2'
+		};
+		const result = {
+			a: [2],
+			b: {
+				c: 2,
+				d: 't'
+			},
+			e: 't2'
+		};
+		// TODO Improve tests
+		this.assert.deepEqual(result, ObjectUtils.deepAssign(obj1, obj2));
 	}
 
 }

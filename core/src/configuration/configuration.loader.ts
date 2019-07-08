@@ -4,7 +4,7 @@ import { ObjectUtils } from '../utils/object.utils';
 import { TypeChecker } from '../utils/type.checker';
 import { DeepPartial } from '../utils/typescript.utils';
 import { IConfiguration } from './configuration.interfaces';
-import { defaultConfiguration } from './configuration.default';
+import { PlugConfiguration } from './configuration.default';
 
 export class ConfigurationLoader {
 
@@ -15,6 +15,23 @@ export class ConfigurationLoader {
 	//
 	// Public methods
 	//
+
+	/**
+	 * Calls to `ConfigurationLoader.loadFile` to load the application configuration which will
+	 * usually be at `/configuration/condiguration.json`. It will use the defaults determined by
+	 * `PlugConfiguration.default` 
+	 * @param folder
+	 * @param environment 
+	 */
+	public static async loadApp<T>(
+		folder: string, options?: { environment?: string; configurationFileName?: string }
+	): Promise<IConfiguration<T>> {
+
+		const finalConfiguration = await this.loadFile<IConfiguration<T>>(folder, options);
+
+		return <IConfiguration<T>>ObjectUtils.deepAssign(PlugConfiguration.default, finalConfiguration);
+		
+	}
 
 	/**
 	 * Searches in a folder for a configuration.json to convert and return it as an object.
@@ -30,9 +47,9 @@ export class ConfigurationLoader {
 	 * @param folder
 	 * @param environment 
 	 */
-	public static async loadConfiguration<T>(
+	public static async loadFile<T>(
 		folder: string, options?: { environment?: string; configurationFileName?: string }
-	): Promise<IConfiguration<T>> {
+	): Promise<DeepPartial<T>> {
 
 		const finalOptions = Object.assign({
 			configurationFileName: this.defaultConfigurationFileName
@@ -68,8 +85,8 @@ export class ConfigurationLoader {
 		const finalConfiguration = configurations.length > 1 ?
 			ObjectUtils.deepAssign(configurations[0], configurations[1]) : configurations[0];
 
-		return <IConfiguration<T>>ObjectUtils.deepAssign(defaultConfiguration, finalConfiguration);
-		
+		return finalConfiguration;
+
 	}
 
 	//
@@ -99,7 +116,7 @@ export class ConfigurationLoader {
 	 * Loads the configuration file, processes envirnoment variable and file imports, an then
 	 * returns it as a valid object
 	 */
-	private static async importConfigurationFile<T>(file: string): Promise<DeepPartial<IConfiguration<T>>> {
+	private static async importConfigurationFile<T>(file: string): Promise<DeepPartial<T>> {
 		
 		const fileDirectory = dirname(file);
 		const fileContent = JSON.parse(await FsUtils.loadFile(file));
@@ -112,8 +129,10 @@ export class ConfigurationLoader {
 					
 					// Environment variable
 					const envVarName = matchEnvironment[0];
-					const enVarValue = process.env[envVarName];
+					console.log('enVarValue', envVarName.substring(0, envVarName.length - 1).substring(2));
+					const enVarValue = process.env[envVarName.substring(0, envVarName.length - 1).substring(2)];
 					if (enVarValue) {
+						
 						objEntry.objRef[objEntry.key] = enVarValue;
 					} else {
 						throw new Error('Environment variable not found while loading configuration:' + envVarName);
@@ -126,7 +145,8 @@ export class ConfigurationLoader {
 
 						// Configuration import
 						const fileName = matchImport[0];
-						const importFilePath = join(fileDirectory, fileName);
+						console.log('fileName', fileName.substring(0, fileName.length - 1).substring(9));
+						const importFilePath = join(fileDirectory, fileName.substring(0, fileName.length -1).substring(9));
 						const importedConfiguration = await this.importConfigurationFile(importFilePath);
 						objEntry.objRef[objEntry.key] = importedConfiguration;
 

@@ -1,0 +1,17 @@
+{
+	"custom": {
+		"a": 1,
+		"import": "@[import:import1.json]",
+		"env": "$[NODE_LOG_LEVEL]",
+		"sub": {
+			"a": 1,
+			"b": {
+				"c": 1,
+				"d": [
+					"1",
+					"2"
+				]
+			}
+		}
+	}
+}

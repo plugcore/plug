@@ -1,6 +1,7 @@
-import { close, lstat, open, readdir, readFile, rmdir, stat, Stats, unlink, write, promises as fsPromises } from 'fs';
+import { close, lstat, open, readdir, readFile, rmdir, stat, Stats, unlink, write, exists, access } from 'fs';
 import { join } from 'path';
 import { StringConstants } from '../constants/string.constants';
+import { F_OK } from 'constants';
 
 export interface IFileStats {
 	path: string;
@@ -311,12 +312,17 @@ export class FsUtils {
 	 * @param folderPath
 	 */	
 	public static async fileOrFolderExists(folderPath: string): Promise<{ exists: boolean; error?: Error }> {
-		try {
-			await fsPromises.access(folderPath);
-			return { exists: true };
-		} catch (error) {
-			return { exists: false, error };
-		}
+		return new Promise(resolve => {
+
+			access(folderPath, F_OK, (error) => {
+				if (error) {
+					resolve({ exists: false, error });
+				} else {
+					resolve({ exists: true });
+				}
+			});
+
+		});
 	}
 
 }

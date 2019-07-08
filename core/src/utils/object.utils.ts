@@ -320,7 +320,7 @@ export class ObjectUtils {
 	 */
 	public static deepAssign<T extends Record<string, any>, K extends Record<string, any>>(base: T, override: K): T & K {
 
-		const result: Record<string, any> =  base;
+		const result: Record<string, any> = this.deepClone(base || {});
 
 		for (const [key, value] of Object.entries(override)) {
 			if (TypeChecker.isPrimitive(value) || TypeChecker.isArray(value)) {
