@@ -1,4 +1,5 @@
 
+
 export type DeepPartial<T> = {
 	// tslint:disable-next-line: array-type
 	[P in keyof T]?: T[P] extends (infer U)[]
@@ -20,3 +21,6 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type TPrimitive = boolean | null | undefined | number | string | Symbol;
+
+// eslint-disable @typescript-eslint/prefer-interface
+export interface ClassParameter<T> { new (...args: any[]): T }

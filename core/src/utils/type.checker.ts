@@ -55,6 +55,14 @@ export class TypeChecker {
 		return (this.hasValue(arg) && arg === Boolean);
 	}
 
+	public static isBuffer(arg: any): arg is Buffer {
+		return Buffer.isBuffer(arg);
+	}
+
+	public static isPromise<T = unknown>(arg: any): arg is Promise<T> {
+		return arg instanceof Promise;
+	}
+
 	private static hasValue(val: any) {
 		return val !== null && val !== undefined;
 	}

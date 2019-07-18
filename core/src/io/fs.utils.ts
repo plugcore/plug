@@ -1,7 +1,8 @@
-import { close, lstat, open, readdir, readFile, rmdir, stat, Stats, unlink, write, exists, access } from 'fs';
+import { F_OK } from 'constants';
+import { access, lstat, readdir, readFile, rmdir, stat, Stats, unlink, write } from 'fs';
 import { join } from 'path';
 import { StringConstants } from '../constants/string.constants';
-import { F_OK } from 'constants';
+import { TypeChecker } from '../utils/type.checker';
 
 export interface IFileStats {
 	path: string;
@@ -105,63 +106,6 @@ export class FsUtils {
 					reject(err);
 				} else {
 					resolve(file);
-				}
-			});
-		});
-	}
-
-	/**
-	 * Promise wrapper to prepare log.json file
-	 * @param filePath
-	 */
-	public static async openLogFile(filePath: string): Promise<number> {
-
-		return new Promise<number>((resolve) => {
-
-			stat(filePath, (err) => {
-				if (err == null) {
-					open(filePath, 'r+', (_, fd) => {
-						resolve(fd);
-					});
-				} else {
-
-					open(filePath, 'w', (_, fd) => {
-						write(fd, '', (__, fdw) => {
-							close(fdw, () => { /* just close */ });
-
-							open(filePath, 'r+', (___, fdr) => {
-								resolve(fdr);
-							});
-						});
-
-					});
-				}
-			});
-		});
-	}
-
-	public static async openNormalFile(filePath: string): Promise<number> {
-
-		return new Promise<number>((resolve) => {
-
-			stat(filePath, (err) => {
-				if (err == null) {
-					open(filePath, 'r+', (_, fd) => {
-						resolve(fd);
-					});
-				} else {
-
-					open(filePath, 'w', (_, fd) => {
-
-						write(fd, 'val,', (__, fdw) => {
-							close(fdw, () => { /**/ });
-
-							open(filePath, 'r+', (___, fdo) => {
-								resolve(fdo);
-							});
-						});
-
-					});
 				}
 			});
 		});
@@ -323,6 +267,31 @@ export class FsUtils {
 			});
 
 		});
+	}
+
+	/**
+	 * Tries to load the file path contents as JSON, can throw exceptions
+	 * @param filePath 
+	 */
+	public static async loadJsonFile<T>(filePath: string, options?: { encoding?: null; flag?: string }) {
+
+		return new Promise<T>((resolve, reject) => {
+
+			readFile(filePath, options || { encoding: 'utf-8' }, (err, data) => {
+				if (err) {
+					reject(err);
+				} else {
+					const content = TypeChecker.isBuffer(data) ? data.toString() : data;
+					try {
+						resolve(JSON.parse(content));
+					} catch (error) {
+						reject(error);
+					}
+				}
+			});
+
+		});
+
 	}
 
 }
