@@ -50,6 +50,7 @@ export interface IPropertyValidatorMetadata<T extends TObjectValidatorProeprtyOp
 export enum EObjectValidatorPropertyTypes {
 	number = 'number',
 	string = 'string',
+	boolean = 'boolean',
 	array = 'array',
 	object = 'object',
 	required = 'required'

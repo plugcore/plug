@@ -1,0 +1,10 @@
+{
+	"numberProp": 1,
+	"stringProp": "string",
+	"arrayProp": ["1", "a"],
+	"subPropr": {
+		"numberProp": 3,
+		"stringProp": "",
+		"boolPropr": false
+	}
+}

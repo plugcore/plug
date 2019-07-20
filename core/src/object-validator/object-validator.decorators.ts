@@ -24,6 +24,15 @@ export function ValidNumber(options?: INumberSchemaValidator) {
 	};
 }
 
+export function ValidBoolean() {
+	return (target: any, propertyKey: string) => {
+		ObjectValidatorDecoratorUtils.addProperty({
+			target, propertyKey, type: EObjectValidatorPropertyTypes.boolean
+		});
+	};
+}
+
+
 export function ValidArray(options?: IArraySchemaValidator) {
 	return (target: any, propertyKey: string) => {
 		ObjectValidatorDecoratorUtils.addProperty({

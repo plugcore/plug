@@ -4,6 +4,7 @@ import {
 	EObjectValidatorPropertyTypes, IPropertyValidatorMetadata, TObjectValidatorProeprtyOptions,
 	IStringSchemaValidator, INumberSchemaValidator, IArraySchemaValidator
 } from './object-validator.shared';
+import { StringUtils } from '../utils/string.utils';
 
 //
 // Utils
@@ -42,41 +43,21 @@ export class ObjectValidatorDecoratorUtils {
 			.map(metadataKey => Reflect.getMetadata(metadataKey, clazz.prototype));
 	}
 
-	public static getSortedClassProperties<T>(clazz: ClassParameter<T>): {
-		strings: IPropertyValidatorMetadata<IStringSchemaValidator>[];
-		numbers: IPropertyValidatorMetadata<INumberSchemaValidator>[];
-		arrays: IPropertyValidatorMetadata<IArraySchemaValidator>[];
-		objects: IPropertyValidatorMetadata<ClassParameter<T>>[];
-		requireds: IPropertyValidatorMetadata<undefined>[];
+	public static sortClassProperties<T>(clazz: ClassParameter<T>): {
+		objectProperties: Record<string, IPropertyValidatorMetadata<TObjectValidatorProeprtyOptions>[]>;
+		requiredProperties: IPropertyValidatorMetadata<undefined>[];
 	} {
+
+		const classProperties = this.getClassProperties(clazz);		
+		const requiredProperties = classProperties.filter(PropertyValidatorTypeChecker.isRequired);
+		const objectProperties = classProperties
+			.filter(rp => !PropertyValidatorTypeChecker.isRequired(rp))
+			.reduce((prev, curr) => {
+				prev[curr.property] = (prev[curr.property] || []).concat(curr);
+				return prev;
+			}, <Record<string, IPropertyValidatorMetadata<TObjectValidatorProeprtyOptions>[]>>{});
 		
-		const strings: IPropertyValidatorMetadata<IStringSchemaValidator>[] = [];
-		const numbers: IPropertyValidatorMetadata<INumberSchemaValidator>[] = [];
-		const arrays: IPropertyValidatorMetadata<IArraySchemaValidator>[] = [];
-		const objects: IPropertyValidatorMetadata<ClassParameter<T>>[] = [];
-		const requireds: IPropertyValidatorMetadata<undefined>[] = [];
-
-		const classProperties = this.getClassProperties(clazz);
-
-		for (const classProperty of classProperties) {
-			if (PropertyValidatorTypeChecker.isString(classProperty)) {
-				strings.push(classProperty);
-			}
-			if (PropertyValidatorTypeChecker.isNumber(classProperty)) {
-				numbers.push(classProperty);
-			}
-			if (PropertyValidatorTypeChecker.isArray(classProperty)) {
-				arrays.push(classProperty);
-			}
-			if (PropertyValidatorTypeChecker.isObject(classProperty)) {
-				objects.push(classProperty);
-			}
-			if (PropertyValidatorTypeChecker.isRequired(classProperty)) {
-				requireds.push(classProperty);
-			}
-		}
-
-		return { strings, numbers, arrays, objects, requireds };
+		return { requiredProperties, objectProperties };
 	}
 
 }
@@ -84,15 +65,74 @@ export class ObjectValidatorDecoratorUtils {
 
 export class ObjectValidatorUtils {
 
+	private static readonly schemaVersion = 'http://json-schema.org/draft-07/schema#';
+
 	/**
 	 * Generates a valid [Json schema](https://json-schema.org/) from a decorated class
 	 * with any of the validator decorators like `@ValidString()`, `@ValidNumber()`, 
 	 * `@ValidArray()`, `@ValidObject()` or `@RequiredProperty()`
 	 * @param clazz 
 	 */
-	public static generateJsonSchema<T>(clazz: ClassParameter<T>): Record<string, any> {
-		const clazzValidatorProperties = ObjectValidatorDecoratorUtils.getSortedClassProperties(clazz);
-		return {};
+	public static generateJsonSchema<T>(clazz: ClassParameter<T>, isSubProperty: boolean = false): Record<string, any> {
+
+		const sortedClassProperties = ObjectValidatorDecoratorUtils.sortClassProperties(clazz);
+
+		const schema: Record<string, any> = {
+			$schema: isSubProperty ? undefined : this.schemaVersion,
+			title: clazz.name,
+			type: 'object', // TODO Support arrays
+		};
+
+		// Field types
+
+		// TODO: Improve readibility, remove depth
+		const objectProperties = sortedClassProperties.objectProperties;
+		if (Object.keys(objectProperties).length > 0) {
+
+			const properties: Record<string, any> = {};
+
+			for (const objKey of Object.keys(objectProperties)) {
+				
+				const validatorTypes = objectProperties[objKey];
+				const objectProperty = validatorTypes.find(vt => vt.type === EObjectValidatorPropertyTypes.object);
+
+				if (objectProperty && PropertyValidatorTypeChecker.isObject(objectProperty)) {
+					// Property is sub object
+					properties[objectProperty.property] = this.generateJsonSchema(objectProperty.options, true);
+				} else {
+					// Property is primitive type or Array
+					const property: Record<string, any> = {
+						title: StringUtils.capitalize(objKey),
+						type: (validatorTypes.length === 1) ? 
+							validatorTypes[0].type : validatorTypes.map(vt => vt.type)
+					};
+	
+					const propertiesToAdd = validatorTypes
+						.filter(vt => vt.options !== undefined)
+						.reduce((prev, curr) => Object.assign(prev, curr), {});
+					if (Object.keys(propertiesToAdd).length > 0) {
+						Object.assign(property, propertiesToAdd);
+					}
+
+					properties[objKey] = property;
+
+				}
+
+			}
+
+			if (Object.keys(properties).length > 0) {
+				schema.properties = properties;
+			}
+
+		}
+
+		// Required fields
+
+		if (sortedClassProperties.requiredProperties.length > 0) {
+			schema.required = sortedClassProperties.requiredProperties.map(rp => rp.property);
+		}
+
+		return schema;
 	}
 
 }
@@ -123,8 +163,9 @@ class PropertyValidatorTypeChecker {
 
 	public static isObject(
 		inp: IPropertyValidatorMetadata<TObjectValidatorProeprtyOptions>
-	): inp is IPropertyValidatorMetadata<ClassParameter<any>> {
-		return inp.type === EObjectValidatorPropertyTypes.object;
+	): inp is Required<IPropertyValidatorMetadata<ClassParameter<any>>> {
+		const hasName = inp.options && (<ClassParameter<any>>inp.options).name !== undefined || false;
+		return inp.type === EObjectValidatorPropertyTypes.object && hasName;
 	}
 
 	public static isRequired(

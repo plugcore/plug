@@ -58,4 +58,15 @@ export class StringUtils {
 		return inp === null || inp === undefined || inp.trim() === '';
 	}
 
+	/**
+	 * Uppercases the first letter
+	 * @param inp
+	 */
+	public static capitalize(inp: string) {
+		if (!inp || typeof inp !== 'string') {
+			return inp;
+		}
+		return inp.charAt(0).toUpperCase() + inp.slice(1);;
+	}
+
 }
