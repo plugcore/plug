@@ -33,7 +33,7 @@ export class ObjectValidatorDecorators extends PlugTest {
 
 		// TODO: Improve test for every decorator type
 
-		const schema = ObjectValidatorUtils.generateJsonSchema(ObjectValidatorDecoratorsTestClass);
+		const schema = ObjectValidatorUtils.generateJsonSchema(ObjectValidatorDecoratorsTestClass);		
 
 		const compiledFromSchema = this.objectValidatorFactory.compile(schema);
 		const resultOk = this.objectValidatorFactory.validate(compiledFromSchema, this.basicDataOk);
@@ -66,7 +66,9 @@ class ObjectValidatorDecoratorsTestSubClass {
 class ObjectValidatorDecoratorsTestClass {
 
 	@RequiredProperty()
-	@ValidNumber()
+	@ValidNumber({
+		minimum: 2
+	})
 	public numberProp: number;
 
 	@ValidString()

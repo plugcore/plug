@@ -1,5 +1,5 @@
 {
-	"numberProp": 1,
+	"numberProp": 3,
 	"stringProp": "string",
 	"arrayProp": ["1", "a"],
 	"subPropr": {

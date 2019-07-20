@@ -109,7 +109,8 @@ export class ObjectValidatorUtils {
 	
 					const propertiesToAdd = validatorTypes
 						.filter(vt => vt.options !== undefined)
-						.reduce((prev, curr) => Object.assign(prev, curr), {});
+						.map(vt => vt.options)
+						.reduce((prev, curr) => Object.assign(prev, curr), <object>{});
 					if (Object.keys(propertiesToAdd).length > 0) {
 						Object.assign(property, propertiesToAdd);
 					}
