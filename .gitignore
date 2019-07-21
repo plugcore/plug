@@ -1,5 +1,6 @@
 # Compiled folders
 dist/
+publish/
 
 # VS Extensions
 .history/

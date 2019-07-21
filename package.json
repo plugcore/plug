@@ -1,0 +1,23 @@
+{
+	"name": "plugdata-framework",
+	"version": "0.0.2",
+	"description": "![Plugdata.io](_docs/logo.png?raw=true \"Plugdata.io\")",
+	"main": ".eslintrc.js",
+	"dependencies": {},
+	"devDependencies": {},
+	"scripts": {
+		"publish": "npm run publish:core",
+		"publish:core": "node scripts/publish-core.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://SergioLarios:Yaden362880@github.com/plugdata/plugdata-framework.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/plugdata/plugdata-framework/issues"
+	},
+	"homepage": "https://github.com/plugdata/plugdata-framework#readme"
+}
