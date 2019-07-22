@@ -1,18 +1,18 @@
 {
 	"name": "@plugdata/core",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "Plugdata.io core utilities",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/plugdata/plugdata-core.git"
+		"url": "git+https://github.com/plugdata/plugdata-framework.git"
 	},
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/plugdata/plugdata-core/issues"
+		"url": "https://github.com/plugdata/plugdata-framework/issues"
 	},
-	"homepage": "https://github.com/plugdata/plugdata-core#readme",
+	"homepage": "https://github.com/plugdata/plugdata-framework/tree/master/core#readme",
 	"scripts": {
 		"install:global": "npm i -g typescript eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin",
 		"build": "tsc",
