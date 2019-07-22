@@ -1,4 +1,4 @@
-![Plugdata.io](_docs/logo.png?raw=true "Plugdata.io")
+![Plugdata.io](../_docs/logo.png?raw=true "Plugdata.io")
 
 # @plugdata/core
 
@@ -25,14 +25,6 @@ Contains the main functionality that any Node JS might need, some of it would be
 - __Utils__: During our development of several projects we've been gathering some common usage utils, mostly for objects and promises manipulation, and other NodeJS wrappers for things like file system calls. We'll be updating these utils as development progresses.
 
 - __Tests__: It's a simple testing library that uses [Node JS assert library](https://nodejs.org/api/assert.html) for it's validation and is based on Typescript classes with an integration to our dependency injection system. It's not aimed to be a full featured testing library as the already existing ones, and we know it's a personal choice of every team, so we offer it just a possibility for simple tests, and we use it for all our internal testing, so it will also have integration with other packages such as `data` and `web`.
-
-## @plugdata/data
-
-This package will contain all the functionality relative to data storage and query system. The amount of supported databases will increase depending on demand, but at the beginning it will cover the most used ones.
-
-- __ORM__: For our database manage we have a wrapper of [TypeORM](https://typeorm.io/) which is a fully featured ORM for the most used SQL databases and MongoDB, we plan to add further support as MongoDB transactions and new NoSQL databases. This is fully integrated with our configuration and dependency injection systems.
-
-- __Impration/exportation__: Uses TypeORMs utils to create JSONs for data import/export between different systems, being able to select which tables and with query support.
 
 # Othe Plugdata packages
 See more at [this link](https://github.com/plugdata/plugdata-framework).
