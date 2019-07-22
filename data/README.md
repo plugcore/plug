@@ -1,5 +1,7 @@
 __We are still working in this library. COMING SOON__
 
+![Plugdata.io](../_docs/logo.png?raw=true "Plugdata.io")
+
 ## @plugdata/data
 
 This package will contain all the functionality relative to data storage and query system. The amount of supported databases will increase depending on demand, but at the beginning it will cover the most used ones.
