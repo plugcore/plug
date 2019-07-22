@@ -26,6 +26,8 @@ async function publishCore() {
 	const publishIndexDtsFolder = join(publishFolder, 'index.d.ts');
 	const srcIndexJsFile = join(distFolder, 'index.js');
 	const publishIndexJsFile = join(publishFolder, 'index.js');
+	const srcReadmeFile = join(coreFolder, 'README.md');
+	const publishReadmeFile = join(publishFolder, 'README.md');
 
 	// 1: Force a TSC
 	printInfo(`${infoPrefix} Executing typescript compiler`);
@@ -60,6 +62,10 @@ async function publishCore() {
 	// 7: Copy index js file for js initialization
 	printInfo(`${infoPrefix}Copying "${srcIndexJsFile}" file to "${publishIndexJsFile}"`);
 	await copyOrReplaceFile(srcIndexJsFile, publishIndexJsFile);
+
+	// 7: Copy README file for documentation
+	printInfo(`${infoPrefix}Copying "${srcReadmeFile}" file to "${publishReadmeFile}"`);
+	await copyOrReplaceFile(srcReadmeFile, publishReadmeFile);
 
 	// Finally run npm publish, must be logged
 	await execCmd('cd core/publish & npm publish');
