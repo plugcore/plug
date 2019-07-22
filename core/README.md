@@ -2,6 +2,8 @@
 
 # @plugdata/core
 
+[![https://nodei.co/npm/@plugdata/core.png?downloads=false&downloadRank=false&stars=false](https://nodei.co/npm/@plugdata/core.png?downloads=false&downloadRank=false&stars=false)](https://www.npmjs.com/package/@plugdata/core)
+
 Contains the main functionality that any Node JS might need, some of it would be:
 
 - __Dependency injection__: It's a custom implementation based on an decorator syntax, and it will be the cornerstone of all our modules and products. This section is related to our consistent API philosophy, since everything will be managed and configured by the container. It's influenced by [typedi](https://github.com/typestack/typedi), but with extended functionality to meet our needs.
