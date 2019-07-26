@@ -30,8 +30,7 @@ async function publishCore() {
 	const publishReadmeFile = join(publishFolder, 'README.md');
 
 	// 1: Force a TSC
-	printInfo(`${infoPrefix} Executing typescript compiler`);
-	await execCmd('cd core & npm run build');
+	// Done in package.json
 
 	// 2: Clean or create publish folder
 	printInfo(`${infoPrefix}Creating publish folder`);
@@ -67,8 +66,7 @@ async function publishCore() {
 	printInfo(`${infoPrefix}Copying "${srcReadmeFile}" file to "${publishReadmeFile}"`);
 	await copyOrReplaceFile(srcReadmeFile, publishReadmeFile);
 
-	// Finally run npm publish, must be logged
-	await execCmd('cd core/publish & npm publish');
+	// Success
 	printSuccess(`${infoPrefix}All tasks executed succesfully`);
 
 }
