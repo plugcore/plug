@@ -6,10 +6,11 @@
 	"dependencies": {},
 	"devDependencies": {},
 	"scripts": {
-		"postinstall": "cd core & npm i & cd ../data & npm i & cd ../web & npm i",
+		"postinstall": "install:globals & cd core & npm i & cd ../data & npm i & cd ../web & npm i & cd .. & npm run build",
+		"install:globals": "npm i -g typescript",
 		"build": "npm run build:core",
 		"build:core": "cd core & tsc & cd .. & node _scripts/build-core.js",
-		"publish": "npm run publish:core",
+		"publish-all": "npm run publish:core",
 		"publish:core": "npm run build:core & cd core/publish & npm publish"
 	},
 	"repository": {

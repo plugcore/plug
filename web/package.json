@@ -17,13 +17,14 @@
 		"install:global": "npm i -g typescript eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin",
 		"build": "tsc",
 		"dev": "tsc -w",
-		"test": "node dist/src/test/test.cli.js test ./dist/test",
-		"test:info": "node dist/src/test/test.cli.js info ./dist/test",
+		"test": "tsc --incremental && node ../core/dist/src/test/test.cli.js test ./dist/test",
+		"test:info": "tsc --incremental && node ../core/dist/src/test/test.cli.js info ./dist/test",
 		"lint": "eslint src/**/*.ts",
 		"lint:fix": "eslint src/**/*.ts --fix"
 	},
 	"dependencies": {
-		"fastify": "^2.6.0"
+		"fastify": "^2.6.0",
+		"@plugdata/core": "file:../core/publish"
 	},
 	"devDependencies": {
 		"@types/node": "^12.0.3"

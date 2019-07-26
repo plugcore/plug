@@ -21,9 +21,16 @@ async function emptyOrCreateFolder(path) {
 		exists(path, folderExists => {
 
 			if (folderExists) {
-				removeFolder(path).then(() => {
-					createFolder(path).then(resolve).catch(reject);
-				}).catch(reject);
+				readdir(path, (error, files) => {
+					if (error) {
+						return reject(new Error(error));
+					}
+					Promise.all(files.map((file) => {
+						return removeFile(path, file);
+					}))
+					.then(() => { resolve(); })
+					.catch(reject);
+				});
 			} else {
 				createFolder(path).then(resolve).catch(reject);
 			}
