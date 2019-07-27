@@ -26,7 +26,7 @@
 	],
 	"scripts": {
 		"build": "tsc & cd .. & node _scripts/build-core.js",
-		"test": "tsc --incremental && node dist/src/test/test.cli.js test ./dist/test",
+		"test": "node dist/src/test/test.cli.js test ./dist/test",
 		"test:info": "node dist/src/test/test.cli.js info ./dist/test",
 		"lint": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts",
 		"lint:fix": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts --fix"
