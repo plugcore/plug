@@ -54,7 +54,7 @@ export enum EObjectValidatorPropertyTypes {
 	array = 'array',
 	object = 'object',
 	required = 'required'
-};
+}
 
 //
 // Types

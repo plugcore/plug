@@ -25,13 +25,11 @@
 		"test"
 	],
 	"scripts": {
-		"install:global": "npm i -g typescript eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin",
-		"build": "tsc",
-		"dev": "tsc -w",
+		"build": "tsc & cd .. & node _scripts/build-core.js",
 		"test": "tsc --incremental && node dist/src/test/test.cli.js test ./dist/test",
 		"test:info": "node dist/src/test/test.cli.js info ./dist/test",
-		"lint": "eslint src/**/*.ts",
-		"lint:fix": "eslint src/**/*.ts --fix"
+		"lint": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts",
+		"lint:fix": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts --fix"
 	},
 	"dependencies": {
 		"ajv": "^6.10.1",

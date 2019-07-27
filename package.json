@@ -3,19 +3,26 @@
 	"version": "0.0.2",
 	"description": "![Plugdata.io](_docs/logo.png?raw=true \"Plugdata.io\")",
 	"main": ".eslintrc.js",
-	"dependencies": {},
-	"devDependencies": {},
 	"scripts": {
-		"postinstall": "install:globals & cd core & npm i & cd ../data & npm i & cd ../web & npm i & cd .. & npm run build",
-		"install:globals": "npm i -g typescript",
+		"postinstall": "cd core & npm i & cd ../data & npm i & cd ../web & npm i & cd .. & npm run build",
 		"build": "npm run build:core",
-		"build:core": "cd core & tsc & cd .. & node _scripts/build-core.js",
+		"build:core": "cd core & npm run build",
 		"publish-all": "npm run publish:core",
-		"publish:core": "npm run build:core & cd core/publish & npm publish"
+		"publish:core": "npm run build:core & cd core/publish & npm publish",
+		"test": "npm run test:core & npm run test:web",
+		"test:core": "cd core & npm test",
+		"test:web": "cd web & npm test",
+		"lint": "npm run lint:core & npm run lint:web",
+		"lint:core": "cd core & npm run lint",
+		"lint:web": "cd web & npm run lint",
+		"check-all": "npm run build & npm run test & npm run lint",
+		"dev": "node ./node_modules/npm-run-all/bin/run-p/index.js dev:**",
+		"dev:core": "cd core & node ../node_modules/tsc-watch/index.js --noClear --onSuccess \"npm run build\"",
+		"dev:web": "cd web & node ../node_modules/tsc-watch/index.js --noClear --onSuccess \"npm run build\""
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://SergioLarios:Yaden362880@github.com/plugdata/plugdata-framework.git"
+		"url": "git+https://github.com/plugdata/plugdata-framework.git"
 	},
 	"keywords": [],
 	"author": "",
@@ -23,5 +30,13 @@
 	"bugs": {
 		"url": "https://github.com/plugdata/plugdata-framework/issues"
 	},
-	"homepage": "https://github.com/plugdata/plugdata-framework#readme"
+	"homepage": "https://github.com/plugdata/plugdata-framework#readme",
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^1.13.0",
+		"@typescript-eslint/parser": "^1.13.0",
+		"eslint": "^6.1.0",
+		"typescript": "^3.5.3",
+		"npm-run-all": "^4.1.5",
+		"tsc-watch": "^2.2.1"
+	}
 }

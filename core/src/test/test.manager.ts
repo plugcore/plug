@@ -28,6 +28,8 @@ export class TestManager {
 
 		// 1: Force an execution on all decorators from the test folder
 		this.initialExecutionTime = Date.now();
+		console.log('LOADING TEST OF FOLDER', testFolder);
+		
 		await this.loadTests(testFolder);
 		// 2: Print test classes and methods
 		await this.printTestsStart();

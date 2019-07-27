@@ -10,7 +10,7 @@ export class ConfigurationLoader {
 
 	private static readonly defaultConfigurationFileName = 'configuration.json';
 	private static readonly environmentVariableRegex = new RegExp(/\$\[(.*?)\]/g);
-	private static readonly configurationFileRegex = new RegExp(/\@\[import\:(.*?)\]/g);
+	private static readonly configurationFileRegex = new RegExp(/@\[import:(.*?)\]/g);
 
 	//
 	// Public methods

@@ -41,7 +41,7 @@ export class DiContainerTest extends PlugTest {
 			Container.get<Di7Example>(Di7Example, 'exampleCtx'),
 			Container.get<Di8Example>(Di8Example, 'exampleCtx'),
 			Container.get<Di9Example>(Di9Example, 'exampleCtx')
-		]).catch(e => { console.log(e); return e;}).then(a => a);
+		]).catch(e => { return e;}).then(a => a);
 
 		this.example1 = values[0];
 		this.example2 = values[1];

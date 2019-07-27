@@ -3,7 +3,7 @@ import { setTimeout } from 'timers';
 export class CronUtils {
 
 	private static cronPattern: RegExp = /^\d+$|^\*$|^\*\/\d+$/;
-	private static rangeRegex: RegExp = /(\d+)\-(\d+)/;
+	private static rangeRegex: RegExp = /(\d+)-(\d+)/;
 
 	private static months = ['january', 'february', 'march', 'april', 'may', 'june', 'july',
 		'august', 'september', 'october', 'november', 'december'];

@@ -305,9 +305,12 @@ export class Container {
 			entry.cbWaiting.forEach((callBack: Function) => {
 				callBack(entry.object);
 			});
+			// Only di.container manages entries so there are no races
+			// eslint-disable-next-line require-atomic-updates
 			entry.cbWaiting = undefined;
 		}
 
+		// eslint-disable-next-line require-atomic-updates
 		entry.isReady = true;
 		DiService.updateEntry(entry, ctx);
 

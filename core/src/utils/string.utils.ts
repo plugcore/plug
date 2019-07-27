@@ -66,7 +66,7 @@ export class StringUtils {
 		if (!inp || typeof inp !== 'string') {
 			return inp;
 		}
-		return inp.charAt(0).toUpperCase() + inp.slice(1);;
+		return inp.charAt(0).toUpperCase() + inp.slice(1);
 	}
 
 }

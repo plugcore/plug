@@ -1,17 +1,26 @@
 module.exports = {
 	parser: '@typescript-eslint/parser',  // Specifies the ESLint parser
+	plugins: ['@typescript-eslint'],
 	extends: [
-		'plugin:@typescript-eslint/recommended',  // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+		'eslint:recommended',
+		'plugin:@typescript-eslint/eslint-recommended',
+		'plugin:@typescript-eslint/recommended'
 	],
 	parserOptions: {
-		ecmaVersion: 2018,  // Support for ECMAScript 2018
+		ecmaVersion: 2018,  // Allows for the parsing of modern ECMAScript features
 		sourceType: 'module',  // Allows for the use of imports
+		ecmaFeatures: {
+			jsx: true,  // Allows for the parsing of JSX
+		},
 	},
 	rules: {
 		['@typescript-eslint/indent']: [
 			'error',
 			'tab',
-			{ "flatTernaryExpressions": true }
+			{
+				'flatTernaryExpressions': true,
+				'SwitchCase': 1
+			},
 		],
 		['quotes']: [
 			'error',
@@ -21,14 +30,14 @@ module.exports = {
 			'error',
 			'always'
 		],
-		['@typescript-eslint/no-explicit-any']: false,
-		['@typescript-eslint/explicit-function-return-type']: false,
-		['@typescript-eslint/no-angle-bracket-type-assertion']: false,
-		['@typescript-eslint/no-object-literal-type-assertion']: false,
-		['@typescript-eslint/interface-name-prefix']: 'always',
-		['@typescript-eslint/no-var-requires']: false,
-		['@typescript-eslint/no-parameter-properties']: { 'allows': ['private'], },
-		['@typescript-eslint/explicit-member-accessibility']: false,
-		['@typescript-eslint/no-use-before-define']: false
+		['@typescript-eslint/no-explicit-any']: 0,
+		['@typescript-eslint/explicit-function-return-type']: 0,
+		['@typescript-eslint/no-angle-bracket-type-assertion']: 0,
+		['@typescript-eslint/no-object-literal-type-assertion']: 0,
+		['@typescript-eslint/interface-name-prefix']: 0,
+		['@typescript-eslint/no-var-requires']: 0,
+		['@typescript-eslint/no-parameter-properties']: 0,
+		['@typescript-eslint/explicit-member-accessibility']: 0,
+		['@typescript-eslint/no-use-before-define']: 0
 	}
 };

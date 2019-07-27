@@ -37,9 +37,7 @@ export class ExtsConfigurationChecker implements IDiOnInit {
 
 		
 		let extCfg: ExtConfiguration = new DefaultExtConfiguration();
-		let jsonPath;
-
-		jsonPath = join(extBaseFolder, PlugdataConstants.pcmsCfgJson);
+		const jsonPath = join(extBaseFolder, PlugdataConstants.pcmsCfgJson);
 		const extJsonCfg = JSON.parse(await FsUtils.loadFile(jsonPath));
 
 		extCfg = ObjectUtils.deepMerge(extCfg, extJsonCfg);
