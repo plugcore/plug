@@ -22,13 +22,12 @@ export class RoutesUtils {
 	public static registerMethod(
 		httpMethod: HTTPMethod, meta: { controller: ClassParameter<any>; methodName: string }, options?: TMethodOptions
 	) {
-
 		const registeredMethod: IRegsiteredMethod = {
 			httpMethod,
 			options,
 			methodName: meta.methodName
 		};
-		Reflect.defineMetadata(`${this.propertyMetadataPrefix}:${meta.methodName}`, meta.controller, registeredMethod);
+		Reflect.defineMetadata(`${this.propertyMetadataPrefix}${meta.methodName}`, registeredMethod, meta.controller);
 
 	}
 

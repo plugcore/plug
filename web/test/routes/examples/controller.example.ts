@@ -3,39 +3,39 @@ import { Controller, Get, Head, Post, Put, Delete, Options, Patch } from '../../
 @Controller()
 export class ControllerExample {
 
-    @Get()
-    public getTest() {
+	@Get()
+	public getTest() {
 
-    }
+	}
 
-    @Head()
-    public headTest() {
+	@Head()
+	public headTest() {
 
-    }
+	}
 
-    @Post()
-    public postTest() {
+	@Post()
+	public postTest() {
 
-    }
+	}
 
-    @Put()
-    public putTest() {
+	@Put()
+	public putTest() {
 
-    }
+	}
 
-    @Delete()
-    public deleteTest() {
+	@Delete()
+	public deleteTest() {
 
-    }
+	}
 
-    @Options()
-    public optionsTest() {
+	@Options()
+	public optionsTest() {
 
-    }
+	}
 
-    @Patch()
-    public patchTest() {
+	@Patch()
+	public patchTest() {
 
-    }
+	}
 
 }
