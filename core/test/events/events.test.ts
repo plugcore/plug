@@ -7,7 +7,7 @@ import { EventsExample, testEventName } from './examples/events.example';
 @TestClass()
 export class EventsTest extends PlugTest {
 
-	@Test({ testThisOnly: true })
+	@Test()
 	public async executeEvent() {
 		
 		const examplePayload = { a: 1, b: '2' };

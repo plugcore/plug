@@ -16,7 +16,7 @@ export class EventDispatcher {
 		this.eventEmitter.on(event, func, context);
 	}
 
-	public emmit(event: string, eventPayload: any) {
+	public emmit(event: string, eventPayload?: any) {
 		this.log.debug('Emitting event ' + event);
 		this.eventEmitter.emit(event, eventPayload);
 	}

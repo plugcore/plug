@@ -3,6 +3,8 @@ import { ConfigurationLoader } from './configuration/configuration.loader';
 import { Container } from './dependecy-injection/di.container';
 import { ProjectConfiguration } from './configuration/configuration.service';
 import { Logger } from './logs/logger';
+import { EventDispatcher } from './events/event.dispatcher';
+import { PublicEvents } from './events/event.constants';
 
 export class PorjectInitialization {
 
@@ -25,8 +27,15 @@ export class PorjectInitialization {
 
 		})().then(() => {
 			// Project started
-			Container.get<Logger>(Logger).then(log => {
-				log.info('* Project started *');
+			Promise.all([
+				Container.get<Logger>(Logger),
+				Container.get<EventDispatcher>(EventDispatcher)
+			]).then(deps => ({
+				log: deps[0],
+				eventDispatcher: deps[1]
+			})).then(deps => {
+				deps.eventDispatcher.emmit(PublicEvents.allServicesLoaded);
+				deps.log.info('* Project started *');
 			});
 		}).catch(error => {
 			console.log('Faltal error on project initialization', error);
@@ -40,8 +49,6 @@ export class PorjectInitialization {
 	private static async setConfiguration(configurationFolder: string) {
 
 		// Load configuration
-		console.log('CONFIGUR', configurationFolder);
-		
 		const configuration = await ConfigurationLoader.loadProject(configurationFolder);
 
 		// Create configuration serice
