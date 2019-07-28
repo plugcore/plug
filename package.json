@@ -12,7 +12,7 @@
 		"test": "node ./node_modules/npm-run-all/bin/run-s/index.js test:**",
 		"test:core": "cd core & npm test",
 		"test:web": "cd web & npm test",
-		"lint": "node ./node_modules/npm-run-all/bin/run-s/index.js lin:**",
+		"lint": "node ./node_modules/npm-run-all/bin/run-s/index.js lint:**",
 		"lint:core": "cd core & npm run lint",
 		"lint:web": "cd web & npm run lint",
 		"check-all": "npm run build & npm run test & npm run lint",
