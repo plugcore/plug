@@ -40,6 +40,8 @@ export class PorjectInitialization {
 	private static async setConfiguration(configurationFolder: string) {
 
 		// Load configuration
+		console.log('CONFIGUR', configurationFolder);
+		
 		const configuration = await ConfigurationLoader.loadProject(configurationFolder);
 
 		// Create configuration serice

@@ -18,10 +18,12 @@ if (commandArguments && commandArguments.length > 3) {
 	const args = commandArguments.slice(2);
 	// Test folder
 	const argFolder = args[1];
+	const argConfigFolder = args[2];
 	const testsFolder = isAbsolute(argFolder) ? argFolder : join(process.cwd(), argFolder);
+
 	switch (args[0]) {
 		case ETestArguments.info: TestManager.showTestsInfo(testsFolder).then(); break;
-		case ETestArguments.test: TestManager.executeTests(testsFolder).then(); break;
+		case ETestArguments.test: TestManager.executeTests(testsFolder, argConfigFolder).then(); break;
 		default: console.error('Invalid command'); break;
 	}
 } else if (commandArguments.length > 2) {

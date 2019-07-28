@@ -5,6 +5,12 @@ import {
 	ITestClass, ITestClassArgs, ITestMethod, ITestMethodArgs, ITestStats,
 	TestTypeDetector, TTestClassItFunc, TTestMethodItFunc
 } from './test.shared';
+import { isAbsolute, join } from 'path';
+import { ProjectConfiguration } from '../configuration/configuration.service';
+import { IConfiguration } from '../configuration/configuration.interfaces';
+import { ConfigurationLoader } from '../configuration/configuration.loader';
+import { PlugConfiguration } from '../configuration/configuration.default';
+import { Container } from '../dependecy-injection/di.container';
 
 export class TestManager {
 
@@ -24,28 +30,40 @@ export class TestManager {
 	// Public CLI methods
 	//
 
-	public static async executeTests(testFolder: string) {
+	public static async executeTests(testFolder: string, argConfigFolder?: string) {
 
 		// 1: Force an execution on all decorators from the test folder
 		this.initialExecutionTime = Date.now();
-		console.log('LOADING TEST OF FOLDER', testFolder);
+
+		// 2: Load project configuration
+		let configuration: IConfiguration<any> | undefined;
+		if (argConfigFolder) {
+			const configurationFolder = isAbsolute(argConfigFolder) ? argConfigFolder : join(process.cwd(), argConfigFolder);
+			configuration = await ConfigurationLoader.loadProject(configurationFolder);
+		} else {
+			configuration = PlugConfiguration.default;
+		}
+		const configurationService = new ProjectConfiguration(configuration);
+		Container.set(ProjectConfiguration, configurationService);		
 		
+		// 3: Load all the classes inside the test folder
 		await this.loadTests(testFolder);
-		// 2: Print test classes and methods
+
+		// 4: Print test classes and methods
 		await this.printTestsStart();
 		this.printTestsExec();
 
-		// 2: Check if there are some tests we are focusing on in this executions
+		// 5: Check if there are some tests we are focusing on in this executions
 		const testOnlyClasses = this.testClasses
 			.filter(tc => tc.testThisOnly || tc.testMethods.findIndex(m => m.testThisOnly === true) >= 0)
 			.map(tc => tc.name);
 
-		// 3: Execute all tests at the same time
+		// 6: Execute all tests at the same time
 		await Promise.all(
 			this.testClasses.map(tc => this.executeTestClass(tc, testOnlyClasses))
 		);
 
-		// 4: Print stats
+		// 7: Print stats
 		this.printTestsEnd();
 
 	}

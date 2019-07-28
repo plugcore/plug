@@ -1,5 +1,6 @@
 import { IDiEntry, IDiOnInit, IDiServiceMetadata, IServiceIdentifier } from './di.interfaces';
 import { DiService } from './di.service';
+import { EventUtils } from '../events/event.utils';
 
 /**
  * Service container.
@@ -313,6 +314,7 @@ export class Container {
 		// eslint-disable-next-line require-atomic-updates
 		entry.isReady = true;
 		DiService.updateEntry(entry, ctx);
+		EventUtils.onServiceReady(entry);
 
 		if (servicesToSetAsReady.length > 0) {
 			servicesToSetAsReady.forEach(element => {
