@@ -14,7 +14,7 @@
 	},
 	"homepage": "https://github.com/plugdata/plugdata-framework/web/#readme",
 	"scripts": {
-		"build": "tsc",
+		"build": "node ../node_modules/typescript/bin/tsc",
 		"test": "node node_modules/@plugdata/core/src/test/test.cli.js test ./dist/test",
 		"test:info": "node node_modules/@plugdata/core/src/test/test.cli.js info ./dist/test",
 		"lint": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts",

@@ -29,3 +29,10 @@ export * from './src/utils/promise.utils';
 export * from './src/utils/string.utils';
 export * from './src/utils/type.checker';
 export * from './src/utils/typescript.utils';
+
+export * from './src/events/event.decorators';
+export * from './src/events/event.constants';
+export * from './src/events/event.dispatcher';
+
+export * from './src/configuration/configuration.interfaces';
+export * from './src/configuration/configuration.service';

@@ -15,8 +15,8 @@
 	"homepage": "https://github.com/plugdata/plugdata-framework/data/#readme",
 	"scripts": {
 		"install:global": "npm i -g typescript eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin",
-		"build": "tsc",
-		"dev": "tsc -w",
+		"build": "node ../node_modules/typescript/bin/tsc",
+		"dev": "node ../node_modules/typescript/bin/tsc -w",
 		"test": "node dist/src/test/test.cli.js test ./dist/test",
 		"test:info": "node dist/src/test/test.cli.js info ./dist/test",
 		"lint": "eslint src/**/*.ts",

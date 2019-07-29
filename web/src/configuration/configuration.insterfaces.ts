@@ -1,4 +1,5 @@
 import { ServerOptions } from 'fastify';
+import { ProjectConfiguration } from '@plugdata/core/types/src/configuration/configuration.service';
 
 export type TFastifySupportedOptions = Pick<ServerOptions,
 'caseSensitive' | 'ignoreTrailingSlash' | 'bodyLimit' | 'pluginTimeout' | 'disableRequestLogging' |
@@ -12,3 +13,5 @@ export interface IWebConfiguration {
 		port?: number;
 	};
 }
+
+export type TWebConfugration = IWebConfiguration & ProjectConfiguration;

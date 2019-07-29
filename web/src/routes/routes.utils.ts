@@ -8,7 +8,7 @@ export class RoutesUtils {
 
 	public static readonly propertyMetadataPrefix = 'p-controller-method:';
 
-	public static registerController(controller: ClassParameter<any>, options?: IControllerOptions) {
+	public static registerController(controller: ClassParameter<any>, options: IControllerOptions) {
 
 		// Save it to later inspect
 		this.controllerList.push({ controller, options });
@@ -20,14 +20,16 @@ export class RoutesUtils {
 	}
 
 	public static registerMethod(
-		httpMethod: HTTPMethod, meta: { controller: ClassParameter<any>; methodName: string }, options?: TMethodOptions
+        decoratorOptions: { httpMethod: HTTPMethod, path?: string, options?: TMethodOptions },
+        decoratorMeta: { controller: ClassParameter<any>; methodName: string },
 	) {
 		const registeredMethod: IRegsiteredMethod = {
-			httpMethod,
-			options,
-			methodName: meta.methodName
+			httpMethod: decoratorOptions.httpMethod,
+            options: decoratorOptions.options,
+            path: decoratorOptions.path,
+			methodName: decoratorMeta.methodName
 		};
-		Reflect.defineMetadata(`${this.propertyMetadataPrefix}${meta.methodName}`, registeredMethod, meta.controller);
+		Reflect.defineMetadata(`${this.propertyMetadataPrefix}${decoratorMeta.methodName}`, registeredMethod, decoratorMeta.controller);
 
 	}
 

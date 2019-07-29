@@ -1,21 +1,28 @@
 import { ClassParameter, IServiceArgs } from '@plugdata/core';
-import { HTTPMethod, RouteOptions } from 'fastify';
+import { FastifyRequest, FastifyReply, DefaultParams, DefaultQuery, HTTPMethod, RequestHandler, RouteShorthandOptions } from 'fastify';
+import { IncomingMessage, ServerResponse } from 'http';
 
 export interface IControllerOptions {
-	base?: string;
+	urlBase: string;
 	service?: IServiceArgs;
 }
 
 export interface IRegisteredController {
 	controller: ClassParameter<any>;
-	options?: Omit<IControllerOptions, 'service'>;
+	options: IControllerOptions;
 }
 
 export interface IRegsiteredMethod {
 	httpMethod: HTTPMethod;
 	options?: TMethodOptions;
+	path?: string;
 	methodName: string;
 }
 
-export type TMethodOptions = string | Omit<RouteOptions, 'method'>;
+export interface Request extends FastifyRequest<IncomingMessage, DefaultQuery, DefaultParams, Headers, Body> {};
+export interface Response extends FastifyReply<ServerResponse> {};
+
+export type TMethodOptions = Omit<RouteShorthandOptions<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>, 'url'>;
+
+export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>;
 

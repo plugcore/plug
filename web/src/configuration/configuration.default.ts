@@ -1,8 +1,7 @@
-import { IWebConfiguration } from './configuration.insterfaces';
 
 export class WebConfiguration {
 
-	public static readonly default: IWebConfiguration = {
+	public static readonly default = {
 		web: {
 			port: 3000
 		}
