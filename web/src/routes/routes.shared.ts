@@ -19,8 +19,8 @@ export interface IRegsiteredMethod {
 	methodName: string;
 }
 
-export interface Request extends FastifyRequest<IncomingMessage, DefaultQuery, DefaultParams, Headers, Body> {};
-export interface Response extends FastifyReply<ServerResponse> {};
+export interface Request extends FastifyRequest<IncomingMessage, DefaultQuery, DefaultParams, Headers, Body> {}
+export interface Response extends FastifyReply<ServerResponse> {}
 
 export type TMethodOptions = Omit<RouteShorthandOptions<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>, 'url'>;
 

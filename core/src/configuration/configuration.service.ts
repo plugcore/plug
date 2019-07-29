@@ -17,9 +17,9 @@ export class ProjectConfiguration<T = undefined> implements IConfiguration<T> {
 		this.frozenConfiguration = ObjectUtils.deepFreeze(
 			ObjectUtils.deepClone(originalConfiguration)
 		);
-		this.init = this.frozenConfiguration.init;
-		this.log = this.frozenConfiguration.log;
-		this.custom = this.frozenConfiguration.custom;
+		for (const cfgKey of Object.keys(this.frozenConfiguration)) {
+			(<Record<string, any>>this)[cfgKey] = (<Record<string, any>>this).frozenConfiguration[cfgKey];
+		}
 	}
 
 }

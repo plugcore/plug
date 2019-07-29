@@ -14,16 +14,18 @@
 	},
 	"homepage": "https://github.com/plugdata/plugdata-framework/data/#readme",
 	"scripts": {
-		"install:global": "npm i -g typescript eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin",
 		"build": "node ../node_modules/typescript/bin/tsc",
-		"dev": "node ../node_modules/typescript/bin/tsc -w",
-		"test": "node dist/src/test/test.cli.js test ./dist/test",
-		"test:info": "node dist/src/test/test.cli.js info ./dist/test",
-		"lint": "eslint src/**/*.ts",
-		"lint:fix": "eslint src/**/*.ts --fix"
+		"test": "node node_modules/@plugdata/core/src/test/test.cli.js test ./dist/test ./test/configuration",
+		"test:info": "node node_modules/@plugdata/core/src/test/test.cli.js info ./dist/test",
+		"lint": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts",
+		"lint:fix": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts --fix"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"mongodb": "^3.3.0-beta2"
+	},
 	"devDependencies": {
-		"@types/node": "^12.0.3"
+		"@types/mongodb": "^3.1.30",
+		"@types/node": "^12.0.3",
+		"@plugdata/core": "file:../core/publish"
 	}
 }

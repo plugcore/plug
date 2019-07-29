@@ -11,15 +11,15 @@ import { WebConfiguration } from '../configuration/configuration.default';
 export class RoutesInitializer {
 
 	private fastifyInstance: FastifyInstance<Server, IncomingMessage, ServerResponse>;;
-    private httpPort: number;
+	private httpPort: number;
 
 	constructor(
-        private log: Logger,
+		private log: Logger,
         @Inject({ sId: ProjectConfiguration }) configuration: TWebConfugration
 	) {
-        this.fastifyInstance = fastify(configuration.web || {});
-        this.httpPort = (configuration.web && configuration.web.port) ?
-            configuration.web.port : WebConfiguration.default.web.port;
+		this.fastifyInstance = fastify(configuration.web || {});
+		this.httpPort = (configuration.web && configuration.web.port) ?
+			configuration.web.port : WebConfiguration.default.web.port;
 	}
 
 	@OnEvent(PublicEvents.allServicesLoaded)
@@ -67,7 +67,7 @@ export class RoutesInitializer {
 	}
 
 	public async shutdownHttpServer() {
-        await this.fastifyInstance.close();
-    }
+		await this.fastifyInstance.close();
+	}
 
 }

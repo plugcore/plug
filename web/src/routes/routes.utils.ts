@@ -20,13 +20,13 @@ export class RoutesUtils {
 	}
 
 	public static registerMethod(
-        decoratorOptions: { httpMethod: HTTPMethod, path?: string, options?: TMethodOptions },
-        decoratorMeta: { controller: ClassParameter<any>; methodName: string },
+		decoratorOptions: { httpMethod: HTTPMethod; path?: string; options?: TMethodOptions },
+		decoratorMeta: { controller: ClassParameter<any>; methodName: string },
 	) {
 		const registeredMethod: IRegsiteredMethod = {
 			httpMethod: decoratorOptions.httpMethod,
-            options: decoratorOptions.options,
-            path: decoratorOptions.path,
+			options: decoratorOptions.options,
+			path: decoratorOptions.path,
 			methodName: decoratorMeta.methodName
 		};
 		Reflect.defineMetadata(`${this.propertyMetadataPrefix}${decoratorMeta.methodName}`, registeredMethod, decoratorMeta.controller);

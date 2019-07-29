@@ -41,7 +41,7 @@ export class DiContainerTest extends PlugTest {
 			Container.get<Di7Example>(Di7Example, 'exampleCtx'),
 			Container.get<Di8Example>(Di8Example, 'exampleCtx'),
 			Container.get<Di9Example>(Di9Example, 'exampleCtx')
-		]).catch(e => { return e;}).then(a => a);
+		]).catch(e => { return e; }).then(a => a);
 
 		this.example1 = values[0];
 		this.example2 = values[1];
@@ -106,8 +106,8 @@ export class DiContainerTest extends PlugTest {
 		this.assert.ok(this.example9.di1Example);
 		this.assert.ok(this.example9.di8Example);
 		this.assert.ok(!DiService.getMetadata(Di9Example));
-		DiService.updateMetadata(Di9Example, {test: 'test'});
-		DiService.updateMetadata(Di9Example, {test2: 'test2'}, true);
+		DiService.updateMetadata(Di9Example, { test: 'test' });
+		DiService.updateMetadata(Di9Example, { test2: 'test2' }, true);
 		this.assert.equal(DiService.getMetadata(Di9Example).test, 'test');
 		this.assert.equal(DiService.getMetadata(Di9Example).test2, 'test2');
 	}

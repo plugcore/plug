@@ -8,7 +8,7 @@ export class InitTest extends PlugTest {
 
 	private readonly initTestFolder = join(__dirname, '..', '..', '..', 'test', 'demo-project');
 
-	@Test({ testThisOnly: true })
+	@Test()
 	public async startApp() {
 
 		PorjectInitialization.start(this.initTestFolder);

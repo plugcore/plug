@@ -44,3 +44,6 @@ package-lock.json
 
 # Yarn Integrity file
 .yarn-integrity
+
+# Test configuration files
+data/test/configuration/configuration.test.json

@@ -36,6 +36,7 @@ export class TestManager {
 		this.initialExecutionTime = Date.now();
 
 		// 2: Load project configuration
+		process.env.NODE_ENV = 'test';
 		let configuration: IConfiguration<any> | undefined;
 		if (argConfigFolder) {
 			const configurationFolder = isAbsolute(argConfigFolder) ? argConfigFolder : join(process.cwd(), argConfigFolder);
@@ -50,7 +51,7 @@ export class TestManager {
 		await this.loadTests(testFolder);
 
 		// 4: Print test classes and methods
-		await this.printTestsStart();
+		await this.printTestsStart(false);
 		this.printTestsExec();
 
 		// 5: Check if there are some tests we are focusing on in this executions
@@ -74,7 +75,7 @@ export class TestManager {
 		await this.loadTests(testFolder);
 
 		// 2: Iterate secuentally over all classes and methods
-		await this.printTestsStart();
+		await this.printTestsStart(true);
 	}
 
 	//
@@ -174,11 +175,19 @@ export class TestManager {
 		return FsUtils.loadJsFolder(testFolder, true);
 	}
 
-	private static async iterateOverTests(classFunc: TTestClassItFunc, methodFunc: TTestMethodItFunc) {
+	private static async iterateOverTests(classFunc: TTestClassItFunc, methodFunc: TTestMethodItFunc, showAll: boolean) {
+		const anyHasFocus = this.testClasses.find(testClass => testClass.testThisOnly ||
+			testClass.testMethods.find(tm => tm.testThisOnly)) !== undefined;
 		for (const testClass of this.testClasses) {
-			await classFunc(testClass);
-			for (const testMethod of testClass.testMethods) {
-				await methodFunc(testMethod, testClass);
+			const anyChildHasTestOnly = testClass.testMethods.find(tm => tm.testThisOnly) !== undefined;
+			const noChildHasNotTestOnly = testClass.testMethods.every(tm => !tm.testThisOnly);
+			if (showAll || !anyHasFocus || (testClass.testThisOnly || anyChildHasTestOnly)) {
+				await classFunc(testClass);
+				for (const testMethod of testClass.testMethods) {
+					if (showAll || !anyHasFocus || (testMethod.testThisOnly || noChildHasNotTestOnly)) {
+						await methodFunc(testMethod, testClass);
+					}
+				}
 			}
 		}
 	}
@@ -195,13 +204,13 @@ export class TestManager {
 		console.log(`${ConsoleColors.fgCyan}- ${method.methodName}${method.testThisOnly ? ' (Focused test)' : ''}`, ConsoleColors.reset);
 	}
 
-	private static async printTestsStart() {
+	private static async printTestsStart(showAll: boolean) {
 
 		console.log('-------------------------------------------------');
 		console.log('-- Registered tests');
 		console.log('-------------------------------------------------\n');
 
-		await this.iterateOverTests(this.logTestClass, this.logTestMethod);
+		await this.iterateOverTests(this.logTestClass, this.logTestMethod, showAll);
 
 		console.log('');
 
