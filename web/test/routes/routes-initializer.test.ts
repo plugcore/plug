@@ -1,7 +1,8 @@
-import { BeforeTests, Container, HttpClient, PlugTest, Test, TestClass, AfterTests } from '@plugdata/core';
+import { BeforeTests, Container, HttpClient, PlugTest, Test, TestClass, AfterTests, HttpUtils } from '@plugdata/core';
 import { RoutesInitializer } from '../../src/routes/routes.initializer';
 import { ControllerExample } from './examples/controller.example';
 import { Controller2Example } from './examples/controller2.example';
+import { RoutesService } from '../../src/routes/routes.service';
 
 @TestClass({ testThisOnly: true })
 export class RoutesInitializerTest extends PlugTest {
@@ -10,21 +11,28 @@ export class RoutesInitializerTest extends PlugTest {
 	private readonly controller1Path = '/test';
 	private readonly controller2Path = '/test2';
 	private routesInitializer: RoutesInitializer;
+	private routesService: RoutesService;
+	private controllerExample: ControllerExample;
 
 	@BeforeTests()
 	public async before() {
-		this.routesInitializer = await Promise.all([
-			Container.get(ControllerExample),
+		
+		const deps = await Promise.all([
+			Container.get<ControllerExample>(ControllerExample),
 			Container.get(Controller2Example),
-			Container.get<RoutesInitializer>(RoutesInitializer)
-		]).then(r => r[2]);
-		await this.routesInitializer.startHttpServer();
-		this.httpClient = new HttpClient('localhost:3000');
+			Container.get<RoutesInitializer>(RoutesInitializer),
+			Container.get<RoutesService>(RoutesService)
+		]).then(r => ({ controllerExample: r[0], routesInitializer: r[2], routesService: r[3] }));
+		this.routesInitializer = deps.routesInitializer;
+		this.routesService = deps.routesService;
+		this.controllerExample = deps.controllerExample;
+		await this.routesInitializer.initHttpServer();
+		this.httpClient = new HttpClient(this.routesService.addressListenning);
 	}
 
 	@AfterTests()
 	public async after() {
-		this.routesInitializer.shutdownHttpServer();
+		this.routesService.shutdownHttpServer();
 	}
 
 	@Test()
@@ -51,6 +59,14 @@ export class RoutesInitializerTest extends PlugTest {
 		this.assert.ok(rPut2.method === 'putTest' && rPut2.test === 2);
 		this.assert.ok(rPatch2.method === 'patchTest' && rPatch2.test === 2);
 		this.assert.ok(rDelete2.method === 'deleteTest' && rDelete2.test === 2);
+		this.assert.ok(this.controllerExample.preHandlerCalled);
+		this.assert.ok(this.controllerExample.preParsingCalled);
+		this.assert.ok(this.controllerExample.preSerializationCalled);
+		this.assert.ok(this.controllerExample.preValidationCalled);
+		this.assert.ok(this.controllerExample.onRequestCalled);
+		this.assert.ok(this.controllerExample.loggerNotNull);
+
+		console.log(JSON.stringify(await HttpUtils.httpCall(this.routesService.addressListenning + '/plug-documentation/json')));
 
 	}
 

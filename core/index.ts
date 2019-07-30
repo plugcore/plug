@@ -36,3 +36,8 @@ export * from './src/events/event.dispatcher';
 
 export * from './src/configuration/configuration.interfaces';
 export * from './src/configuration/configuration.service';
+
+export * from './src/object-validator/object-validator.decorators';
+export * from './src/object-validator/object-validator.factory';
+export * from './src/object-validator/object-validator.shared';
+export { ObjectValidatorUtils } from './src/object-validator/object-validator.utils';

@@ -15,16 +15,19 @@
 	"homepage": "https://github.com/plugdata/plugdata-framework/web/#readme",
 	"scripts": {
 		"build": "node ../node_modules/typescript/bin/tsc",
-		"test": "node node_modules/@plugdata/core/src/test/test.cli.js test ./dist/test",
+		"test": "node node_modules/@plugdata/core/src/test/test.cli.js test ./dist/test ./test/configuration | node ../node_modules/pino-pretty/bin.js -t -i pid,hostname,name",
 		"test:info": "node node_modules/@plugdata/core/src/test/test.cli.js info ./dist/test",
 		"lint": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts",
 		"lint:fix": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts --fix"
 	},
 	"dependencies": {
+		"@plugdata/core": "file:../core/publish",
 		"fastify": "^2.6.0",
-		"@plugdata/core": "file:../core/publish"
+		"fastify-oas": "^2.3.1",
+		"openapi3-ts": "^1.3.0"
 	},
 	"devDependencies": {
-		"@types/node": "^12.0.3"
+		"@types/node": "^12.0.3",
+		"@types/swagger-schema-official": "^2.0.18"
 	}
 }

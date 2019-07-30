@@ -8,7 +8,7 @@ export class HttpClient {
 	private domain: string;
 
 	constructor(domain: string) {
-		this.domain = domain;
+		this.domain = domain.replace(/(^\w+:|^)\/\//, '');
 	}
 
 	public get<T>(path: string, options?: Omit<HttpCallOptions, 'method'>): Promise<T> {
