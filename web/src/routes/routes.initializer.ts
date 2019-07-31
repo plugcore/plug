@@ -18,8 +18,7 @@ export class RoutesInitializer {
 
 		// OAS configuration
 		this.routesService.fastifyInstance.register(oas, {
-			routePrefix: '/plug-documentation',
-			exposeRoute: true,
+			exposeRoute: false,
 			addModels: true,
 			swagger: {
 				info: {},
@@ -30,12 +29,12 @@ export class RoutesInitializer {
 		});
 
 		// Documentation route
-		/* this.routesService.fastifyInstance.route({
+		this.routesService.fastifyInstance.route({
 			method: 'GET',
 			url: '/plug-documentation/json',
 			handler: (request, reply) => { reply.send(this.routesService.fastifyInstance.oas()); },
 			schema: { hide: true }
-		}); */
+		});
 
 	}
 

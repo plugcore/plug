@@ -16,7 +16,8 @@ async function setPackagesVersion() {
 	const currentVersion = corePackageJson.version;
 	const newVersion = await consolePromt(
 		`Current version is ${consoleColors.fgYellow}${currentVersion}${consoleColors.reset}, set the new version: \n`,
-		`Are you sure yo want to set ${consoleColors.fgYellow}%%${consoleColors.reset} as new version?`);
+		`Are you sure yo want to change version from ${consoleColors.fgYellow}${currentVersion}${consoleColors.reset} ` +
+		`to ${consoleColors.fgGreen}%%${consoleColors.reset}?`);
 
 	if (versionCompare(currentVersion, newVersion) < 0) {
 
