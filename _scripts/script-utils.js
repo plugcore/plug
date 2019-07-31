@@ -251,7 +251,7 @@ async function saveStringAsFile(filePath, fileContent) {
 }
 
 async function saveObjectAsJsonFile(filePath, object) {
-	const jsonText = JSON.stringify(object);
+	const jsonText = JSON.stringify(object, null, '\t');
 	return saveStringAsFile(filePath, jsonText);
 }
 

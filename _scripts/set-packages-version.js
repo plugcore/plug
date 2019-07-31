@@ -1,4 +1,4 @@
-const { consolePromt, printError, versionCompare, loadJsonFile, saveObjectAsJsonFile } = require('./script-utils');
+const { consolePromt, printError, versionCompare, loadJsonFile, saveObjectAsJsonFile, consoleColors } = require('./script-utils');
 const { join } = require('path');
 
 async function setPackagesVersion() {
@@ -10,10 +10,12 @@ async function setPackagesVersion() {
 	const webPublishPackageJsonPath = join(__dirname, '..', 'web', 'publish', 'package.json');
 	const dataPackageJsonPath = join(__dirname, '..', 'data', 'package.json');
 	const dataPublishPackageJsonPath = join(__dirname, '..', 'data', 'publish', 'package.json');
+	const mainPackageJsonPath = join(__dirname, '..', 'package.json');
 
 	const corePackageJson = await loadJsonFile(corePackageJsonPath);
 	const currentVersion = corePackageJson.version;
-	const newVersion = await consolePromt(`Current version is ${currentVersion}, set the new version: \n`);
+	const newVersion = await consolePromt(
+		`Current version is ${consoleColors.fgYellow}${currentVersion}${consoleColors.reset}, set the new version: \n`);
 
 	if (versionCompare(currentVersion, newVersion) < 0) {
 
@@ -23,6 +25,15 @@ async function setPackagesVersion() {
 		const webPublishPackageJson = await loadJsonFile(webPublishPackageJsonPath);
 		const dataPackageJson = await loadJsonFile(dataPackageJsonPath);
 		const dataPublishPackageJson = await loadJsonFile(dataPublishPackageJsonPath);
+		const mainPackageJson = await loadJsonFile(mainPackageJsonPath);
+
+		corePackageJson.version = newVersion;
+		corePublishPackageJson.version = newVersion;
+		webPackageJson.version = newVersion;
+		webPublishPackageJson.version = newVersion;
+		dataPackageJson.version = newVersion;
+		dataPublishPackageJson.version = newVersion;
+		mainPackageJson.version = newVersion;
 
 		// JSON files updates
 		await Promise.all([
@@ -31,7 +42,8 @@ async function setPackagesVersion() {
 			saveObjectAsJsonFile(webPackageJsonPath, webPackageJson),
 			saveObjectAsJsonFile(webPublishPackageJsonPath, webPublishPackageJson),
 			saveObjectAsJsonFile(dataPackageJsonPath, dataPackageJson),
-			saveObjectAsJsonFile(dataPublishPackageJsonPath, dataPublishPackageJson)
+			saveObjectAsJsonFile(dataPublishPackageJsonPath, dataPublishPackageJson),
+			saveObjectAsJsonFile(mainPackageJsonPath, mainPackageJson)
 		]);
 
 	} else {
@@ -46,6 +58,7 @@ async function setPackagesVersion() {
 		await setPackagesVersion();
 	} catch (error) {
 		printError('Error while setting new version for packages', error);
+		process.exit(2);
 	}
 })();
 

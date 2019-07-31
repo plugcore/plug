@@ -1,6 +1,6 @@
 {
 	"name": "plugdata-framework",
-	"version": "0.0.2",
+	"version": "1.0.0",
 	"description": "![Plugdata.io](_docs/logo.png?raw=true \"Plugdata.io\")",
 	"main": ".eslintrc.js",
 	"scripts": {
@@ -9,6 +9,7 @@
 		"build:core": "cd core & npm run build",
 		"build:web": "cd web & npm run build",
 		"build:data": "cd data & npm run build",
+		"prepare-to-publish": "npm run check-all & node ./_scripts/set-packages-version.js",
 		"publish-all": "node ./node_modules/npm-run-all/bin/run-s/index.js publish:**",
 		"publish:core": "npm run build:core & cd core/publish & npm publish",
 		"test": "npm run build && node ./node_modules/npm-run-all/bin/run-s/index.js test:**",
@@ -19,7 +20,7 @@
 		"lint:core": "cd core & npm run lint",
 		"lint:web": "cd web & npm run lint",
 		"lint:data": "cd data & npm run lint",
-		"check-all": "npm run build & npm run test & npm run lint",
+		"check-all": "node ./node_modules/npm-run-all/bin/run-s/index.js test lint",
 		"dev": "node ./node_modules/npm-run-all/bin/run-p/index.js dev:**",
 		"dev:core": "cd core & node ../node_modules/tsc-watch/index.js --noClear --onSuccess \"npm run build\"",
 		"dev:web": "cd web & node ../node_modules/tsc-watch/index.js --noClear --onSuccess \"npm run build\"",

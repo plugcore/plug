@@ -1,6 +1,6 @@
 {
 	"name": "@plugdata/web",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"description": "Plugdata.io web utilities",
 	"main": "index.js",
 	"repository": {

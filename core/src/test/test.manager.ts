@@ -65,7 +65,7 @@ export class TestManager {
 		);
 
 		// 7: Print stats
-		const success = this.printTestsEnd();
+		this.printTestsEnd();
 
 	}
 
