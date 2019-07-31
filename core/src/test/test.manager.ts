@@ -65,7 +65,7 @@ export class TestManager {
 		);
 
 		// 7: Print stats
-		this.printTestsEnd();
+		const success = this.printTestsEnd();
 
 	}
 
@@ -283,6 +283,8 @@ export class TestManager {
 			ConsoleColors.reset
 		);
 		console.log('---------------------');
+
+		return errorTests === 0;
 
 	}
 

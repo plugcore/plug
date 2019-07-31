@@ -32,7 +32,7 @@ export class ExampleResponse {
 
 export class ExampleHeaders {
 
-	@ValidString({ pattern: 'Bearer\s[\d|a-f]{8}-([\d|a-f]{4}-){3}[\d|a-f]{12}' })
+	@ValidString({ pattern: 'Bearer\\s[\\d|a-f]{8}-([\\d|a-f]{4}-){3}[\\d|a-f]{12}' })
 	public Authorization: string;
 
 }

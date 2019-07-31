@@ -1,6 +1,73 @@
 const { exec } = require('child_process');
 const { exists, mkdir, lstat, unlink, access, readdir, rmdir, copyFile, readFile, writeFile } = require('fs');
 const { join } = require('path');
+const readline = require('readline');
+
+async function buildProject(projectFolder) {
+
+	// Var declarations
+	const packageJsonFile = 'package.json';
+	const packageJsonPath = join(projectFolder, packageJsonFile);
+	const packageJson = await loadJsonFile(packageJsonPath);
+	
+	const infoPrefix = 'BUILD-' + packageJson.name + ': ';
+	const publishFolderPath = 'publish';
+	const distFolder = join(projectFolder, 'dist');
+	const publishFolder = join(projectFolder, publishFolderPath);
+	const distPackageJsonPath = join(projectFolder, publishFolderPath, packageJsonFile);
+	const distSrcFolder = join(distFolder, 'src');
+	const publishSrcFolder = join(publishFolder, 'src');
+	const distTypesFolder = join(distFolder, 'types');
+	const publishTypesFolder = join(publishFolder, 'types');
+	const publishTestTypesFolder = join(publishFolder, 'types', 'test');
+	const srcTypesDtsFile = join(projectFolder, 'index.ts');
+	const publishTypesDtsFile = join(publishFolder, 'types', 'index.d.ts');
+	const publishIndexDtsFolder = join(publishFolder, 'index.d.ts');
+	const srcIndexJsFile = join(distFolder, 'index.js');
+	const publishIndexJsFile = join(publishFolder, 'index.js');
+	const srcReadmeFile = join(projectFolder, 'README.md');
+	const publishReadmeFile = join(publishFolder, 'README.md');
+
+	// 1: Force a TSC
+	// Done in package.json
+
+	// 2: Clean or create publish folder
+	printInfo(`${infoPrefix}Creating publish folder`);
+	await emptyOrCreateFolder(publishFolder);
+
+	// 3: copy packageJson
+	printInfo(`${infoPrefix}Creating package.json`);
+	packageJson.devDependencies = undefined;
+	await saveObjectAsJsonFile(distPackageJsonPath, packageJson);
+
+	// 4: Copy src
+	printInfo(`${infoPrefix}Copying "${distSrcFolder}" folder to "${publishSrcFolder}"`);
+	await copyFolder(distSrcFolder, publishSrcFolder);
+
+	// 5: Copy types and remove tests
+	printInfo(`${infoPrefix}Copying "${distTypesFolder}" folder to "${publishTypesFolder}"`);
+	await copyFolder(distTypesFolder, publishTypesFolder);
+	printInfo(`${infoPrefix}Removing "${publishTestTypesFolder}" folder`);
+	await removeFolder(publishTestTypesFolder);
+
+	// 6: Create link for types
+	printInfo(`${infoPrefix}Copying "${srcTypesDtsFile}" file to "${publishTypesDtsFile}`);
+	await copyOrReplaceFile(srcTypesDtsFile, publishTypesDtsFile);
+	printInfo(`${infoPrefix}Creating "${publishIndexDtsFolder}" file`);
+	await saveStringAsFile(publishIndexDtsFolder, 'export * from \'./types\';');
+
+	// 7: Copy index js file for js initialization
+	printInfo(`${infoPrefix}Copying "${srcIndexJsFile}" file to "${publishIndexJsFile}"`);
+	await copyOrReplaceFile(srcIndexJsFile, publishIndexJsFile);
+
+	// 7: Copy README file for documentation
+	printInfo(`${infoPrefix}Copying "${srcReadmeFile}" file to "${publishReadmeFile}"`);
+	await copyOrReplaceFile(srcReadmeFile, publishReadmeFile);
+
+	// Success
+	printSuccess(`${infoPrefix}All tasks executed succesfully`);
+
+}
 
 async function execCmd(cmd) {
 	return new Promise((resolve, reject) => {
@@ -28,8 +95,8 @@ async function emptyOrCreateFolder(path) {
 					Promise.all(files.map((file) => {
 						return removeFile(path, file);
 					}))
-					.then(() => { resolve(); })
-					.catch(reject);
+						.then(() => { resolve(); })
+						.catch(reject);
 				});
 			} else {
 				createFolder(path).then(resolve).catch(reject);
@@ -76,7 +143,7 @@ async function removeFile(dir, file) {
 			}
 		});
 	});
-};
+}
 
 async function removeFolder(dir) {
 	return new Promise((resolve, reject) => {
@@ -104,7 +171,7 @@ async function removeFolder(dir) {
 			});
 		});
 	});
-};
+}
 
 async function isFile(filePath) {
 	return new Promise((resolve, reject) => {
@@ -188,7 +255,7 @@ async function saveObjectAsJsonFile(filePath, object) {
 	return saveStringAsFile(filePath, jsonText);
 }
 
-const consoleColors =  {
+const consoleColors = {
 	reset: '\x1b[0m',
 	bright: '\x1b[1m',
 	dim: '\x1b[2m',
@@ -228,6 +295,73 @@ function printError(errorText, error) {
 	console.log(`${consoleColors.fgRed}${errorText}`, error, consoleColors.reset);
 }
 
+/**
+ * Compares two software version numbers (e.g. "1.7.1" or "1.2b").
+ * This function was born in http://stackoverflow.com/a/6832721.
+ * Tests can be found in http://jsfiddle.net/pCX3V/
+ * @copyright by Jon Papaioannou (["john", "papaioannou"].join(".") + "@gmail.com")
+ * @license This function is in the public domain. Do what you want with it, no strings attached.
+ */
+function versionCompare(v1, v2, options) {
+	var lexicographical = options && options.lexicographical,
+		zeroExtend = options && options.zeroExtend,
+		v1parts = v1.split('.'),
+		v2parts = v2.split('.');
+
+	function isValidPart(x) {
+		return (lexicographical ? /^\d+[A-Za-z]*$/ : /^\d+$/).test(x);
+	}
+
+	if (!v1parts.every(isValidPart) || !v2parts.every(isValidPart)) {
+		return NaN;
+	}
+
+	if (zeroExtend) {
+		while (v1parts.length < v2parts.length) v1parts.push('0');
+		while (v2parts.length < v1parts.length) v2parts.push('0');
+	}
+
+	if (!lexicographical) {
+		v1parts = v1parts.map(Number);
+		v2parts = v2parts.map(Number);
+	}
+
+	for (var i = 0; i < v1parts.length; ++i) {
+		if (v2parts.length == i) {
+			return 1;
+		}
+
+		if (v1parts[i] == v2parts[i]) {
+			continue;
+		}
+		else if (v1parts[i] > v2parts[i]) {
+			return 1;
+		}
+		else {
+			return -1;
+		}
+	}
+
+	if (v1parts.length != v2parts.length) {
+		return -1;
+	}
+
+	return 0;
+}
+
+async function consolePromt(question) {
+	return new Promise(resolve => {
+		const rl = readline.createInterface({
+			input: process.stdin,
+			output: process.stdout
+		});
+		rl.question(question, function (response) {
+			rl.close();
+			resolve(response);
+		});
+	});
+}
+
 module.exports = {
 	execCmd,
 	emptyOrCreateFolder,
@@ -243,5 +377,8 @@ module.exports = {
 	consoleColors,
 	printInfo,
 	printSuccess,
-	printError
+	printError,
+	buildProject,
+	versionCompare,
+	consolePromt
 };

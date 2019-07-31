@@ -1,4 +1,4 @@
-import { ClassParameter, IServiceArgs } from '@plugdata/core';
+import { ClassParameter, IServiceArgs, ValidString, ValidNumber } from '@plugdata/core';
 import { FastifyRequest, FastifyReply, DefaultParams, DefaultQuery, HTTPMethod, RequestHandler, RouteShorthandOptions } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'http';
 
@@ -69,3 +69,11 @@ export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOption
 
 export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>;
 
+export class ErrorResponse {
+	@ValidNumber()
+	statusCode: number;
+	@ValidString()
+	error: string;
+	@ValidString()
+	message: string;
+}

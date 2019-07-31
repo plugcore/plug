@@ -11,7 +11,7 @@
 		"build:data": "cd data & npm run build",
 		"publish-all": "node ./node_modules/npm-run-all/bin/run-s/index.js publish:**",
 		"publish:core": "npm run build:core & cd core/publish & npm publish",
-		"test": "node ./node_modules/npm-run-all/bin/run-s/index.js test:**",
+		"test": "npm run build && node ./node_modules/npm-run-all/bin/run-s/index.js test:**",
 		"test:core": "cd core & npm test",
 		"test:web": "cd web & npm test",
 		"test:data": "cd data & npm test",

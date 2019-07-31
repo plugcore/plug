@@ -42,6 +42,7 @@ export class HttpUtils {
 			opts.headers = options.headers;
 			opts.method = options.method;
 		}
+
 		return opts;
 	}
 

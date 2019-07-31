@@ -1,4 +1,9 @@
 module.exports = {
+	env: {
+		commonjs: true,
+		node: true,
+		es6: true
+	},
 	parser: '@typescript-eslint/parser',  // Specifies the ESLint parser
 	plugins: ['@typescript-eslint'],
 	extends: [
@@ -14,6 +19,7 @@ module.exports = {
 		},
 	},
 	rules: {
+		['no-useless-escape']: 0,
 		['@typescript-eslint/indent']: [
 			'error',
 			'tab',

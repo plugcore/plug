@@ -41,7 +41,7 @@ export class MongoDbConnectionTest extends PlugTest {
 			await this.collection.insertOne(testData);
 			const findOneResult = await this.collection.findOne(testData);
 			this.assert.ok(findOneResult);
-			await this.collection.remove(testData);
+			await this.collection.deleteOne(testData);
 			const findOneResultAfterDelete = await this.collection.findOne(testData);
 			this.assert.ok(!findOneResultAfterDelete);
 		}

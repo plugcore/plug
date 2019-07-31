@@ -1,10 +1,10 @@
 const { buildProject, printError } = require('./script-utils');
 const { join } = require('path');
 
-async function buildCore() {
+async function buildData() {
 
 	// Var declarations
-	const projectFolder = join(__dirname, '..', 'core');
+	const projectFolder = join(__dirname, '..', 'data');
 	await buildProject(projectFolder);
 
 }
@@ -12,9 +12,9 @@ async function buildCore() {
 // Execution boilerplate
 (async () => {
 	try {
-		await buildCore();
+		await buildData();
 	} catch (error) {
-		printError('Error on Core build', error);
+		printError('Error on Data build', error);
 	}
 })();
 

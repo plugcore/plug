@@ -1,8 +1,9 @@
-import { BeforeTests, Container, HttpClient, PlugTest, Test, TestClass, AfterTests, HttpUtils } from '@plugdata/core';
+import { AfterTests, BeforeTests, Container, HttpClient, PlugTest, Test, TestClass } from '@plugdata/core';
 import { RoutesInitializer } from '../../src/routes/routes.initializer';
+import { RoutesService } from '../../src/routes/routes.service';
 import { ControllerExample } from './examples/controller.example';
 import { Controller2Example } from './examples/controller2.example';
-import { RoutesService } from '../../src/routes/routes.service';
+import { ExampleRequest } from './examples/route-validators.example';
 
 @TestClass({ testThisOnly: true })
 export class RoutesInitializerTest extends PlugTest {
@@ -39,7 +40,12 @@ export class RoutesInitializerTest extends PlugTest {
 	public async getRegisteredMethods() {
 
 		const rGet1 = await this.httpClient.get<any>(this.controller1Path);
-		const rPost1 = await this.httpClient.post<any>(this.controller1Path);
+		const rPost1 = await this.httpClient.post<any>(this.controller1Path, <ExampleRequest>{
+			isPublic: true, name: 'test'
+		}, {
+			headers: { Authorization: 'Bearer 89abddfb-2cff-4fda-83e6-13221f0c3d4f' },
+			params: { customId: '1', num: 2 }
+		});
 		const rPut1 = await this.httpClient.put<any>(this.controller1Path);
 		const rPatch1 = await this.httpClient.patch<any>(this.controller1Path);
 		const rDelete1 = await this.httpClient.delete<any>(this.controller1Path);
@@ -50,7 +56,7 @@ export class RoutesInitializerTest extends PlugTest {
 		const rDelete2 = await this.httpClient.delete<any>(this.controller2Path);
 
 		this.assert.ok(rGet1.method === 'getTest' && rGet1.test === 1);
-		this.assert.ok(rPost1.method === 'postTest' && rPost1.test === 1);
+		this.assert.ok(rPost1.success);
 		this.assert.ok(rPut1.method === 'putTest' && rPut1.test === 1);
 		this.assert.ok(rPatch1.method === 'patchTest' && rPatch1.test === 1);
 		this.assert.ok(rDelete1.method === 'deleteTest' && rDelete1.test === 1);
@@ -65,8 +71,6 @@ export class RoutesInitializerTest extends PlugTest {
 		this.assert.ok(this.controllerExample.preValidationCalled);
 		this.assert.ok(this.controllerExample.onRequestCalled);
 		this.assert.ok(this.controllerExample.loggerNotNull);
-
-		console.log(JSON.stringify(await HttpUtils.httpCall(this.routesService.addressListenning + '/plug-documentation/json')));
 
 	}
 

@@ -1,7 +1,7 @@
 import { ArrayUtils, Container, Logger, OnEvent, PublicEvents, Service, ObjectValidatorUtils } from '@plugdata/core';
 import * as oas from 'fastify-oas';
 import { RoutesService } from './routes.service';
-import { TRequestHandler } from './routes.shared';
+import { TRequestHandler, ErrorResponse } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 import { RouteSchema } from 'fastify';
 
@@ -18,7 +18,8 @@ export class RoutesInitializer {
 
 		// OAS configuration
 		this.routesService.fastifyInstance.register(oas, {
-			exposeRoute: false,
+			routePrefix: '/plug-documentation',
+			exposeRoute: true,
 			addModels: true,
 			swagger: {
 				info: {},
@@ -29,12 +30,12 @@ export class RoutesInitializer {
 		});
 
 		// Documentation route
-		this.routesService.fastifyInstance.route({
+		/* this.routesService.fastifyInstance.route({
 			method: 'GET',
 			url: '/plug-documentation/json',
 			handler: (request, reply) => { reply.send(this.routesService.fastifyInstance.oas()); },
 			schema: { hide: true }
-		});
+		}); */
 
 	}
 
@@ -82,24 +83,21 @@ export class RoutesInitializer {
 				const schema: RouteSchema = controllerOptions.schema || {};
 				if (routeValidation) {
 
-					if (routeValidation.request) {
+					if (method.httpMethod !== 'GET' && routeValidation.request) {
 						schema.body = ObjectValidatorUtils.generateJsonSchema(routeValidation.request);
-						schema.produces = [this.contetTypeJson];
 					}
 					if (routeValidation.response) {
 						schema.response = {
 							200: ObjectValidatorUtils.generateJsonSchema(routeValidation.response),
-							400: {}
+							400: ObjectValidatorUtils.generateJsonSchema(ErrorResponse)
 						};
-						schema.consumes = [this.contetTypeJson];
 					}
 					if (routeValidation.parameters) {
-						schema.params = ObjectValidatorUtils.generateJsonSchema(routeValidation.parameters);
+						schema.querystring = ObjectValidatorUtils.generateJsonSchema(routeValidation.parameters);
 					}
 					if (routeValidation.headers) {
 						schema.headers = ObjectValidatorUtils.generateJsonSchema(routeValidation.headers);
 					}
-					console.log(">>>>>", JSON.stringify(schema));
 					controllerOptions.schema = schema;
 
 				}

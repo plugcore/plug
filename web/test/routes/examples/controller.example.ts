@@ -17,7 +17,17 @@ export class ControllerExample {
 		private logger: Logger
 	) {}
 
-	@Get('', {
+	@Get()
+	public async getTest(req: Request, res: Response) {
+		return { method: 'getTest', test: 1 };
+	}
+
+	@Head()
+	public async headTest(req: Request, res: Response) {
+		return { method: 'headTest', test: 1 };
+	}
+
+	@Post('', {
 		routeValidation: {
 			request: ExampleRequest,
 			response: ExampleResponse,
@@ -30,20 +40,8 @@ export class ControllerExample {
 		preHandler: ControllerExample.prototype.preHandler,
 		preSerialization: ControllerExample.prototype.preSerialization
 	})
-	public async getTest(req: Request, res: Response) {
-		return { method: 'getTest', test: 1 };
-	}
-
-	@Head('', {
-		onRequest: async () => { console.log('pepee'); }
-	})
-	public async headTest(req: Request, res: Response) {
-		return { method: 'headTest', test: 1 };
-	}
-
-	@Post()
 	public async postTest(req: Request, res: Response) {
-		return { method: 'postTest', test: 1 };
+		return <ExampleResponse>{ success: true };
 	}
 
 	@Put()
