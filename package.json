@@ -12,6 +12,8 @@
 		"prepare-to-publish": "npm run check-all & node ./_scripts/set-packages-version.js",
 		"publish-all": "node ./node_modules/npm-run-all/bin/run-s/index.js publish:**",
 		"publish:core": "npm run build:core & cd core/publish & npm publish",
+		"publish:web": "npm run build:web & cd web/publish & npm publish",
+		"publish:data": "npm run build:data & cd data/publish & npm publish",
 		"test": "npm run build && node ./node_modules/npm-run-all/bin/run-s/index.js test:**",
 		"test:core": "cd core & npm test",
 		"test:web": "cd web & npm test",
