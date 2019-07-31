@@ -1,6 +1,6 @@
 {
 	"name": "plugdata-framework",
-	"version": "1.0.0",
+	"version": "0.1.1",
 	"description": "![Plugdata.io](_docs/logo.png?raw=true \"Plugdata.io\")",
 	"main": ".eslintrc.js",
 	"scripts": {

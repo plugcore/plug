@@ -349,15 +349,37 @@ function versionCompare(v1, v2, options) {
 	return 0;
 }
 
-async function consolePromt(question) {
-	return new Promise(resolve => {
+/**
+ * Promts the user in the console using the first parameter
+ * as a question and returns whatever the user writes.
+ * The second parameter is optional, an is a configuration
+ * string that can include a `%%` with the result from
+ * the first question. If the user rejects the confirmation
+ * it throws an error.
+ * @param {*} question 
+ * @param {*} confirmationQuestion 
+ */
+async function consolePromt(question, confirmationQuestion) {
+	return new Promise((resolve, reject) => {
 		const rl = readline.createInterface({
 			input: process.stdin,
 			output: process.stdout
 		});
 		rl.question(question, function (response) {
-			rl.close();
-			resolve(response);
+			if (confirmationQuestion) {
+				const secondQuestion = confirmationQuestion.replace('%%', response) + ' (y/yes): ';
+				rl.question(secondQuestion, function (response2) {
+					rl.close();
+					if (response2 === 'y' || response2 === 'yes') {
+						resolve(response);
+					} else {
+						reject('Operation canceled');
+					}
+				});
+			} else {
+				rl.close();
+				resolve(response);
+			}
 		});
 	});
 }

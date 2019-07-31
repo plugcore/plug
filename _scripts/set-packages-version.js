@@ -15,7 +15,8 @@ async function setPackagesVersion() {
 	const corePackageJson = await loadJsonFile(corePackageJsonPath);
 	const currentVersion = corePackageJson.version;
 	const newVersion = await consolePromt(
-		`Current version is ${consoleColors.fgYellow}${currentVersion}${consoleColors.reset}, set the new version: \n`);
+		`Current version is ${consoleColors.fgYellow}${currentVersion}${consoleColors.reset}, set the new version: \n`,
+		`Are you sure yo want to set ${consoleColors.fgYellow}%%${consoleColors.reset} as new version?`);
 
 	if (versionCompare(currentVersion, newVersion) < 0) {
 
@@ -34,6 +35,11 @@ async function setPackagesVersion() {
 		dataPackageJson.version = newVersion;
 		dataPublishPackageJson.version = newVersion;
 		mainPackageJson.version = newVersion;
+
+		// Published versions must be without file:...
+		webPublishPackageJson.dependencies['@plugdata/core'] = newVersion;
+		dataPublishPackageJson.dependencies['@plugdata/core'] = newVersion;
+
 
 		// JSON files updates
 		await Promise.all([
@@ -57,7 +63,7 @@ async function setPackagesVersion() {
 	try {
 		await setPackagesVersion();
 	} catch (error) {
-		printError('Error while setting new version for packages', error);
+		printError('Error while setting new version for packages:', error);
 		process.exit(2);
 	}
 })();
