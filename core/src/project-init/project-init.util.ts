@@ -1,10 +1,11 @@
 import { join } from 'path';
-import { ConfigurationLoader } from './configuration/configuration.loader';
-import { Container } from './dependecy-injection/di.container';
-import { ProjectConfiguration } from './configuration/configuration.service';
-import { Logger } from './logs/logger';
-import { EventDispatcher } from './events/event.dispatcher';
-import { PublicEvents } from './events/event.constants';
+import { ConfigurationLoader } from '../configuration/configuration.loader';
+import { ProjectConfiguration } from '../configuration/configuration.service';
+import { Container } from '../dependecy-injection/di.container';
+import { PublicEvents } from '../events/event.constants';
+import { EventDispatcher } from '../events/event.dispatcher';
+import { Logger } from '../logs/logger';
+import { FsUtils } from '../io/fs.utils';
 
 export class PorjectInitialization {
 
@@ -19,11 +20,11 @@ export class PorjectInitialization {
 	 * in the correct order. It takes as a parameter a folder from which it will lookup
 	 * for a configuration folder to load it, and fire the required events.
 	 */
-	public static start(projectFolder: string) {
+	public static start(projectFolder: string, configurationFolder?: string) {
 		(async () => {
-
 			// 1: Project configuration
-			await this.setConfiguration(join(projectFolder, this.defaultConfigurationFolder));
+			await FsUtils.waitForFolder(projectFolder, true);
+			await this.setConfiguration(join(projectFolder, '..', '..', configurationFolder || this.defaultConfigurationFolder));
 
 		})().then(() => {
 			// Project started
@@ -60,3 +61,4 @@ export class PorjectInitialization {
 	}
 
 }
+

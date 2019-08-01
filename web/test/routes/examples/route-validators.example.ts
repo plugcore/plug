@@ -1,12 +1,12 @@
-import { ValidString, RequiredProperty, ValidNumber, ValidBoolean } from '@plugdata/core';
+import { IsString, RequiredProperty, IsNumber, IsBoolean } from '@plugdata/core';
 
 export class ExampleParams {
 
-	@ValidString({ maxLength: 10 })
+	@IsString({ maxLength: 10 })
 	@RequiredProperty()
 	public customId: string;
 
-	@ValidNumber({ maximum: 999 })
+	@IsNumber({ maximum: 999 })
 	@RequiredProperty()
 	public num: number;
 
@@ -14,25 +14,25 @@ export class ExampleParams {
 
 export class ExampleRequest {
 
-	@ValidString({ maxLength: 50 })
+	@IsString({ maxLength: 50 })
 	@RequiredProperty()
 	public name: string;
 
-	@ValidBoolean()
+	@IsBoolean()
 	public isPublic: boolean;
 
 }
 
 export class ExampleResponse {
 
-	@ValidBoolean()
+	@IsBoolean()
 	public success: boolean;
 
 }
 
 export class ExampleHeaders {
 
-	@ValidString({ pattern: 'Bearer\\s[\\d|a-f]{8}-([\\d|a-f]{4}-){3}[\\d|a-f]{12}' })
+	@IsString({ pattern: 'Bearer\\s[\\d|a-f]{8}-([\\d|a-f]{4}-){3}[\\d|a-f]{12}' })
 	public Authorization: string;
 
 }

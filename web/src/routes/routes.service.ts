@@ -1,4 +1,4 @@
-import { Inject, Logger, ObjectUtils, ProjectConfiguration, Service } from '@plugdata/core';
+import { Inject, Logger, ProjectConfiguration, Service } from '@plugdata/core';
 import * as fastify from 'fastify';
 import { FastifyInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
@@ -10,6 +10,7 @@ export class RoutesService {
 	
 	public fastifyInstance: FastifyInstance<Server, IncomingMessage, ServerResponse>;
 	public httpPort: number;
+	public host: string;
 	public addressListenning: string;
 
 	constructor(
@@ -18,15 +19,15 @@ export class RoutesService {
 	) {
 
 		// Port
-		this.httpPort = (configuration.web && configuration.web.port) ?
-			configuration.web.port : WebConfiguration.default.web.port;
+		this.httpPort = (configuration.web && configuration.web.server && configuration.web.server.port) ?
+			configuration.web.server.port : WebConfiguration.default.web.server.port;
 
-		// Fastify configuration
-		const webCfg = ObjectUtils.deepClone(configuration.web || {});
-		webCfg.port = undefined;
+		// Host
+		this.host = (configuration.web && configuration.web.server && configuration.web.server.host) ?
+			configuration.web.server.host : WebConfiguration.default.web.server.host;
 
 		// Fastify initialization
-		this.fastifyInstance = fastify(webCfg);
+		this.fastifyInstance = fastify();
 
 	}
 

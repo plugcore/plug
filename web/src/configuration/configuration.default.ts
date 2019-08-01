@@ -1,9 +1,18 @@
 
 export class WebConfiguration {
 
-	public static readonly default = {
+	public static readonly default =  {
 		web: {
-			port: 3000
+			server: {
+				port: 3000,
+				host: 'localhost'
+			},
+			oas: {
+				info: {},
+				consumes: ['application/json'],
+				produces: ['application/json'],
+
+			}
 		}
 	};
 

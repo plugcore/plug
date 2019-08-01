@@ -5,7 +5,7 @@ import { ControllerExample } from './examples/controller.example';
 import { Controller2Example } from './examples/controller2.example';
 import { ExampleRequest } from './examples/route-validators.example';
 
-@TestClass({ testThisOnly: true })
+@TestClass()
 export class RoutesInitializerTest extends PlugTest {
 
 	private httpClient: HttpClient;

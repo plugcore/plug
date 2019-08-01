@@ -13,6 +13,7 @@ export class EventDispatcher {
 	private readonly eventEmitter = globalEventEmitter;
 
 	public on(event: string, func: ListenerFn<any[]>, context?: any) {
+		this.log.debug(`Registering event listener '${func.name}' to ${event}`);
 		this.eventEmitter.on(event, func, context);
 	}
 

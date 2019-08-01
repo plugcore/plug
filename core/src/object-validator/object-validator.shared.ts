@@ -27,7 +27,7 @@ export interface IArraySchemaValidator {
 	maxItems?: number;
 	minItems?: number;
 	uniqueItems?: boolean;
-	items?: Record<string, any> | Record<string, any>[];
+	items?: Record<string, any> | Record<string, any>[] | ClassParameter<any> | ClassParameter<any>[];
 	additionalItems?: Record<string, any> | boolean;
 	contains?: Record<string, any>;
 }

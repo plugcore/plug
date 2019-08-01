@@ -31,6 +31,10 @@
 		"lint": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts",
 		"lint:fix": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts --fix"
 	},
+	"bin": {
+		"plug-test": "./src/test/test.cli.js",
+		"plug-start": "./src/project-init/project-init.cli.js"
+	},
 	"dependencies": {
 		"ajv": "^6.10.1",
 		"cron": "^1.7.1",

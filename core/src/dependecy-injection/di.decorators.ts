@@ -24,7 +24,6 @@ export function Service({ ctx, sId }: IServiceArgs = {}): Function {
 			Container.registrerService(sId, target, constructorParms, ctx);
 
 			// Mark class as service so we know we must track it
-
 			(<any>target)['isService'] = true;
 
 		}

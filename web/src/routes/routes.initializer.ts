@@ -1,31 +1,38 @@
-import { ArrayUtils, Container, Logger, OnEvent, PublicEvents, Service, ObjectValidatorUtils } from '@plugdata/core';
+import {
+	ArrayUtils, Container, Logger, OnEvent, PublicEvents, Service,
+	ObjectValidatorUtils, ProjectConfiguration, Inject, ObjectUtils,
+	ClassParameter
+} from '@plugdata/core';
 import * as oas from 'fastify-oas';
 import { RoutesService } from './routes.service';
 import { TRequestHandler, ErrorResponse } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 import { RouteSchema } from 'fastify';
+import { TWebConfugration } from '../configuration/configuration.insterfaces';
+import { WebConfiguration } from '../configuration/configuration.default';
 
 @Service()
 export class RoutesInitializer {
 
 	private readonly eventNames = ['onRequest', 'preParsing', 'preValidation', 'preHandler', 'preSerialization'];
-	private readonly contetTypeJson = 'application/json';
 
 	constructor(
 		private log: Logger,
-		private routesService: RoutesService
+		private routesService: RoutesService,
+		@Inject({ sId: ProjectConfiguration }) configuration: TWebConfugration
 	) {
 
 		// OAS configuration
+
+		const defaultServers = { servers: [{ url: `http://${this.routesService.host}:${this.routesService.httpPort}` }] };
+		const defaultConfiguration = ObjectUtils.deepMerge(WebConfiguration.default, defaultServers);
+		const oasConfiguration = (configuration.web && configuration.web.oas) ? 
+			ObjectUtils.deepMerge(defaultConfiguration, configuration.web.oas) : defaultConfiguration;
+
 		this.routesService.fastifyInstance.register(oas, {
 			exposeRoute: false,
 			addModels: true,
-			swagger: {
-				info: {},
-				servers: [{ url: 'http://127.0.0.1:3000' }],
-				consumes: [this.contetTypeJson],
-				produces: [this.contetTypeJson],
-			}
+			swagger: oasConfiguration
 		});
 
 		// Documentation route
@@ -40,6 +47,7 @@ export class RoutesInitializer {
 
 	@OnEvent(PublicEvents.allServicesLoaded)
 	public onServicesReady() {
+		this.log.debug('All services loaded event, starting web servicer ...');
 		this.initHttpServer().then();
 	}
 
@@ -83,11 +91,15 @@ export class RoutesInitializer {
 				if (routeValidation) {
 
 					if (method.httpMethod !== 'GET' && routeValidation.request) {
-						schema.body = ObjectValidatorUtils.generateJsonSchema(routeValidation.request);
+						schema.body = this.isModelArray(routeValidation.request) ? 
+							ObjectValidatorUtils.generateJsonSchema(routeValidation.request.model, { asArray: true }): 
+							ObjectValidatorUtils.generateJsonSchema(routeValidation.request) ;
 					}
 					if (routeValidation.response) {
 						schema.response = {
-							200: ObjectValidatorUtils.generateJsonSchema(routeValidation.response),
+							200: schema.body = this.isModelArray(routeValidation.response) ? 
+								ObjectValidatorUtils.generateJsonSchema(routeValidation.response.model, { asArray: true }): 
+								ObjectValidatorUtils.generateJsonSchema(routeValidation.response),
 							400: ObjectValidatorUtils.generateJsonSchema(ErrorResponse)
 						};
 					}
@@ -120,6 +132,10 @@ export class RoutesInitializer {
 
 		await this.routesService.startHttpServer();
 
+	}
+
+	private isModelArray(model: any): model is { isArray: true; model: ClassParameter<any> } {
+		return model.isArray !== undefined && model.isArray === true;
 	}
 
 }

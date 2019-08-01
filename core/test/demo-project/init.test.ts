@@ -1,7 +1,7 @@
 import { join } from 'path';
-import { PorjectInitialization } from '../../src/init';
 import { TestClass, Test } from '../../src/test/test.decorators';
 import { PlugTest } from '../../src/test/test.shared';
+import { PorjectInitialization } from '../../src/project-init/project-init.util';
 
 @TestClass()
 export class InitTest extends PlugTest {

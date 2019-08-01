@@ -21,6 +21,7 @@
 		"lint:fix": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts --fix"
 	},
 	"dependencies": {
+		"@plugdata/core": "file:../core/publish",
 		"mongodb": "^3.3.0-beta2"
 	},
 	"devDependencies": {

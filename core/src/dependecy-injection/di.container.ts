@@ -28,7 +28,6 @@ export class Container {
 	 * @param ctx
 	 */
 	public static registrerService(id: IServiceIdentifier, clazz: Function, params?: Function[], ctx?: string) {
-
 		const serviceId = DiService.genServiceId(id);
 		const entry = DiService.getTmpEnrySafely(serviceId, clazz);
 

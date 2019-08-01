@@ -69,19 +69,27 @@ export class ObjectValidatorUtils {
 
 	/**
 	 * Generates a valid [Json schema](https://json-schema.org/) from a decorated class
-	 * with any of the validator decorators like `@ValidString()`, `@ValidNumber()`, 
-	 * `@ValidArray()`, `@ValidObject()` or `@RequiredProperty()`
+	 * with any of the validator decorators like `@IsString()`, `@IsNumber()`, 
+	 * `@IsArray()`, `@IsObject()` or `@RequiredProperty()`
 	 * @param clazz 
 	 */
-	public static generateJsonSchema<T>(clazz: ClassParameter<T>, isSubProperty: boolean = false): Record<string, any> {
+	public static generateJsonSchema<T>(clazz: ClassParameter<T>, options?: {
+		asArray?: boolean;
+		ignoreSchemaVersion?: boolean;
+	}): Record<string, any> {
 
 		const sortedClassProperties = ObjectValidatorDecoratorUtils.sortClassProperties(clazz);
-
+		const asArray = options && options.asArray;
 		const schema: Record<string, any> = {
-			$schema: isSubProperty ? undefined : this.schemaVersion,
-			title: clazz.name,
-			type: 'object', // TODO Support arrays
+			$schema: options && options.ignoreSchemaVersion ? undefined : this.schemaVersion,
+			title: asArray ? StringUtils.capitalize(clazz.name) + ' list' : clazz.name,
+			type: asArray ? 'array' : 'object',
 		};
+
+		const resultSchema = asArray ? {
+			title: clazz.name,
+			type: 'object',
+		} : schema;
 
 		// Field types
 
@@ -98,7 +106,9 @@ export class ObjectValidatorUtils {
 
 				if (objectProperty && PropertyValidatorTypeChecker.isObject(objectProperty)) {
 					// Property is sub object
-					properties[objectProperty.property] = this.generateJsonSchema(objectProperty.options, true);
+					properties[objectProperty.property] = this.generateJsonSchema(
+						objectProperty.options, { ignoreSchemaVersion: true} );
+
 				} else {
 					// Property is primitive type or Array
 					const property: Record<string, any> = {
@@ -122,7 +132,7 @@ export class ObjectValidatorUtils {
 			}
 
 			if (Object.keys(properties).length > 0) {
-				schema.properties = properties;
+				resultSchema.properties = properties;
 			}
 
 		}
@@ -130,10 +140,14 @@ export class ObjectValidatorUtils {
 		// Required fields
 
 		if (sortedClassProperties.requiredProperties.length > 0) {
-			schema.required = sortedClassProperties.requiredProperties.map(rp => rp.property);
+			resultSchema.required = sortedClassProperties.requiredProperties.map(rp => rp.property);
 		}
 
-		return schema;
+		if (asArray) {
+			schema.items = resultSchema;
+		}
+
+		return asArray ? schema : resultSchema;
 	}
 
 }

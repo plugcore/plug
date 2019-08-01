@@ -1,4 +1,4 @@
-import { ClassParameter, IServiceArgs, ValidString, ValidNumber } from '@plugdata/core';
+import { ClassParameter, IServiceArgs, IsString, IsNumber } from '@plugdata/core';
 import { FastifyRequest, FastifyReply, DefaultParams, DefaultQuery, HTTPMethod, RequestHandler, RouteShorthandOptions } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'http';
 
@@ -22,8 +22,8 @@ export interface IRegsiteredMethod {
 /**
  * This object represents a list of validators for the route.
  * All properties are ment to be class decorated with _@plugdata/core_
- * validator decorators. These could be `@ValidString()`, `@ValidNumber()`,
- * `@ValidBoolean()`, `@ValidArray()`, `@ValidObject()` or `@RequiredProperty()`
+ * validator decorators. These could be `@IsString()`, `@IsNumber()`,
+ * `@IsBoolean()`, `@IsArray()`, `@IsObject()` or `@RequiredProperty()`
  */
 export interface IRouteValidation {
 	/**
@@ -32,13 +32,13 @@ export interface IRouteValidation {
 	 * If this field is applied, then by default it will determine that this
 	 * route consumes `application/json`
 	 */
-	request?: ClassParameter<any>;
+	request?: ClassParameter<any> | { isArray: true; model: ClassParameter<any> };
 	/**
 	 * Decorated class with validations that represents the response.
 	 * If this field is applied, then by default it will determine that this
 	 * route produces `application/json`
 	 */
-	response?: ClassParameter<any>;
+	response?: ClassParameter<any> | { isArray: true; model: ClassParameter<any> };
 	/**
 	 * The parameters from the request are converted to an object.
 	 * You can validate this parameters as it were a normal request object
@@ -52,7 +52,7 @@ export interface IRouteValidation {
 	headers?: ClassParameter<any>;
 }
 
-export interface Request extends FastifyRequest<IncomingMessage, DefaultQuery, DefaultParams, Headers, Body> { }
+export interface Request extends FastifyRequest<IncomingMessage, DefaultQuery, DefaultParams, Headers, any> { }
 export interface Response extends FastifyReply<ServerResponse> { }
 
 export type InRouteShorthandOptions = RouteShorthandOptions<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>;
@@ -70,10 +70,10 @@ export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOption
 export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>;
 
 export class ErrorResponse {
-	@ValidNumber()
+	@IsNumber()
 	statusCode: number;
-	@ValidString()
+	@IsString()
 	error: string;
-	@ValidString()
+	@IsString()
 	message: string;
 }

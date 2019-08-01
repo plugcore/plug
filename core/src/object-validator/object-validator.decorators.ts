@@ -8,7 +8,7 @@ import { ObjectValidatorDecoratorUtils } from './object-validator.utils';
 // Decorators
 //
 
-export function ValidString(options?: IStringSchemaValidator) {
+export function IsString(options?: IStringSchemaValidator) {
 	return (target: any, propertyKey: string) => {
 		ObjectValidatorDecoratorUtils.addProperty({
 			target, propertyKey, options, type: EObjectValidatorPropertyTypes.string
@@ -16,7 +16,7 @@ export function ValidString(options?: IStringSchemaValidator) {
 	};
 }
 
-export function ValidNumber(options?: INumberSchemaValidator) {
+export function IsNumber(options?: INumberSchemaValidator) {
 	return (target: any, propertyKey: string) => {
 		ObjectValidatorDecoratorUtils.addProperty({
 			target, propertyKey, options, type: EObjectValidatorPropertyTypes.number
@@ -24,7 +24,7 @@ export function ValidNumber(options?: INumberSchemaValidator) {
 	};
 }
 
-export function ValidBoolean() {
+export function IsBoolean() {
 	return (target: any, propertyKey: string) => {
 		ObjectValidatorDecoratorUtils.addProperty({
 			target, propertyKey, type: EObjectValidatorPropertyTypes.boolean
@@ -33,7 +33,7 @@ export function ValidBoolean() {
 }
 
 
-export function ValidArray(options?: IArraySchemaValidator) {
+export function IsArray(options?: IArraySchemaValidator) {
 	return (target: any, propertyKey: string) => {
 		ObjectValidatorDecoratorUtils.addProperty({
 			target, propertyKey, options, type: EObjectValidatorPropertyTypes.array
@@ -41,7 +41,7 @@ export function ValidArray(options?: IArraySchemaValidator) {
 	};
 }
 
-export function ValidObject<T>(clazz: ClassParameter<T>) {
+export function IsObject<T>(clazz: ClassParameter<T>) {
 	return (target: any, propertyKey: string) => {
 		ObjectValidatorDecoratorUtils.addProperty({
 			target, propertyKey, options: clazz, type: EObjectValidatorPropertyTypes.object

@@ -1,6 +1,6 @@
 import { ClassParameter, TypeChecker } from '@plugdata/core';
-import { IControllerOptions, IRegisteredController, TMethodOptions, IRegsiteredMethod } from './routes.shared';
 import { HTTPMethod } from 'fastify';
+import { IControllerOptions, IRegisteredController, IRegsiteredMethod, TMethodOptions } from './routes.shared';
 
 export class RoutesUtils {
 
@@ -30,7 +30,6 @@ export class RoutesUtils {
 			methodName: decoratorMeta.methodName
 		};
 		Reflect.defineMetadata(`${this.propertyMetadataPrefix}${decoratorMeta.methodName}`, registeredMethod, decoratorMeta.controller);
-
 	}
 
 	public static getRegisteredMethods<T>(clazz: ClassParameter<T>): IRegsiteredMethod[] {

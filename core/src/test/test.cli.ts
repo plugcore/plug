@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { isAbsolute, join } from 'path';
 import { TestManager } from './test.manager';
 
