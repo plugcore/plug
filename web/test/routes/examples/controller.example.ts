@@ -5,7 +5,7 @@ import { ExampleHeaders, ExampleRequest, ExampleResponse, ExampleParams } from '
 
 @Controller({ urlBase: '/test' })
 export class ControllerExample {
-	
+
 	public onRequestCalled = false;
 	public preParsingCalled = false;
 	public preValidationCalled = false;
@@ -15,7 +15,7 @@ export class ControllerExample {
 
 	constructor(
 		private logger: Logger
-	) {}
+	) { }
 
 	@Get()
 	public async getTest(req: Request, res: Response) {
@@ -28,7 +28,7 @@ export class ControllerExample {
 	}
 
 	@Post('', {
-		routeValidation: {
+		routeSchemas: {
 			request: ExampleRequest,
 			response: ExampleResponse,
 			parameters: ExampleParams,

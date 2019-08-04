@@ -2,6 +2,9 @@ const { consolePromt, printError, versionCompare, loadJsonFile, saveObjectAsJson
 const { join } = require('path');
 
 async function setPackagesVersion() {
+	const commandArguments = process.argv;
+	const force = commandArguments[2] && commandArguments[2] === 'force';
+	const same = commandArguments[3] && commandArguments[3] === 'same';
 
 	// Var declarations
 	const corePackageJsonPath = join(__dirname, '..', 'core', 'package.json');
@@ -14,12 +17,12 @@ async function setPackagesVersion() {
 
 	const corePackageJson = await loadJsonFile(corePackageJsonPath);
 	const currentVersion = corePackageJson.version;
-	const newVersion = await consolePromt(
+	const newVersion = same ? currentVersion : await consolePromt(
 		`Current version is ${consoleColors.fgYellow}${currentVersion}${consoleColors.reset}, set the new version: \n`,
 		`Are you sure yo want to change version from ${consoleColors.fgYellow}${currentVersion}${consoleColors.reset} ` +
 		`to ${consoleColors.fgGreen}%%${consoleColors.reset}?`);
 
-	if (versionCompare(currentVersion, newVersion) < 0) {
+	if (force || versionCompare(currentVersion, newVersion) < 0) {
 
 		// Version update
 		const corePublishPackageJson = await loadJsonFile(corePublishPackageJsonPath);

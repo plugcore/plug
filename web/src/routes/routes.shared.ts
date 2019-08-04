@@ -1,5 +1,5 @@
-import { ClassParameter, IServiceArgs, IsString, IsNumber } from '@plugdata/core';
-import { FastifyRequest, FastifyReply, DefaultParams, DefaultQuery, HTTPMethod, RequestHandler, RouteShorthandOptions } from 'fastify';
+import { ClassParameter, IsBoolean, IServiceArgs, IsNumber, IsString, RequiredProperty } from '@plugdata/core';
+import { DefaultParams, DefaultQuery, FastifyReply, FastifyRequest, HTTPMethod, RequestHandler, RouteShorthandOptions } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'http';
 
 export interface IControllerOptions {
@@ -25,7 +25,7 @@ export interface IRegsiteredMethod {
  * validator decorators. These could be `@IsString()`, `@IsNumber()`,
  * `@IsBoolean()`, `@IsArray()`, `@IsObject()` or `@RequiredProperty()`
  */
-export interface IRouteValidation {
+export interface IRouteSchemas {
 	/**
 	 * Decorated class with validations that represents the request body.
 	 * This field will be ignored if it's a GET method.
@@ -41,9 +41,14 @@ export interface IRouteValidation {
 	response?: ClassParameter<any> | { isArray: true; model: ClassParameter<any> };
 	/**
 	 * The parameters from the request are converted to an object.
-	 * You can validate this parameters as it were a normal request object
+	 * You can validate this parameters as it was a normal request object
 	 */
 	parameters?: ClassParameter<any>;
+	/**
+	 * The parameters defiend in the url, ex: `/:id`, are converted to an object.
+	 * You can validate this parameters as it was a normal request object
+	 */
+	urlParameters?: ClassParameter<any>;
 	/**
 	 * As ir happens with the parameters, all headers will be converted
 	 * to an object wich can be validated through a decotared class
@@ -52,14 +57,15 @@ export interface IRouteValidation {
 	headers?: ClassParameter<any>;
 }
 
-export interface Request extends FastifyRequest<IncomingMessage, DefaultQuery, DefaultParams, Headers, any> { }
+export interface Request<TBody = any, TUrlParams = DefaultParams, TParams = DefaultQuery, THeaders = Headers> extends
+	FastifyRequest<IncomingMessage, TParams, TUrlParams, THeaders, TBody> { }
 export interface Response extends FastifyReply<ServerResponse> { }
 
 export type InRouteShorthandOptions = RouteShorthandOptions<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>;
 
 type OmitedShorthandOptions = 'url' | 'onRequest' | 'preParsing' | 'preValidation' | 'preHandler' | 'preSerialization';
 export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOptions> & {
-	routeValidation?: IRouteValidation;
+	routeSchemas?: IRouteSchemas;
 	onRequest?: InRouteShorthandOptions['onRequest'] | ((req: Request, res: Response) => Promise<any>);
 	preParsing?: InRouteShorthandOptions['preParsing'] | ((req: Request, res: Response) => Promise<any>);
 	preValidation?: InRouteShorthandOptions['preValidation'] | ((req: Request, res: Response) => Promise<any>);
@@ -69,11 +75,24 @@ export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOption
 
 export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>;
 
-export class ErrorResponse {
+export class ErrorResponseModel {
 	@IsNumber()
+	@RequiredProperty()
 	statusCode: number;
 	@IsString()
+	@RequiredProperty()
 	error: string;
 	@IsString()
+	@RequiredProperty()
 	message: string;
 }
+
+export class DefaultResponseModel {
+	@IsBoolean()
+	@RequiredProperty()
+	success: boolean;
+}
+
+export const defaultResponse: DefaultResponseModel = {
+	success: true
+};

@@ -23,8 +23,8 @@ export class PorjectInitialization {
 	public static start(projectFolder: string, configurationFolder?: string) {
 		(async () => {
 			// 1: Project configuration
-			await FsUtils.waitForFolder(projectFolder, true);
 			await this.setConfiguration(join(projectFolder, '..', '..', configurationFolder || this.defaultConfigurationFolder));
+			await FsUtils.waitForFolder(projectFolder, true);
 
 		})().then(() => {
 			// Project started
@@ -50,6 +50,10 @@ export class PorjectInitialization {
 	private static async setConfiguration(configurationFolder: string) {
 
 		// Load configuration
+		const currentEnv = process.env.NODE_ENV;
+		if (!currentEnv) {
+			process.env.NODE_ENV = 'dev';
+		}
 		const configuration = await ConfigurationLoader.loadProject(configurationFolder);
 
 		// Create configuration serice

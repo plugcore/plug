@@ -1,15 +1,15 @@
 import {
-	ArrayUtils, Container, Logger, OnEvent, PublicEvents, Service,
-	ObjectValidatorUtils, ProjectConfiguration, Inject, ObjectUtils,
-	ClassParameter
+	ArrayUtils, ClassParameter, Container, Inject, Logger,
+	ObjectUtils, ObjectValidatorUtils, OnEvent, ProjectConfiguration,
+	PublicEvents, Service
 } from '@plugdata/core';
-import * as oas from 'fastify-oas';
-import { RoutesService } from './routes.service';
-import { TRequestHandler, ErrorResponse } from './routes.shared';
-import { RoutesUtils } from './routes.utils';
 import { RouteSchema } from 'fastify';
-import { TWebConfugration } from '../configuration/configuration.insterfaces';
+import * as oas from 'fastify-oas';
 import { WebConfiguration } from '../configuration/configuration.default';
+import { TWebConfugration } from '../configuration/configuration.insterfaces';
+import { RoutesService } from './routes.service';
+import { ErrorResponseModel, TRequestHandler } from './routes.shared';
+import { RoutesUtils } from './routes.utils';
 
 @Service()
 export class RoutesInitializer {
@@ -25,10 +25,9 @@ export class RoutesInitializer {
 		// OAS configuration
 
 		const defaultServers = { servers: [{ url: `http://${this.routesService.host}:${this.routesService.httpPort}` }] };
-		const defaultConfiguration = ObjectUtils.deepMerge(WebConfiguration.default, defaultServers);
-		const oasConfiguration = (configuration.web && configuration.web.oas) ? 
+		const defaultConfiguration = ObjectUtils.deepMerge(WebConfiguration.default.web.oas, defaultServers);
+		const oasConfiguration = (configuration.web && configuration.web.oas) ?
 			ObjectUtils.deepMerge(defaultConfiguration, configuration.web.oas) : defaultConfiguration;
-
 		this.routesService.fastifyInstance.register(oas, {
 			exposeRoute: false,
 			addModels: true,
@@ -38,7 +37,7 @@ export class RoutesInitializer {
 		// Documentation route
 		this.routesService.fastifyInstance.route({
 			method: 'GET',
-			url: '/plug-documentation/json',
+			url: '/api-documentation.json',
 			handler: (request, reply) => { reply.send(this.routesService.fastifyInstance.oas()); },
 			schema: { hide: true }
 		});
@@ -47,7 +46,7 @@ export class RoutesInitializer {
 
 	@OnEvent(PublicEvents.allServicesLoaded)
 	public onServicesReady() {
-		this.log.debug('All services loaded event, starting web servicer ...');
+		this.log.debug('All services loaded, starting http server...');
 		this.initHttpServer().then();
 	}
 
@@ -66,7 +65,7 @@ export class RoutesInitializer {
 			// 2: Attach al controller methods to fastify methods
 			for (const method of methods) {
 
-				const controllerMethodHandler: TRequestHandler = controllerService[method.methodName];
+				const controllerMethodHandler: TRequestHandler = controllerService[method.methodName].bind(controllerService);
 				const controllerOptions = method.options || {};
 				const url = controller.options.urlBase + (method.path || '');
 
@@ -86,33 +85,37 @@ export class RoutesInitializer {
 				}
 
 				// Route validations
-				const routeValidation = controllerOptions.routeValidation;
+				const routeSchemas = controllerOptions.routeSchemas;
 				const schema: RouteSchema = controllerOptions.schema || {};
-				if (routeValidation) {
+				if (routeSchemas) {
 
-					if (method.httpMethod !== 'GET' && routeValidation.request) {
-						schema.body = this.isModelArray(routeValidation.request) ? 
-							ObjectValidatorUtils.generateJsonSchema(routeValidation.request.model, { asArray: true }): 
-							ObjectValidatorUtils.generateJsonSchema(routeValidation.request) ;
+					if (method.httpMethod !== 'GET' && routeSchemas.request) {
+						schema.body = this.isModelArray(routeSchemas.request) ?
+							ObjectValidatorUtils.generateJsonSchema(routeSchemas.request.model, { asArray: true }) :
+							ObjectValidatorUtils.generateJsonSchema(routeSchemas.request);
 					}
-					if (routeValidation.response) {
+					if (routeSchemas.response) {
 						schema.response = {
-							200: schema.body = this.isModelArray(routeValidation.response) ? 
-								ObjectValidatorUtils.generateJsonSchema(routeValidation.response.model, { asArray: true }): 
-								ObjectValidatorUtils.generateJsonSchema(routeValidation.response),
-							400: ObjectValidatorUtils.generateJsonSchema(ErrorResponse)
+							200: this.isModelArray(routeSchemas.response) ?
+								ObjectValidatorUtils.generateJsonSchema(routeSchemas.response.model, { asArray: true }) :
+								ObjectValidatorUtils.generateJsonSchema(routeSchemas.response),
+							400: ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel),
+							500: ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel)
 						};
 					}
-					if (routeValidation.parameters) {
-						schema.querystring = ObjectValidatorUtils.generateJsonSchema(routeValidation.parameters);
+					if (routeSchemas.parameters) {
+						schema.querystring = ObjectValidatorUtils.generateJsonSchema(routeSchemas.parameters);
 					}
-					if (routeValidation.headers) {
-						schema.headers = ObjectValidatorUtils.generateJsonSchema(routeValidation.headers);
+					if (routeSchemas.urlParameters) {
+						schema.params = ObjectValidatorUtils.generateJsonSchema(routeSchemas.urlParameters);
+					}
+					if (routeSchemas.headers) {
+						schema.headers = ObjectValidatorUtils.generateJsonSchema(routeSchemas.headers);
 					}
 					controllerOptions.schema = schema;
 
 				}
-				controllerOptions.routeValidation = undefined;
+				controllerOptions.routeSchemas = undefined;
 
 				const routeConfiguration = Object.assign(controllerOptions, {
 					method: method.httpMethod,
@@ -131,6 +134,7 @@ export class RoutesInitializer {
 		}));
 
 		await this.routesService.startHttpServer();
+
 
 	}
 

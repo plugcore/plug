@@ -10,18 +10,19 @@ import { ObjectUtils } from '../utils/object.utils';
 export class Logger {
 
 	private pinoLogger: pino.Logger;
+	public  pinoOptions: pino.LoggerOptions;
 
 	constructor(
 		private projectConfiguration: ProjectConfiguration
 	) {
-		const pinoConfiguration = Object.assign(
+		this.pinoOptions = Object.assign(
 			ObjectUtils.deepClone(this.projectConfiguration.log),
 			<pino.LoggerOptions>{
 				// TODO: Modify with extensions name in the future
 				name: 'main'
 			}
 		);
-		this.pinoLogger = pino(pinoConfiguration);
+		this.pinoLogger = pino(this.pinoOptions);
 	}
 
 	public debug(...inMsgs: any) {

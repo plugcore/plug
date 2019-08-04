@@ -16,11 +16,7 @@ Contains the main functionality that any Node JS might need, some of it would be
 
 - __Events__: It's an adaptation of [EventEmitter3](https://github.com/primus/eventemitter3#readme) to our dependency injection system. It has almost the same API than the [Node JS events](https://nodejs.org/api/events.html) but with some additions like contexts, so it won't be necessary to call `.bind(this)`, and some unnecessary methods removed for better performance.
 
-- __Scheduled jobs__: For job scheduling we have adapted a simple [cron](https://www.npmjs.com/package/cron) library to our dependency injection and event system so you can easily create them and listen for all events if some logging or database insertion is needed.
-
 - __Object validator__: An integration with our dependency injection of [AJV](https://github.com/epoberezkin/ajv) wich supports [draft-07 of JSON Schema](http://json-schema.org/latest/json-schema-validation.html) and is one of the fastest a better mantanind libraries for this porpuse
-
-- __Object transformation__: Another common task is object transformation when you are dealing with different integrations and internal business logic, so we have created an utility with a similar API than [json-map-transform](https://github.com/edudavid/json-map-transform) for common and repetitive object transformations with precompiled templates.
 
 - __Utils__: During our development of several projects we've been gathering some common usage utils, mostly for objects and promises manipulation, and other NodeJS wrappers for things like file system calls. We'll be updating these utils as development progresses.
 

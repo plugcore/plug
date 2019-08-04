@@ -1,4 +1,4 @@
-import { ClassParameter, ObjectUtils, Service } from '@plugdata/core';
+import { ClassParameter, ObjectUtils, Service, TypeChecker } from '@plugdata/core';
 import { IControllerOptions, TMethodOptions } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 
@@ -18,59 +18,73 @@ export function Controller(options: IControllerOptions) {
 
 }
 
-export function Get(path?: string, options?: TMethodOptions) {
+export function Get(path?: string | TMethodOptions, options?: TMethodOptions) {
 	return function (controller: any, methodName: string) {
 		// If arguments size is 3 it means its a method definition
 		if (arguments.length === 3) {
-			RoutesUtils.registerMethod({ httpMethod: 'GET', path, options }, { controller, methodName });
+			const realPath = TypeChecker.isString(path) ? path : undefined;
+			const realOptions = TypeChecker.isString(path) ? options : path;
+			RoutesUtils.registerMethod({ httpMethod: 'GET', path: realPath, options: realOptions }, { controller, methodName });
 		}
 	};
 }
 
-export function Head(path?: string, options?: TMethodOptions) {
+export function Head(path?: string | TMethodOptions, options?: TMethodOptions) {
 	return function (controller: any, methodName: string) {
 		if (arguments.length === 3) {
-			RoutesUtils.registerMethod({ httpMethod: 'HEAD', path, options }, { controller, methodName });
+			const realPath = TypeChecker.isString(path) ? path : undefined;
+			const realOptions = TypeChecker.isString(path) ? options : path;
+			RoutesUtils.registerMethod({ httpMethod: 'HEAD', path: realPath, options: realOptions }, { controller, methodName });
 		}
 	};
 }
 
-export function Post(path?: string, options?: TMethodOptions) {
+export function Post(path?: string | TMethodOptions, options?: TMethodOptions) {
 	return function (controller: any, methodName: string) {
 		if (arguments.length === 3) {
-			RoutesUtils.registerMethod({ httpMethod: 'POST', path, options }, { controller, methodName });
+			const realPath = TypeChecker.isString(path) ? path : undefined;
+			const realOptions = TypeChecker.isString(path) ? options : path;
+			RoutesUtils.registerMethod({ httpMethod: 'POST', path: realPath, options: realOptions }, { controller, methodName });
 		}
 	};
 }
 
-export function Put(path?: string, options?: TMethodOptions) {
+export function Put(path?: string | TMethodOptions, options?: TMethodOptions) {
 	return function (controller: any, methodName: string) {
 		if (arguments.length === 3) {
-			RoutesUtils.registerMethod({ httpMethod: 'PUT', path, options }, { controller, methodName });
+			const realPath = TypeChecker.isString(path) ? path : undefined;
+			const realOptions = TypeChecker.isString(path) ? options : path;
+			RoutesUtils.registerMethod({ httpMethod: 'PUT', path: realPath, options: realOptions }, { controller, methodName });
 		}
 	};
 }
 
-export function Delete(path?: string, options?: TMethodOptions) {
+export function Delete(path?: string | TMethodOptions, options?: TMethodOptions) {
 	return function (controller: any, methodName: string) {
 		if (arguments.length === 3) {
-			RoutesUtils.registerMethod({ httpMethod: 'DELETE', path, options }, { controller, methodName });
+			const realPath = TypeChecker.isString(path) ? path : undefined;
+			const realOptions = TypeChecker.isString(path) ? options : path;
+			RoutesUtils.registerMethod({ httpMethod: 'DELETE', path: realPath, options: realOptions }, { controller, methodName });
 		}
 	};
 }
 
-export function Options(path?: string, options?: TMethodOptions) {
+export function Options(path?: string | TMethodOptions, options?: TMethodOptions) {
 	return function (controller: any, methodName: string) {
 		if (arguments.length === 3) {
-			RoutesUtils.registerMethod({ httpMethod: 'OPTIONS', path, options }, { controller, methodName });
+			const realPath = TypeChecker.isString(path) ? path : undefined;
+			const realOptions = TypeChecker.isString(path) ? options : path;
+			RoutesUtils.registerMethod({ httpMethod: 'OPTIONS', path: realPath, options: realOptions }, { controller, methodName });
 		}
 	};
 }
 
-export function Patch(path?: string, options?: TMethodOptions) {
+export function Patch(path?: string | TMethodOptions, options?: TMethodOptions) {
 	return function (controller: any, methodName: string) {
 		if (arguments.length === 3) {
-			RoutesUtils.registerMethod({ httpMethod: 'PATCH', path, options }, { controller, methodName });
+			const realPath = TypeChecker.isString(path) ? path : undefined;
+			const realOptions = TypeChecker.isString(path) ? options : path;
+			RoutesUtils.registerMethod({ httpMethod: 'PATCH', path: realPath, options: realOptions }, { controller, methodName });
 		}
 	};
 }

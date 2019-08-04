@@ -1,6 +1,7 @@
 import { ArrayUtils } from './array.utils';
 import { TypeChecker } from './type.checker';
 import { IObjectEntry } from './utils.interfaces';
+import { deepStrictEqual } from 'assert';
 
 export class ObjectUtils {
 
@@ -350,6 +351,18 @@ export class ObjectUtils {
 
 		return Object.freeze(object);
 
+	}
+
+	/**
+	 * Wrapper of Nodejs Assert.deepEqualStrict
+	 */
+	public static deepEqual(obj1: object, obj2: object): boolean {
+		try {
+			deepStrictEqual(obj1, obj2);
+			return true;
+		} catch (error) {
+			return false;
+		}
 	}
 
 	private static isMergebleObject(item: any): boolean {

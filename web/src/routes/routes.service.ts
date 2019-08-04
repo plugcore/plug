@@ -27,13 +27,14 @@ export class RoutesService {
 			configuration.web.server.host : WebConfiguration.default.web.server.host;
 
 		// Fastify initialization
-		this.fastifyInstance = fastify();
+		this.fastifyInstance = fastify({
+			logger: this.log.pinoOptions
+		});
 
 	}
 
 	public async startHttpServer() {
-		this.addressListenning = await this.fastifyInstance.listen(this.httpPort);
-		this.log.info('Listening server on ' + this.addressListenning);
+		this.addressListenning = await this.fastifyInstance.listen(this.httpPort);	
 	}
 
 	public async shutdownHttpServer() {

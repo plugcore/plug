@@ -1,6 +1,6 @@
 {
 	"name": "plugdata-framework",
-	"version": "0.1.3",
+	"version": "0.2.0",
 	"description": "![Plugdata.io](_docs/logo.png?raw=true \"Plugdata.io\")",
 	"main": ".eslintrc.js",
 	"scripts": {
@@ -26,7 +26,11 @@
 		"dev": "node ./node_modules/npm-run-all/bin/run-p/index.js dev:**",
 		"dev:core": "cd core & node ../node_modules/tsc-watch/index.js --noClear --onSuccess \"npm run build\"",
 		"dev:web": "cd web & node ../node_modules/tsc-watch/index.js --noClear --onSuccess \"npm run build\"",
-		"dev:data": "cd data & node ../node_modules/tsc-watch/index.js --noClear --onSuccess \"npm run build\""
+		"dev:data": "cd data & node ../node_modules/tsc-watch/index.js --noClear --onSuccess \"npm run build\"",
+		"link-published": "npm i && node _scripts/set-packages-version.js force same && npx run-s link-published:**",
+		"link-published:core": "cd core/publish & npm link ",
+		"link-published:web": "cd web/publish & npm link ",
+		"link-published:data": "cd data/publish & npm link "
 	},
 	"repository": {
 		"type": "git",
