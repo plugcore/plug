@@ -1,39 +1,51 @@
-import { ClassParameter, IDiOnInit, Inject, Logger, ObjectUtils, ProjectConfiguration, Service, TypeChecker } from '@plugdata/core';
+import { ClassParameter, IDiOnInit, Logger, ObjectUtils, ProjectConfiguration, Service, TypeChecker } from '@plugdata/core';
 import { Collection, Db, MongoClient } from 'mongodb';
-import { TDataConfugration } from '../configuration/configuration.insterfaces';
 import { IGetCollectionOptions } from './mongodb.interfaces';
 
 @Service()
 export class MongoDbConnection implements IDiOnInit {
 
 	private dbConnection: Db;
-	private mongoClient: MongoClient;
+	private mongoClient: Omit<MongoClient, ''>;
 
+	private connectionName?: string;
 	constructor(
 		private log: Logger,
-		@Inject({ sId: ProjectConfiguration }) private configuration: TDataConfugration
+		private configuration: ProjectConfiguration,
 	) { }
 
 	public async onInit() {
 		if (this.configuration.data) {
 			try {
-				this.mongoClient = await MongoClient.connect(
-					this.configuration.data.url, Object.assign({
-						useNewUrlParser: true
-					}, this.configuration.data.options));
-				this.dbConnection = this.mongoClient.db(this.configuration.data.databaseName);
+				if (this.connectionName) {
+					const connection = (this.configuration.data.connections || []).find(c => c.name === this.connectionName);
+					if (connection) {
+						this.mongoClient = await MongoClient.connect(connection.url, Object.assign({
+							useNewUrlParser: true
+						}, connection.options));
+						this.dbConnection = this.mongoClient.db(connection.databaseName);
+					} else {
+						this.log.error('Mongodb connection not found in configuration: ' + this.connectionName);
+					}
+				} else {
+					this.mongoClient = await MongoClient.connect(
+						this.configuration.data.defaultConnection.url, Object.assign({
+							useNewUrlParser: true
+						}, this.configuration.data.defaultConnection.options));
+					this.dbConnection = this.mongoClient.db(this.configuration.data.defaultConnection.databaseName);
+				}
 			} catch (error) {
 				this.log.error('Error while connecting to MongoDB', error);
 			}
 		} else {
-			this.log.debug('No database configuration has been found');
+			this.log.error('No database configuration has been found');
 		}
 	}
 
 	/**
 	 * Creates a Mongodb client connected to the default mongodb connection
 	 * and already attached to a determined collection
-	 * @param collection 
+	 * @param collection
 	 */
 	public async getCollection<T>(
 		collection: ClassParameter<T> | string, options?: IGetCollectionOptions<T>
@@ -48,11 +60,11 @@ export class MongoDbConnection implements IDiOnInit {
 				if (error) {
 					reject(error);
 				} else {
-					if (options && (options.createIfDoesntExists || options.createIfDoesntExists !== undefined) ) {
+					if (options && (options.createIfDoesntExists || options.createIfDoesntExists !== undefined)) {
 						// Create collection if doesn't exists
 						// TODO: Improve readibility
 						const r = this.dbConnection.listCollections({ name: collectionName }, { nameOnly: true });
-						r.hasNext((error, hasNext)=> {
+						r.hasNext((error, hasNext) => {
 							if (error) {
 								reject(error);
 							} else {

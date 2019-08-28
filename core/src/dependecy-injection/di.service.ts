@@ -3,6 +3,9 @@ import { IDiEntry, IServiceIdentifier } from './di.interfaces';
 
 export class DiService {
 
+	public static readonly variationStart = '<[';
+	public static readonly variationEnd = ']>';
+
 	// -------------------------------------------------------------------------
 	// Class vars
 	// -------------------------------------------------------------------------
@@ -14,13 +17,18 @@ export class DiService {
 	// Public methods
 	// -------------------------------------------------------------------------
 
-	public static genServiceId(service: IServiceIdentifier) {
+	public static genServiceId(service: IServiceIdentifier, variation?: Record<string, any>) {
 		let result = '';
 
 		if (typeof service === 'string') {
 			result = service;
 		} else if (service instanceof Function) {
 			result = service.name;
+		}
+		if (variation) {
+			const keys = Object.keys(variation);
+			keys.sort();
+			result = `${result}${this.variationStart}${keys.map(k => `${k}:${variation[k]}`).join('-')}${this.variationEnd}`;
 		}
 		return result;
 	}
@@ -51,7 +59,8 @@ export class DiService {
 			serviceId,
 			serviceClass: clazz,
 			isReady: false,
-			depsClosed: false
+			depsClosed: false,
+			isOnlyTemplate: false
 		};
 
 	}

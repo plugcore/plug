@@ -3,9 +3,6 @@ import { access, lstat, readdir, readFile, rmdir, stat, Stats, unlink, write } f
 import { join } from 'path';
 import { StringConstants } from '../constants/string.constants';
 import { TypeChecker } from '../utils/type.checker';
-import { IDiServiceMetadata } from '../dependecy-injection/di.interfaces';
-import { Container } from '../dependecy-injection/di.container';
-import { DiService } from '../dependecy-injection/di.service';
 
 export interface IFileStats {
 	path: string;
@@ -254,75 +251,10 @@ export class FsUtils {
 	}
 
 	/**
-	 * Loads all the js files recursively in the given path, and waits for all the
-	 * services to be loaded.
-	 * @param folderPath
-	 */
-	public static async waitForFolder(folderPath: string, recursive?: boolean): Promise<IDiServiceMetadata[]> {
-
-		const jsFiles = await this.loadJsFolder(folderPath, recursive);
-		const services: IDiServiceMetadata[] = [];
-		const classes = this.getClasses(jsFiles);
-
-		// Load all classes that have metadata (Services)
-		classes.forEach(clazz => {
-			const clazzMetadata = Container.getServiceMetadata(clazz);
-			if (clazzMetadata) {
-				services.push(clazzMetadata);
-			}
-		});
-
-		setTimeout(() => {
-			services.forEach(service => {
-				const serviceId = DiService.genServiceId(service.serviceId);
-				const entry = DiService.getEntry(serviceId, service.ctx);
-				if (!entry) {
-					console.error(
-						`No dependencies has been found for service: ${serviceId} ` +
-						`in context: ${service.ctx}`);
-				} else if (!entry.isReady) {
-					const depsLeft = entry.depsLeft || <{ targetServiceId: string; depMet: boolean }[]> [];
-					const missingDeps = depsLeft.filter(dep => !dep.depMet).map(dl => dl.targetServiceId);
-					console.error(
-						`The following dependencies couldn't be found for service: ${serviceId} ` +
-						`in context: ${service.ctx} => ${missingDeps.join(',')}`);
-				}
-			});
-
-		}, 5 * 1000);
-
-		// Wait for all the  services to be loaded
-		if (services && services.length > 0) {
-			await Container.waitFor(services);
-		}
-
-		return services;
-	}
-	
-	/**
-	 * Returns a list of all the classes loaded by the loadFolder function
-	 * @param jsFiles
-	 */
-	public static getClasses(jsFiles: any[]): Function[] {
-		const result: Function[] = [];
-
-		jsFiles.forEach(jsFile => {
-			Object.keys(jsFile).forEach(key => {
-				const moduleExport = jsFile[key];
-				if (moduleExport instanceof Function) {
-					result.push(moduleExport);
-				}
-			});
-		});
-
-		return result;
-	}
-
-	/**
 	 * Check if the folder exists and you have permissions over it. It doesn't throw an error
 	 * but returns it instead.
 	 * @param folderPath
-	 */	
+	 */
 	public static async fileOrFolderExists(folderPath: string): Promise<{ exists: boolean; error?: Error }> {
 		return new Promise(resolve => {
 
@@ -339,7 +271,7 @@ export class FsUtils {
 
 	/**
 	 * Tries to load the file path contents as JSON, can throw exceptions
-	 * @param filePath 
+	 * @param filePath
 	 */
 	public static async loadJsonFile<T>(filePath: string, options?: { encoding?: null; flag?: string }) {
 

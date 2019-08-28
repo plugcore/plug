@@ -1,0 +1,65 @@
+.branding {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: fixed;
+  width: 100%;
+  max-width: 15rem;
+  height: 64px;
+  line-height: 64px;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  color: #444;
+  transition-delay: 0s;
+  transition: all $sidebarTrnTime $transitionTiming;
+  -webkit-transition: all $sidebarTrnTime $transitionTiming;
+  .app-logo {
+    width: auto;
+    height: 22px;
+    margin-right: 8px;
+  }
+  .app-logo-text {
+    width: auto;
+    height: 20px;
+  }
+} 
+
+.app-user {
+  text-align: center;
+  width: 100%;
+  padding: 1rem 0 .4rem;
+  .app-user-photo {
+    width: 72px;
+    margin: 0 auto 8px;
+    height: 72px;
+    box-sizing: border-box;
+    border: 1px solid rgba(120, 130, 140, 0.13);
+    padding: 4px;
+    border-radius: 50%;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
+  .app-user-name {
+    display: block;
+    font-size: .875rem;
+    font-weight: 300;
+    color: rgba(0, 0, 0, .96);
+    margin-left: -2px;
+  }
+}
+[dir=rtl] {
+  .branding {
+    top: 0;
+    left: auto !important;
+    right: 0;
+    .app-logo {
+      margin-right: 0;
+      margin-left: 8px;
+    }
+  } 
+}

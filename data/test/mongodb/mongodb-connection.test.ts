@@ -1,7 +1,6 @@
 import { TestClass, PlugTest, BeforeTests, Container, ProjectConfiguration, Test, AfterTests } from '@plugdata/core';
 import { Collection } from '../../src/mongodb/mongodb.interfaces';
 import { DbCollectionExample } from './examples/dbcollection.example';
-import { TDataConfugration } from '../../src/configuration/configuration.insterfaces';
 import { MongoDbConnection } from '../../src/mongodb/mongodb.connection';
 
 @TestClass()
@@ -12,13 +11,11 @@ export class MongoDbConnectionTest extends PlugTest {
 
 	@BeforeTests()
 	public async before() {
-
-		const configuration = await Container.get<TDataConfugration>(ProjectConfiguration);
+		const configuration = await Container.get<ProjectConfiguration>(ProjectConfiguration);
 		if (configuration.data) {
 			this.mongoDbConnection = await Container.get<MongoDbConnection>(MongoDbConnection);
 			this.collection = await this.mongoDbConnection.getCollection(DbCollectionExample);
 		}
-
 	}
 
 	@AfterTests()
@@ -44,6 +41,8 @@ export class MongoDbConnectionTest extends PlugTest {
 			await this.collection.deleteOne(testData);
 			const findOneResultAfterDelete = await this.collection.findOne(testData);
 			this.assert.ok(!findOneResultAfterDelete);
+		} else {
+			this.assert.ok(true);
 		}
 
 	}

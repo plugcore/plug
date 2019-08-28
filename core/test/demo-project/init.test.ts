@@ -11,7 +11,7 @@ export class InitTest extends PlugTest {
 	@Test()
 	public async startApp() {
 
-		PorjectInitialization.start(this.initTestFolder);
+		// PorjectInitialization.start(this.initTestFolder);
 
 	}
 

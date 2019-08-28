@@ -1,0 +1,20 @@
+<form [formGroup]="formGroup">
+	<mat-form-field class="dateStart">
+		<input #dateStart formControlName="dateStart" matInput (input)="fromInput('dateStart', dateStart.value)" (dateInput)="fromFormGroup('dateStart')"
+		 [matDatepicker]="picker" [placeholder]="data.filterName + ' date start'">
+		<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+		<mat-datepicker #picker></mat-datepicker>
+	</mat-form-field>
+	<mat-form-field class="timeStart">
+		<input #timeStart type="time" formControlName="timeStart" matInput (input)="fromFormGroup('timeStart')" [placeholder]="data.filterName + ' time start'">
+	</mat-form-field>
+	<mat-form-field class="dateEnd">
+		<input #dateEnd formControlName="dateEnd" matInput (input)="fromInput('dateEnd', dateEnd.value)" (dateInput)="fromFormGroup('dateEnd')"
+		 [matDatepicker]="picker2" [placeholder]="data.filterName + ' date end'">
+		<mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+		<mat-datepicker #picker2></mat-datepicker>
+	</mat-form-field>
+	<mat-form-field class="timeEnd">
+		<input #timeEnd type="time" formControlName="timeEnd" matInput (input)="fromFormGroup('timeEnd')" [placeholder]="data.filterName + ' time end'">
+	</mat-form-field>
+</form>

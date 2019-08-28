@@ -1,0 +1,31 @@
+.json-view {
+	text-align: center;
+}
+
+p.break-word {
+	word-wrap: break-word;
+}
+
+p > span {
+	&.string {
+		color: green;
+	}
+	&.boolean {
+		color: blue;
+	}
+	&.number {
+		color: darkorange;
+	}
+	&.null {
+		color: magenta;
+	}
+}
+
+span.show-properties:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.breadcrumb {
+	margin-bottom: 10px;
+}

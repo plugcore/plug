@@ -21,6 +21,11 @@ export interface IServiceArgs {
 	ctx?: string;
 }
 
+export interface IInjectArgs extends IServiceArgs{
+	variationVarName?: string;
+	variation?: Record<string, any>;
+}
+
 /**
  * Constructor handler interface
  */
@@ -37,20 +42,26 @@ export interface IDiEntry {
 	serviceId: string;
 	isReady: boolean;
 	depsClosed: boolean;
+	isOnlyTemplate: boolean;
 	serviceClass?: Function;
 	object?: any;
-	constructorHandlers?: [{
+	constructorHandlers?: {
 		targetServiceId: string;
 		index: number;
 		targetCtx?: string;
-	}];
-	depsLeft?: [{
+		variationVarName?: string;
+		variationVarValue?: any;
+	}[];
+	depsLeft?: {
 		targetServiceId: string;
 		depMet: boolean;
 		targetCtx?: string;
-	}];
+		variationVarName?: string;
+		variationVarValue?: any;
+	}[];
 	cbWaiting?: Function[];
 	metadata?: any;
+	variation?: Record<string, any>;
 }
 
 /**

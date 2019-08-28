@@ -17,7 +17,7 @@ export class Di4Example implements IDiOnInit {
 	}
 
 	public async onInit(): Promise<void> {
-		await new Promise((resolve, reject) => {
+		await new Promise((resolve) => {
 			setTimeout(() => { resolve(); }, 500);
 		});
 	}

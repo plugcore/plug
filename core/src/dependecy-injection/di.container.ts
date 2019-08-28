@@ -1,6 +1,7 @@
 import { IDiEntry, IDiOnInit, IDiServiceMetadata, IServiceIdentifier } from './di.interfaces';
 import { DiService } from './di.service';
 import { EventUtils } from '../events/event.utils';
+import { ObjectUtils } from '../utils/object.utils';
 
 /**
  * Service container.
@@ -72,15 +73,17 @@ export class Container {
 	 * @param serviceId
 	 * @param ctx
 	 */
-	public static async get<T>(serviceId: IServiceIdentifier, ctx?: string): Promise<T> {
+	public static async get<T>(
+		serviceId: IServiceIdentifier, ctx?: string, variation?: Record<string, any>
+	): Promise<T> {
 
-		const serviceName = DiService.genServiceId(serviceId);
+		const serviceName = DiService.genServiceId(serviceId, variation);
 		const entry = DiService.getEntry(serviceName, ctx);
 
 		if (entry && entry.isReady) {
 			return entry.object;
 		} else {
-			return await this.waitForDep<T>(serviceName, ctx);
+			return await this.waitForDep<T>(serviceName, ctx, variation);
 		}
 
 	}
@@ -92,15 +95,27 @@ export class Container {
 	 * @param ctx
 	 * @param update
 	 */
-	public static registerDepLeft(serviceId: IServiceIdentifier, targetServiceId: IServiceIdentifier, targetCtx?: string, update?: boolean) {
+	public static registerDepLeft(inp: {
+		serviceId: IServiceIdentifier;
+		targetServiceId: IServiceIdentifier;
+		targetCtx?: string;
+		update?: boolean;
+		variation?: Record<string, any>;
+		variationVarName?: string;
+	}) {
 
-		const serviceName = DiService.genServiceId(serviceId);
-		const targetServiceName = DiService.genServiceId(targetServiceId);
+		const serviceName = DiService.genServiceId(inp.serviceId);
+		const targetServiceName = DiService.genServiceId(inp.targetServiceId, inp.variation);
 		let entry = DiService.getTmpEnrySafely(serviceName);
 
-		entry = this.registerEntryDepLeft(entry, targetServiceName, targetCtx);
+		entry = this.registerEntryDepLeft({
+			entry,
+			targetServiceName,
+			targetCtx: inp.targetCtx,
+			variationVarName: inp.variationVarName
+		});
 
-		if (update) {
+		if (inp.update) {
 			DiService.updateTmpEnry(entry);
 		}
 
@@ -113,20 +128,36 @@ export class Container {
 	 * @param targetId
 	 * @param index
 	 * @param ctx
-	 * @param udate
+	 * @param update
 	 */
-	public static registrerConstructorHandler(
-		id: IServiceIdentifier, targetId: IServiceIdentifier, index: number, targetCtx?: string, udate?: boolean
-	) {
+	public static registrerConstructorHandler(inp: {
+		id: IServiceIdentifier;
+		targetId: IServiceIdentifier;
+		index: number;
+		targetCtx?: string;
+		update?: boolean;
+		variation?: Record<string, any>;
+		variationVarName?: string;
+	}) {
 
-		const serviceName = DiService.genServiceId(id);
-		const targetServiceName = DiService.genServiceId(targetId);
+		const serviceName = DiService.genServiceId(inp.id);
+		const targetServiceName = DiService.genServiceId(inp.targetId);
 
 		let entry = DiService.getTmpEnrySafely(serviceName);
-		entry = this.updateConstructorHandler(entry, index, targetServiceName, targetCtx);
+		entry = this.updateConstructorHandler({
+			entry,
+			index: inp.index,
+			targetServiceName,
+			targetCtx: inp.targetCtx,
+			variationVarName: inp.variationVarName,
+		});
 
-		if (udate) {
+		if (inp.update) {
 			DiService.updateTmpEnry(entry);
+		}
+
+		if (inp.variation) {
+			this.waitForDep(targetServiceName, inp.targetCtx, inp.variation);
 		}
 
 	}
@@ -173,63 +204,87 @@ export class Container {
 	// Private methods
 	// -------------------------------------------------------------------------
 
-	private static registerEntryDepLeft(entry: IDiEntry, targetServiceName: string, targetCtx?: string): IDiEntry {
+	private static registerEntryDepLeft(inp: {
+		entry: IDiEntry;
+		targetServiceName: string;
+		targetCtx?: string;
+		variationVarName?: string;
+	}): IDiEntry {
 
 		const newDepLeft = {
-			targetServiceId: targetServiceName,
-			depMet: DiService.depIsReady(targetServiceName, targetCtx),
-			targetCtx
+			targetServiceId: inp.targetServiceName,
+			depMet: inp.variationVarName !== undefined || DiService.depIsReady(inp.targetServiceName, inp.targetCtx),
+			targetCtx: inp.targetCtx,
+			variationVarName: inp.variationVarName
 		};
 
-		if (entry.depsLeft) {
-			const hIndex = entry.depsLeft
-				.findIndex(el => el.targetServiceId === targetServiceName);
+		if (inp.entry.depsLeft) {
+			const hIndex = inp.entry.depsLeft
+				.findIndex(el => el.targetServiceId === inp.targetServiceName);
 			if (hIndex === -1) {
-				entry.depsLeft.push(newDepLeft);
+				inp.entry.depsLeft.push(newDepLeft);
 			} else {
-				entry.depsLeft[hIndex] = newDepLeft;
+				inp.entry.depsLeft[hIndex] = newDepLeft;
 			}
 		} else {
-			entry.depsLeft = [newDepLeft];
+			inp.entry.depsLeft = [newDepLeft];
 		}
 
-		return entry;
+		return inp.entry;
 
 	}
 
-	private static updateConstructorHandler(entry: IDiEntry, index: number, targetServiceName: string, targetCtx?: string): IDiEntry {
+	private static updateConstructorHandler(inp: {
+		entry: IDiEntry;
+		index: number;
+		targetServiceName: string;
+		targetCtx?: string;
+		variationVarName?: string;
+	}): IDiEntry {
 		const newHandler = {
-			targetServiceId: targetServiceName,
-			index,
-			targetCtx
+			targetServiceId: inp.targetServiceName,
+			index: inp.index,
+			targetCtx: inp.targetCtx,
+			variationVarName: inp.variationVarName
 		};
-		if (entry.constructorHandlers) {
-			const hIndex = entry.constructorHandlers
-				.findIndex(el => el.index === index);
+		if (inp.entry.constructorHandlers) {
+			const hIndex = inp.entry.constructorHandlers
+				.findIndex(el => el.index === inp.index);
 			if (hIndex === -1) {
-				entry.constructorHandlers.push(newHandler);
+				inp.entry.constructorHandlers.push(newHandler);
 			}
 		} else {
-			entry.constructorHandlers = [newHandler];
+			inp.entry.constructorHandlers = [newHandler];
 		}
-		return entry;
+		return inp.entry;
 	}
 
 	private static initConstructorService(entry: IDiEntry, params: Function[], ctx?: string) {
 
 		params.forEach((targetClass, index) => {
 			const targetServiceName = DiService.genServiceId(targetClass);
-			entry = this.updateConstructorHandler(entry, index, targetServiceName, ctx);
+			// This will create a dep only if it's not been decorated iwth @inject() before
+			entry = this.updateConstructorHandler({
+				entry,
+				index,
+				targetServiceName,
+				targetCtx: ctx
+			});
 		});
 
 		if (entry.constructorHandlers) {
 			entry.constructorHandlers.forEach(element => {
-				entry = this.registerEntryDepLeft(entry,
-					element.targetServiceId, element.targetCtx || ctx);
+				entry = this.registerEntryDepLeft({
+					entry,
+					targetServiceName: element.targetServiceId,
+					targetCtx: element.targetCtx || ctx,
+					variationVarName: element.variationVarName
+				});
 			});
 		}
 
 		entry.depsClosed = true;
+		entry.isOnlyTemplate = entry.depsLeft && entry.depsLeft.some(dl => dl.variationVarName !== undefined) || false;
 		DiService.updateEntry(entry, ctx);
 		this.checkIfReady(entry, ctx);
 
@@ -243,6 +298,7 @@ export class Container {
 		}
 
 		entry.depsClosed = true;
+		entry.isOnlyTemplate = entry.depsLeft && entry.depsLeft.some(dl => dl.variationVarName) || false;
 		DiService.updateEntry(entry, ctx);
 		this.checkIfReady(entry, ctx);
 
@@ -259,9 +315,13 @@ export class Container {
 			const params: any[] = [];
 
 			entry.constructorHandlers.forEach(handler => {
-				const tEntry = DiService.getEntry(handler.targetServiceId, handler.targetCtx);
-				if (tEntry) {
-					params[handler.index] = tEntry.object;
+				if (handler.variationVarValue) {
+					params[handler.index] = handler.variationVarValue;
+				} else {
+					const tEntry = DiService.getEntry(handler.targetServiceId, handler.targetCtx);
+					if (tEntry) {
+						params[handler.index] = tEntry.object;
+					}
 				}
 			});
 
@@ -271,6 +331,23 @@ export class Container {
 			}
 
 		}
+
+		if (!entry.object) {
+			entry.object = new (<any>entry.serviceClass)();
+		}
+
+		const constructorHandlers = entry.constructorHandlers || [];
+		const depsToBeInjectedBecouseVaration = entry.depsLeft ? entry.depsLeft.filter(dl =>
+			dl.variationVarName &&
+			dl.variationVarValue &&
+			constructorHandlers.findIndex(ch => ch.variationVarName === dl.variationVarName) < 0
+		) : [];
+		if (depsToBeInjectedBecouseVaration.length > 0) {
+			depsToBeInjectedBecouseVaration.forEach(dep => {
+				entry.object[dep.variationVarName || ''] = dep.variationVarValue;
+			});
+		}
+
 		DiService.updateEntry(entry, ctx);
 
 		// Process ready
@@ -329,7 +406,7 @@ export class Container {
 	 * @param serviceName
 	 * @param ctx
 	 */
-	private static async waitForDep<T>(serviceName: string, ctx?: string) {
+	private static async waitForDep<T>(serviceName: string, ctx?: string, variation?: Record<string, any>) {
 
 		const entry = DiService.getEnrySafely(serviceName, undefined, ctx);
 
@@ -343,7 +420,55 @@ export class Container {
 				entry.cbWaiting = [callBack];
 			}
 
+
+			let isVariation = false;
+			if (
+				variation &&
+				entry.serviceClass === undefined &&
+				serviceName.indexOf(DiService.variationStart) >= 0 &&
+				serviceName.indexOf(DiService.variationEnd) >= 0
+			) {
+
+				const originalServiceName = serviceName.substring(0, serviceName.indexOf(DiService.variationStart));
+				const service = DiService.getEntry(originalServiceName, ctx);
+
+				if (service) {
+					console.log('service', entry, service);
+					entry.serviceClass = service.serviceClass;
+					entry.constructorHandlers = service.constructorHandlers ?
+						service.constructorHandlers.map(a => ObjectUtils.deepClone(a)) : undefined;
+					entry.depsLeft = service.depsLeft ?
+						service.depsLeft.map(a => ObjectUtils.deepClone(a)) : undefined;
+					entry.depsClosed = entry.depsLeft ? entry.depsLeft
+						.filter(dl => dl.variationVarName === undefined)
+						.every(dl => dl.depMet) : true;
+
+					const depLeft = (entry.depsLeft || [])
+						.filter(dl => dl.variationVarName !== undefined)
+						.find(depLeft => (depLeft.variationVarName && Object.keys(variation).includes));
+					if (depLeft) {
+						depLeft.depMet = true;
+						depLeft.variationVarValue = variation[depLeft.variationVarName || ''];
+					}
+
+					const constructorHandler = (entry.constructorHandlers || [])
+						.filter(dl => dl.variationVarName !== undefined)
+						.find(depLeft => (depLeft.variationVarName && Object.keys(variation).includes));
+					if (constructorHandler) {
+						constructorHandler.variationVarValue = variation[constructorHandler.variationVarName || ''];
+					}
+
+					isVariation = true;
+
+				}
+			}
+
 			DiService.updateEntry(entry, ctx);
+
+			if (isVariation) {
+				console.log('isVariation', entry);
+				this.checkIfReady(entry, ctx);
+			}
 
 		});
 
@@ -375,7 +500,7 @@ export class Container {
 
 	private static checkIfReady(entry: IDiEntry, ctx?: string) {
 
-		if (this.hasAllDeps(entry)) {
+		if (!entry.isOnlyTemplate && this.hasAllDeps(entry)) {
 			this.setServiceAsReady(entry, ctx);
 		}
 

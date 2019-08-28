@@ -1,0 +1,16 @@
+.container {
+	display: flex;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+}
+
+.card {
+	width: 20%;
+	.card-content {
+		margin: 0 16px;
+	}
+	.card-actions {
+		margin: 0 16px;
+		float: right;
+	}
+}

@@ -1,12 +1,10 @@
 import {
-	ArrayUtils, ClassParameter, Container, Inject, Logger,
-	ObjectUtils, ObjectValidatorUtils, OnEvent, ProjectConfiguration,
-	PublicEvents, Service
+	ArrayUtils, ClassParameter, Container, Logger, ObjectUtils, ObjectValidatorUtils,
+	OnEvent, ProjectConfiguration, PublicEvents, Service
 } from '@plugdata/core';
 import { RouteSchema } from 'fastify';
 import * as oas from 'fastify-oas';
 import { WebConfiguration } from '../configuration/configuration.default';
-import { TWebConfugration } from '../configuration/configuration.insterfaces';
 import { RoutesService } from './routes.service';
 import { ErrorResponseModel, TRequestHandler } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
@@ -19,7 +17,7 @@ export class RoutesInitializer {
 	constructor(
 		private log: Logger,
 		private routesService: RoutesService,
-		@Inject({ sId: ProjectConfiguration }) configuration: TWebConfugration
+		configuration: ProjectConfiguration
 	) {
 
 		// OAS configuration

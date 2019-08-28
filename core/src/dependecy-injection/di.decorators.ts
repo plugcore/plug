@@ -3,7 +3,7 @@ import { RmdConstats } from '../constants/reflect-metadata.constants';
 import { ExtCtxGenerator } from '../extensions/ext-ctx.generator';
 import { JsStackUtils } from '../utils/js-stack.utils';
 import { Container } from './di.container';
-import { IServiceArgs } from './di.interfaces';
+import { IServiceArgs, IInjectArgs } from './di.interfaces';
 
 /**
  * Service decortor made to easily registrer the class into the container
@@ -37,7 +37,7 @@ export function Service({ ctx, sId }: IServiceArgs = {}): Function {
  * definition at class level or at constructor level
  * @param sId
  */
-export function Inject({ sId, ctx }: IServiceArgs = {}): Function {
+export function Inject({ sId, ctx, variation, variationVarName }: IInjectArgs = {}): Function {
 	return (target: Record<string, any> | Function, propertyName: string, index?: number) => {
 
 		const type = Reflect.getMetadata(RmdConstats.objectClass, target, propertyName);
@@ -52,15 +52,28 @@ export function Inject({ sId, ctx }: IServiceArgs = {}): Function {
 
 			if (target instanceof Function && index !== undefined) {
 				// Constructor inject
-
-				Container.registrerConstructorHandler(
-					target.name, sId, index, ctx, true);
+				Container.registrerConstructorHandler({
+					id: target.name,
+					targetId: sId,
+					index: index,
+					targetCtx: ctx,
+					update: true,
+					variation,
+					variationVarName
+				});
 
 			} else if (target instanceof Object) {
 				// Property inject
 
-				Container.registerDepLeft(target.constructor.name, sId, ctx, true);
-				Container.get(sId, ctx).then(dep => {
+				Container.registerDepLeft({
+					serviceId: target.constructor.name,
+					targetServiceId: sId,
+					targetCtx: ctx,
+					update: true,
+					variation,
+					variationVarName
+				});
+				Container.get(sId, ctx, variation).then(dep => {
 					Object.defineProperty(target, propertyName, {
 						enumerable: true,
 						writable: true,

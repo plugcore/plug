@@ -2,10 +2,10 @@ import { join } from 'path';
 import { ConfigurationLoader } from '../configuration/configuration.loader';
 import { ProjectConfiguration } from '../configuration/configuration.service';
 import { Container } from '../dependecy-injection/di.container';
+import { DiUtils } from '../dependecy-injection/di.utils';
 import { PublicEvents } from '../events/event.constants';
 import { EventDispatcher } from '../events/event.dispatcher';
 import { Logger } from '../logs/logger';
-import { FsUtils } from '../io/fs.utils';
 
 export class PorjectInitialization {
 
@@ -24,7 +24,7 @@ export class PorjectInitialization {
 		(async () => {
 			// 1: Project configuration
 			await this.setConfiguration(join(projectFolder, '..', '..', configurationFolder || this.defaultConfigurationFolder));
-			await FsUtils.waitForFolder(projectFolder, true);
+			await DiUtils.waitForFolder(projectFolder, true);
 
 		})().then(() => {
 			// Project started

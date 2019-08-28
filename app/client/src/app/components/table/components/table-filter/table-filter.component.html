@@ -1,0 +1,48 @@
+<div class="modal-content">
+	<form [formGroup]="data['formGroup']">
+		<div fxLayout="row" fxLayoutWrap="wrap">
+			<div fxFlex="100" fxFlex.gt-xs="100" class="pr-1">
+				<ng-container *ngFor="let filter of data['tablesConfig'].filters">
+					<ng-container *ngIf="filter.filterType || filter.filterType === 0" [ngSwitch]="filter.filterType">
+						<div class="pb-1">
+							<mat-form-field class="full-width" *ngSwitchCase="2">
+								<mat-select [formControlName]="filter.filterId" [placeholder]="filter.filterName">
+									<mat-option [value]="undefined">without filter</mat-option>
+									<mat-option [value]="true">true</mat-option>
+									<mat-option [value]="false">false</mat-option>
+								</mat-select>
+								<mat-hint>{{filter.filterHint}}</mat-hint>
+							</mat-form-field>
+							<mat-form-field class="full-width" *ngSwitchCase="3">
+								<input matInput [formControlName]="filter.filterId" [matDatepicker]="picker" [placeholder]="filter.filterName">
+								<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+								<mat-datepicker #picker></mat-datepicker>
+								<mat-hint>{{filter.filterHint}}</mat-hint>
+							</mat-form-field>
+							<mat-form-field class="full-width" *ngSwitchCase="5" hintLabel="{{filter.filterHint}}">
+								<input matInput type="time" [formControlName]="filter.filterId" [placeholder]="filter.filterName">
+							</mat-form-field>
+							<mat-form-field class="full-width" *ngSwitchCase="1">
+								<input type="number" [formControlName]="filter.filterId" matInput [placeholder]="filter.filterName">
+								<mat-hint>{{filter.filterHint}}</mat-hint>
+							</mat-form-field>
+							<plug-table-filter-date [parentSubject]="parentSubject" [data]="filter" [currentValue]="this.data['formGroup'].controls[filter.filterId].value"
+							 (eventEmmiter)="reciveData($event)" *ngSwitchCase="4"></plug-table-filter-date>
+							<mat-form-field class="full-width" *ngSwitchDefault>
+								<input [formControlName]="filter.filterId" matInput [placeholder]="filter.filterName">
+								<mat-hint>{{filter.filterHint}}</mat-hint>
+							</mat-form-field>
+						</div>
+					</ng-container>
+					<template #filters *ngIf="filter.filterComponent"></template>
+				</ng-container>
+			</div>
+		</div>
+
+	</form>
+	<mat-dialog-actions>
+		<button class="submit-filter" mat-raised-button mat-dialog-close color="primary" (click)="sendFiltered()" [disabled]="data['formGroup'].invalid">Submit</button>
+		<button class="reset-filter" mat-raised-button color="primary" (click)="resetFilters()">Reset filters</button>
+		<button mat-raised-button color="primary" mat-dialog-close>Close</button>
+	</mat-dialog-actions>
+</div>

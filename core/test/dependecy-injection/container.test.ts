@@ -12,8 +12,10 @@ import { Di6Example } from './examples/di6.example';
 import { Di7Example } from './examples/di7.example.ctx';
 import { Di8Example } from './examples/di8.example.ctx';
 import { Di9Example } from './examples/di9.example.ctx';
+import { Di11Example } from './examples/di11.example';
+import { Di10Example } from './examples/di10.example';
 
-@TestClass()
+@TestClass({ testThisOnly: true })
 export class DiContainerTest extends PlugTest {
 
 	private example1: Di1Example;
@@ -25,6 +27,8 @@ export class DiContainerTest extends PlugTest {
 	private example7: Di7Example;
 	private example8: Di8Example;
 	private example9: Di9Example;
+	private example10: Di10Example;
+	private example11: Di11Example;
 
 	@BeforeTests()
 	public async beforeStart() {
@@ -40,7 +44,9 @@ export class DiContainerTest extends PlugTest {
 			Container.get<Di5Example>(Di5Example),
 			Container.get<Di7Example>(Di7Example, 'exampleCtx'),
 			Container.get<Di8Example>(Di8Example, 'exampleCtx'),
-			Container.get<Di9Example>(Di9Example, 'exampleCtx')
+			Container.get<Di9Example>(Di9Example, 'exampleCtx'),
+			Container.get<Di10Example>(Di10Example, undefined, { variationVar: '3' }),
+			Container.get<Di11Example>(Di11Example)
 		]).catch(e => { return e; }).then(a => a);
 
 		this.example1 = values[0];
@@ -51,6 +57,8 @@ export class DiContainerTest extends PlugTest {
 		this.example7 = values[5];
 		this.example8 = values[6];
 		this.example9 = values[7];
+		this.example10 = values[8];
+		this.example11 = values[9];
 
 	}
 
@@ -112,4 +120,24 @@ export class DiContainerTest extends PlugTest {
 		this.assert.equal(DiService.getMetadata(Di9Example).test2, 'test2');
 	}
 
+	@Test()
+	public testExample10() {
+		this.assert.equal(this.example10.timesConstructorCalled, 1);
+		this.assert.ok(this.example10.getExample1());
+		this.assert.ok(this.example10.getExample3());
+		this.assert.equal(this.example10.getVariationVar(), '3');
+	}
+
+	@Test()
+	public testExample11() {
+		this.assert.equal(this.example11.timesConstructorCalled, 1);
+		this.assert.ok(this.example11.getD10example1());
+		this.assert.ok(this.example11.getD10example2());
+		this.assert.equal(this.example11.getD10example1().getVariationVar(), '1');
+		this.assert.equal(this.example11.getD10example2().getVariationVar(), '2');
+		this.assert.ok(this.example11.getD10example1().getExample1());
+		this.assert.ok(this.example11.getD10example1().getExample3());
+		this.assert.ok(this.example11.getD10example2().getExample1());
+		this.assert.ok(this.example11.getD10example2().getExample3());
+	}
 }

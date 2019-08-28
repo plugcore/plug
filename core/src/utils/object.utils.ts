@@ -214,6 +214,7 @@ export class ObjectUtils {
 	 */
 	public static deepClone<T extends Record<string, any>>(obj: T, hash = new WeakMap()): T {
 
+		if (obj === undefined || obj === null) { return obj; }
 		if (Object(obj) !== obj) { return obj; } // primitives
 		if (obj instanceof Set) { return <any>(new Set(obj)); }
 		if (Buffer.isBuffer(obj)) { return obj; }
@@ -293,8 +294,8 @@ export class ObjectUtils {
 	/**
 	 * Returns an array with an entry for every value in the object, it goes throught
 	 * all sub properties and array elements.
-	 * @param obj 
-	 * @param func 
+	 * @param obj
+	 * @param func
 	 */
 	public static walkThroughObject<T extends Record<string, any>>(obj: T, currVals: IObjectEntry[] = []): IObjectEntry[] {
 
@@ -316,8 +317,8 @@ export class ObjectUtils {
 
 	/**
 	 * Behaves like `Object.assign()` but takes into account subproperties
-	 * @param base 
-	 * @param override 
+	 * @param base
+	 * @param override
 	 */
 	public static deepAssign<T extends Record<string, any>, K extends Record<string, any>>(base: T, override: K): T & K {
 
@@ -339,7 +340,7 @@ export class ObjectUtils {
 	 * Applies `Object.freeze()` recursivley to all objects defined as properties from
 	 * the original object. See frozen objects in
 	 * [MDN documentation](https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Objetos_globales/Object/freeze).
-	 * 
+	 *
 	 */
 	public static deepFreeze<T>(object: any): T {
 

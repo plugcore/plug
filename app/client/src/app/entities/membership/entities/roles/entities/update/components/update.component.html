@@ -1,0 +1,57 @@
+<form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+	<mat-form-field>
+		<input matInput placeholder="Role Name" formControlName="name">
+	</mat-form-field>
+	<div style="display: flex; flex-wrap: wrap; justify-content: space-between" formGroupName="permissions">
+		<div style="width: 33%; margin-bottom: 10px;">
+			<h3>Data Models</h3>
+			<mat-checkbox class="example-margin" formControlName="dataModelsDocumentation">Show Documentation Menu
+			</mat-checkbox>
+		</div>
+		<div style="width: 33%; margin-bottom: 10px;">
+			<h3>Databases</h3>
+			<mat-checkbox class="example-margin" formControlName="databasesStatus">Show Status Menu</mat-checkbox>
+			<mat-checkbox class="example-margin" formControlName="databasesDocumentation">Show Documentation Menu
+			</mat-checkbox>
+			<mat-checkbox class="example-margin" formControlName="databasesLog">Show Log Menu</mat-checkbox>
+		</div>
+		<div style="width: 33%; margin-bottom: 10px;">
+			<h3>API</h3>
+			<mat-checkbox class="example-margin" formControlName="apiStatus">Show Status Menu</mat-checkbox>
+			<mat-checkbox class="example-margin" formControlName="apiDocumentation">Show Documentation Menu
+			</mat-checkbox>
+			<mat-checkbox class="example-margin" formControlName="apiLog">Show Log Menu</mat-checkbox>
+		</div>
+		<div style="width: 33%; margin-bottom: 10px;">
+			<h3>Plugs</h3>
+			<mat-checkbox class="example-margin" formControlName="plugsStatus">Show Status Menu</mat-checkbox>
+			<mat-checkbox class="example-margin" formControlName="plugsDocumentation">Show Documentation Menu
+			</mat-checkbox>
+			<mat-checkbox class="example-margin" formControlName="plugsLog">Show Log Menu</mat-checkbox>
+		</div>
+		<div style="width: 33%; margin-bottom: 10px;">
+			<h3>Scheduled Jobs</h3>
+			<mat-checkbox class="example-margin" formControlName="scheduledJobsStatus">Show Status Menu
+			</mat-checkbox>
+			<mat-checkbox class="example-margin" formControlName="scheduledJobsDocumentation">Show
+				Documentation Menu</mat-checkbox>
+			<mat-checkbox class="example-margin" formControlName="scheduledJobsLog">Show Log Menu
+			</mat-checkbox>
+		</div>
+		<div style="width: 33%; margin-bottom: 10px;">
+			<h3>Membership</h3>
+			<mat-checkbox class="example-margin" formControlName="membershipUsers">Show Users Menu
+			</mat-checkbox>
+			<mat-checkbox class="example-margin" formControlName="membershipRoles">Show Roles Menu
+			</mat-checkbox>
+		</div>
+		<div style="width: 33%; margin-bottom: 10px;">
+			<h3>System</h3>
+			<mat-checkbox class="example-margin" formControlName="systemConfiguration">Show Configuration Menu
+			</mat-checkbox>
+			<mat-checkbox class="example-margin" formControlName="systemLog">Show Log Menu</mat-checkbox>
+		</div>
+	</div>
+	<button style="margin-top: 20px;" mat-raised-button type="submit"
+		[disabled]="!roleForm.valid">{{isUpdate ? 'Update' : 'Create'}}</button>
+</form>

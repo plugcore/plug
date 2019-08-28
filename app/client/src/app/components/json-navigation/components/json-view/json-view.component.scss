@@ -1,0 +1,28 @@
+.json-view {
+	padding: 5px;
+	margin: 5px;
+	white-space: pre;
+	max-width: 800px;
+	max-height: 700px;
+	overflow: scroll;
+}
+
+::ng-deep .string {
+	color: green;
+}
+
+::ng-deep .number {
+	color: darkorange;
+}
+
+::ng-deep .boolean {
+	color: blue;
+}
+
+::ng-deep .null {
+	color: magenta;
+}
+
+::ng-deep .key {
+	color: red;
+}

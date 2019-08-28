@@ -12,10 +12,10 @@ export class ProjectConfiguration<T = undefined> implements IConfiguration<T> {
 	private frozenConfiguration: IConfiguration<T>;
 
 	constructor(
-		private originalConfiguration: IConfiguration<T>
+		originalConfiguration: IConfiguration<T>
 	) {
 		this.frozenConfiguration = ObjectUtils.deepFreeze(
-			ObjectUtils.deepClone(originalConfiguration)
+			ObjectUtils.deepClone(originalConfiguration || {})
 		);
 		for (const cfgKey of Object.keys(this.frozenConfiguration)) {
 			(<Record<string, any>>this)[cfgKey] = (<Record<string, any>>this).frozenConfiguration[cfgKey];
@@ -24,4 +24,3 @@ export class ProjectConfiguration<T = undefined> implements IConfiguration<T> {
 
 }
 
- 
