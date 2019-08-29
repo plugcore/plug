@@ -50,6 +50,7 @@ export interface IDiEntry {
 		index: number;
 		targetCtx?: string;
 		variationVarName?: string;
+		variation?: Record<string, any>;
 		variationVarValue?: any;
 	}[];
 	depsLeft?: {

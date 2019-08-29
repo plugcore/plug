@@ -36,6 +36,7 @@ export class Container {
 		DiService.discardTmpEntry(serviceId);
 		entry.serviceId = DiService.genServiceId(id);
 
+
 		if (params && params.length > 0) {
 			this.initConstructorService(entry, params, ctx);
 		} else {
@@ -141,7 +142,7 @@ export class Container {
 	}) {
 
 		const serviceName = DiService.genServiceId(inp.id);
-		const targetServiceName = DiService.genServiceId(inp.targetId);
+		const targetServiceName = DiService.genServiceId(inp.targetId, inp.variation);
 
 		let entry = DiService.getTmpEnrySafely(serviceName);
 		entry = this.updateConstructorHandler({
@@ -150,14 +151,11 @@ export class Container {
 			targetServiceName,
 			targetCtx: inp.targetCtx,
 			variationVarName: inp.variationVarName,
+			variation: inp.variation
 		});
 
 		if (inp.update) {
 			DiService.updateTmpEnry(entry);
-		}
-
-		if (inp.variation) {
-			this.waitForDep(targetServiceName, inp.targetCtx, inp.variation);
 		}
 
 	}
@@ -240,12 +238,14 @@ export class Container {
 		targetServiceName: string;
 		targetCtx?: string;
 		variationVarName?: string;
+		variation?: Record<string, any>;
 	}): IDiEntry {
 		const newHandler = {
 			targetServiceId: inp.targetServiceName,
 			index: inp.index,
 			targetCtx: inp.targetCtx,
-			variationVarName: inp.variationVarName
+			variationVarName: inp.variationVarName,
+			variation: inp.variation
 		};
 		if (inp.entry.constructorHandlers) {
 			const hIndex = inp.entry.constructorHandlers
@@ -280,6 +280,19 @@ export class Container {
 					targetCtx: element.targetCtx || ctx,
 					variationVarName: element.variationVarName
 				});
+				if (element.variation) {
+					const targetEntry = DiService.getEntry(element.targetServiceId, element.targetCtx || ctx);
+					if (entry.depsLeft && targetEntry && targetEntry.isReady) {
+						const targetDep = entry.depsLeft.find(dl => dl.targetServiceId === element.targetServiceId);
+						if (targetDep) {
+							targetDep.depMet = true;
+						}
+					}
+
+					if (!targetEntry) {
+						this.waitForDep(element.targetServiceId, element.targetCtx || ctx, element.variation).then();
+					}
+				}
 			});
 		}
 
@@ -433,15 +446,12 @@ export class Container {
 				const service = DiService.getEntry(originalServiceName, ctx);
 
 				if (service) {
-					console.log('service', entry, service);
 					entry.serviceClass = service.serviceClass;
+					entry.depsClosed = true;
 					entry.constructorHandlers = service.constructorHandlers ?
 						service.constructorHandlers.map(a => ObjectUtils.deepClone(a)) : undefined;
 					entry.depsLeft = service.depsLeft ?
 						service.depsLeft.map(a => ObjectUtils.deepClone(a)) : undefined;
-					entry.depsClosed = entry.depsLeft ? entry.depsLeft
-						.filter(dl => dl.variationVarName === undefined)
-						.every(dl => dl.depMet) : true;
 
 					const depLeft = (entry.depsLeft || [])
 						.filter(dl => dl.variationVarName !== undefined)
@@ -466,7 +476,6 @@ export class Container {
 			DiService.updateEntry(entry, ctx);
 
 			if (isVariation) {
-				console.log('isVariation', entry);
 				this.checkIfReady(entry, ctx);
 			}
 

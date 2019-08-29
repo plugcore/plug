@@ -1,5 +1,6 @@
 import { Container } from './di.container';
 import { IDiEntry, IServiceIdentifier } from './di.interfaces';
+import { ValidatorUtils } from '../utils/validator.utils';
 
 export class DiService {
 
@@ -12,6 +13,7 @@ export class DiService {
 
 	private static readonly tmpCtx = 'tmpCtx';
 	private static mainCtx: any = {};
+	private static variationsMap: Record<string, any[]> = {};
 
 	// -------------------------------------------------------------------------
 	// Public methods
@@ -26,9 +28,19 @@ export class DiService {
 			result = service.name;
 		}
 		if (variation) {
-			const keys = Object.keys(variation);
-			keys.sort();
-			result = `${result}${this.variationStart}${keys.map(k => `${k}:${variation[k]}`).join('-')}${this.variationEnd}`;
+			if (result.indexOf(this.variationStart) < 0 || result.indexOf(this.variationEnd) < 0) {
+				let serviceVariations = this.variationsMap[result];
+				if (!serviceVariations) {
+					serviceVariations = [];
+					this.variationsMap[result] = serviceVariations;
+				}
+				let currVariationIndex = serviceVariations.findIndex(sv => ValidatorUtils.deepEqual(sv, variation));
+				if (currVariationIndex < 0) {
+					currVariationIndex = serviceVariations.length;
+					serviceVariations.push(variation);
+				}
+				result = `${result}${this.variationStart}${currVariationIndex}${this.variationEnd}`;
+			}
 		}
 		return result;
 	}

@@ -1,6 +1,7 @@
-import { Inject } from '../../../src/dependecy-injection/di.decorators';
+import { Inject, Service } from '../../../src/dependecy-injection/di.decorators';
 import { Di10Example } from './di10.example';
 
+@Service()
 export class Di11Example {
 
 	public timesConstructorCalled = 0;
