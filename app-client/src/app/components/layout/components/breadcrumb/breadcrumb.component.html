@@ -1,8 +1,0 @@
-<div *ngIf="breadcrumb !==undefined && useBreadcrumb" class="breadcrumb-title">
-	<h1 class="bc-title">{{breadcrumbTitle}}</h1>
-	<ul class="breadcrumb">
-		<li *ngFor="let route of breadcrumb">
-			<a routerLink="{{route.url}}" class="text-muted">{{route.label}}</a>
-		</li>
-	</ul>
-</div>

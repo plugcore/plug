@@ -1,8 +1,0 @@
-<div class="container">
-	<div class="category" *ngFor="let category of categories">
-		<h3>{{category.name}}</h3>
-		<ng-container *ngFor="let option of category.options">
-			<p><a routerLink="/{{option.path}}">{{option.name}}</a></p>
-		</ng-container>
-	</div>
-</div>
