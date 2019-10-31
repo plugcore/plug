@@ -3,13 +3,15 @@ const { exists, mkdir, lstat, unlink, access, readdir, rmdir, copyFile, readFile
 const { join } = require('path');
 const readline = require('readline');
 
+const packageJsonFileSuffix = 'file:';
+
 async function buildProject(projectFolder) {
 
 	// Var declarations
 	const packageJsonFile = 'package.json';
 	const packageJsonPath = join(projectFolder, packageJsonFile);
 	const packageJson = await loadJsonFile(packageJsonPath);
-	
+
 	const infoPrefix = 'BUILD-' + packageJson.name + ': ';
 	const publishFolderPath = 'publish';
 	const distFolder = join(projectFolder, 'dist');
@@ -38,6 +40,18 @@ async function buildProject(projectFolder) {
 	// 3: copy packageJson
 	printInfo(`${infoPrefix}Creating package.json`);
 	packageJson.devDependencies = undefined;
+	if (packageJson.dependencies) {
+		for (const dependency of Object.keys(packageJson.dependencies)) {
+			const dependencyLocation = packageJson.dependencies[dependency];
+			if (dependencyLocation.startsWith(packageJsonFileSuffix)) {
+				packageJson.dependencies[dependency] = [
+					dependencyLocation.slice(0, packageJsonFileSuffix.length),
+					'../',
+					dependencyLocation.slice(packageJsonFileSuffix.length)
+				].join('');
+			}
+		}
+	}
 	await saveObjectAsJsonFile(distPackageJsonPath, packageJson);
 
 	// 4: Copy src
@@ -145,14 +159,18 @@ async function removeFile(dir, file) {
 	});
 }
 
-async function removeFolder(dir) {
+async function removeFolder(dir, errorOnFolderNotFound) {
 	return new Promise((resolve, reject) => {
 		if (dir === undefined || dir === null || dir === '/' || dir === '\\') {
 			reject('Badk path: ' + dir);
 		}
 		access(dir, (error) => {
 			if (error) {
-				return reject(new Error(error));
+				if (errorOnFolderNotFound) {
+					return reject(new Error(error));
+				} else {
+					return resolve();
+				}
 			}
 			readdir(dir, (error, files) => {
 				if (error) {
@@ -356,8 +374,8 @@ function versionCompare(v1, v2, options) {
  * string that can include a `%%` with the result from
  * the first question. If the user rejects the confirmation
  * it throws an error.
- * @param {*} question 
- * @param {*} confirmationQuestion 
+ * @param {*} question
+ * @param {*} confirmationQuestion
  */
 async function consolePromt(question, confirmationQuestion) {
 	return new Promise((resolve, reject) => {

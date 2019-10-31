@@ -4,7 +4,7 @@
 	"description": "![Plugdata.io](_docs/logo.png?raw=true \"Plugdata.io\")",
 	"main": ".eslintrc.js",
 	"scripts": {
-		"postinstall": "cd core & npm i & cd ../data & npm i & cd ../web & npm i & cd .. & npm run build",
+		"postinstall": "cd core & npm i & npm run build & cd ../data & npm i & npm run build & cd ../web & npm i & npm run build",
 		"build": "npx run-s build:**",
 		"build:core": "cd core & npm run build",
 		"build:web": "cd web & npm run build",
