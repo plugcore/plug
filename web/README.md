@@ -1,13 +1,16 @@
-__We are still working in this library. COMING SOON__
-
 ![Plugdata.io](../_docs/logo.png?raw=true "Plugdata.io")
 
 ## @plugdata/web
 
-In this package we can find everything that is related to web connectivity
+[![https://nodei.co/npm/@plugdata/web.png?downloads=false&downloadRank=false&stars=false](https://nodei.co/npm/@plugdata/web.png?downloads=false&downloadRank=false&stars=false)](https://www.npmjs.com/package/@plugdata/web)
 
-- __Web framework__: For web servers management
+Aquí encontraremos todo lo necesario para la comunicación en web, como por ejemplo la generación de APIs REST.
 
-- __OAS 3__: We believe that a good documentation is needed for a good API, event if it's just for internal usage. This adds support for an easy creation of [OAS 3](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md) description files, being able to add little chunks of documentation for each operation created, so it's easily updated at the same time that the code changes, and being able to version it. We take care of the full document creation taking into account all the current configuration.
+- __Web framework__: Para la creación de APIs.
 
-- __Login__: Easy integration of basic login mechanisms like `basic auth` or `JWT`, but also easy to extend for custom login strategies, and new support will be added in the future.
+- __OAS 3__: Creemos que se necesita una buena documentación para una buena API, evento si es solo para uso interno. Esto agrega soporte para una fácil creación de archivos de descripción de [OAS 3](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md), pudiendo agregar pequeños trozos de documentación para cada operación creada, por lo que se actualiza fácilmente al mismo tiempo que cambia el código, y se puede versionar. 
+
+- __Login \*\*Próximamente\*\*__:  Fácil integración de mecanismos de inicio de sesión básicos como `basic auth` o `JWT`, pero también fácil de ampliar para estrategias de inicio de sesión personalizadas, y se agregará nuevo soporte en el futuro. 
+
+# Otros módulos de Plugdata.io
+Ver más en [este link](https://github.com/plugdata/plugdata).

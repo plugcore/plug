@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 import { join, dirname } from 'path';
 import { FsUtils } from '../io/fs.utils';
 import { ObjectUtils } from '../utils/object.utils';
@@ -19,9 +23,9 @@ export class ConfigurationLoader {
 	/**
 	 * Calls to `ConfigurationLoader.loadFile` to load the application configuration which will
 	 * usually be at `/configuration/condiguration.json`. It will use the defaults determined by
-	 * `PlugConfiguration.default` 
+	 * `PlugConfiguration.default`
 	 * @param folder
-	 * @param environment 
+	 * @param environment
 	 */
 	public static async loadProject<T>(
 		folder: string, options?: { environment?: string; configurationFileName?: string }
@@ -30,7 +34,7 @@ export class ConfigurationLoader {
 		const finalConfiguration = await this.loadFile<IConfiguration<T>>(folder, options);
 
 		return <IConfiguration<T>>ObjectUtils.deepAssign(PlugConfiguration.default, finalConfiguration);
-		
+
 	}
 
 	/**
@@ -45,7 +49,7 @@ export class ConfigurationLoader {
 	 *     - At any point you can have something like `{ "log": { "level" : "$[NODE_LOG_LEVEL]" } }`
 	 *  It can throw errors.
 	 * @param folder
-	 * @param environment 
+	 * @param environment
 	 */
 	public static async loadFile<T>(
 		folder: string, options?: { environment?: string; configurationFileName?: string }
@@ -57,7 +61,7 @@ export class ConfigurationLoader {
 
 		// Validators
 		await this.basicValidations(folder, finalOptions.configurationFileName);
-		
+
 		// Base configuration load
 		const configurationFile = join(folder, this.defaultConfigurationFileName);
 		const configurationPromises = [this.importConfigurationFile<T>(configurationFile)];
@@ -70,14 +74,14 @@ export class ConfigurationLoader {
 				this.defaultConfigurationFileName.substr(0, dotIndex) + `.${currEnv}` +
 				this.defaultConfigurationFileName.substr(dotIndex  )
 			);
-			const envFileExists = (await FsUtils.fileOrFolderExists(configurationEnvFile)); 
+			const envFileExists = (await FsUtils.fileOrFolderExists(configurationEnvFile));
 			if (envFileExists.exists) {
 				configurationPromises.push(
 					this.importConfigurationFile<T>(configurationEnvFile)
 				);
 			}
 		}
-		
+
 		// Configuration load
 		const configurations = await Promise.all(configurationPromises);
 
@@ -117,7 +121,7 @@ export class ConfigurationLoader {
 	 * returns it as a valid object
 	 */
 	private static async importConfigurationFile<T>(file: string): Promise<DeepPartial<T>> {
-		
+
 		const fileDirectory = dirname(file);
 		const fileContent = JSON.parse(await FsUtils.loadFile(file));
 
@@ -126,12 +130,12 @@ export class ConfigurationLoader {
 
 				const matchEnvironment = objEntry.value.match(this.environmentVariableRegex);
 				if (matchEnvironment && matchEnvironment.length === 1) {
-					
+
 					// Environment variable
 					const envVarName = matchEnvironment[0];
 					const enVarValue = process.env[envVarName.substring(0, envVarName.length - 1).substring(2)];
 					if (enVarValue) {
-						
+
 						objEntry.objRef[objEntry.key] = enVarValue;
 					} else {
 						throw new Error('Environment variable not found while loading configuration:' + envVarName);

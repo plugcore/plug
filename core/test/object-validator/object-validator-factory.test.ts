@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 import { TestClass, BeforeTests, Test } from '../../src/test/test.decorators';
 import { PlugTest } from '../../src/test/test.shared';
 import { ObjectValidatorFactory } from '../../src/object-validator/object-validator.factory';
@@ -34,7 +38,7 @@ export class ObjectVlidatorFactoryTest extends PlugTest {
 		const compiledFromObject = this.objectValidatorFactory.compile(this.basicSchema);
 		const resultOk = this.objectValidatorFactory.validate(compiledFromObject, this.basicDataOk);
 		const resultErrors = this.objectValidatorFactory.validate(compiledFromObject, this.basicDataErrors);
-		
+
 		this.assert.ok(resultOk.valid);
 		this.assert.ok(resultOk.errors.length === 0);
 
@@ -49,7 +53,7 @@ export class ObjectVlidatorFactoryTest extends PlugTest {
 		const compiledFromObject = await this.objectValidatorFactory.compileFromFile(this.basicSchemaPath);
 		const resultOk = this.objectValidatorFactory.validate(compiledFromObject, this.basicDataOk);
 		const resultErrors = this.objectValidatorFactory.validate(compiledFromObject, this.basicDataErrors);
-		
+
 		this.assert.ok(resultOk.valid);
 		this.assert.ok(resultOk.errors.length === 0);
 
@@ -63,7 +67,7 @@ export class ObjectVlidatorFactoryTest extends PlugTest {
 
 		const resultOk = this.objectValidatorFactory.validate(this.basicSchema, this.basicDataOk);
 		const resultErrors = this.objectValidatorFactory.validate(this.basicSchema, this.basicDataErrors);
-		
+
 		this.assert.ok(resultOk.valid);
 		this.assert.ok(resultOk.errors.length === 0);
 

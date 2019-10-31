@@ -4,23 +4,23 @@
 
 [![https://nodei.co/npm/@plugdata/core.png?downloads=false&downloadRank=false&stars=false](https://nodei.co/npm/@plugdata/core.png?downloads=false&downloadRank=false&stars=false)](https://www.npmjs.com/package/@plugdata/core)
 
-Contains the main functionality that any Node JS might need, some of it would be:
+Módulo principal que será necesario para cualquier  implementación, sus principales características son.
 
-- __Dependency injection__: It's a custom implementation based on an decorator syntax, and it will be the cornerstone of all our modules and products. This section is related to our consistent API philosophy, since everything will be managed and configured by the container. It's influenced by [typedi](https://github.com/typestack/typedi), but with extended functionality to meet our needs.
+- __Inyección de dependencias__:  Es una implementación personalizada basada en una sintaxis decoradora, y será la piedra angular de todos nuestros módulos y productos. Esta sección está relacionada con nuestra filosofía de API consistente, ya que todo será administrado y configurado por el contenedor. Está influenciado por [typedi](https://github.com/typestack/typedi), pero con una funcionalidad ampliada para satisfacer nuestras necesidades. 
 
-- __Configuration__: There will be a main configuration file which will have everything needed for other packages configuration, custom implementations and future products. It's based on JSONs files, which will be able to reference environment variables and have different versions for different environments (productio, development, etc.).
+- __Configuración__: Habrá un archivo de configuración principal que tendrá todo lo necesario para la configuración de otros paquetes, implementaciones personalizadas y futuros productos. Se basa en archivos JSON, que podrán hacer referencia a variables de entorno y tener diferentes versiones para diferentes entornos (producción, pre-producción, desarrollo, etc...). 
 
-- __Logs__: For all our logging we'll use [pino](https://github.com/pinojs/pino) since it fits our philosophy and has a great connectivity with other products such as [Elastic logs](https://www.elastic.co/es/solutions/logging)
+- __Logs__: Para todos nuestros registros usaremos [pino](https://github.com/pinojs/pino), ya que se ajusta a nuestra filosofía y tenemos una gran conectividad con otros productos como [Elastic logs](https://www.elastic.co/es/solutions/logging).
 
-- __Http/s Client__: We have a lightweight http/s client that is a simple promisified wrapper of Nodejs [Http/s client](https://nodejs.org/api/http.html#http_http_get_options_callback) with easy methods to make REST JSON calls.
+- __Cliente Http y Https__:  Tenemos un cliente http/s liviano que es un simple contenedor promisificado del cliente [http/s de Nodejs](https://nodejs.org/api/http.html#http_http_get_options_callback) con métodos sencillos para realizar llamadas REST JSON. 
 
-- __Events__: It's an adaptation of [EventEmitter3](https://github.com/primus/eventemitter3#readme) to our dependency injection system. It has almost the same API than the [Node JS events](https://nodejs.org/api/events.html) but with some additions like contexts, so it won't be necessary to call `.bind(this)`, and some unnecessary methods removed for better performance.
+- __Manejador de eventos \*\*Próximamente\*\*__: Es una adaptación de [EventEmitter3](https://github.com/primus/eventemitter3#readme) a nuestro sistema de inyección de dependencias. Tiene casi la misma API que los [eventos Node JS](https://nodejs.org/api/events.html) pero con algunas adiciones como contextos, por lo que no será necesario llamar a `.bind(this)`, y se eliminarán algunos métodos innecesarios para un mejor rendimiento.
 
-- __Object validator__: An integration with our dependency injection of [AJV](https://github.com/epoberezkin/ajv) wich supports [draft-07 of JSON Schema](http://json-schema.org/latest/json-schema-validation.html) and is one of the fastest a better mantanind libraries for this porpuse
+- __Validación de objetos__: Una integración con nuestra inyección de dependencia de [AJV](https://github.com/epoberezkin/ajv) que admite el [draft-07 of JSON Schema](http://json-schema.org/latest/json-schema-validation.html) y es una de las bibliotecas mantenidas más rápidas y mejores para este propósito.
 
-- __Utils__: During our development of several projects we've been gathering some common usage utils, mostly for objects and promises manipulation, and other NodeJS wrappers for things like file system calls. We'll be updating these utils as development progresses.
+- __Utilidades genéricas__: Durante el desarrollo de varios proyectos, hemos estado reuniendo algunas utilidades de uso común, principalmente para la manipulación de objetos y promises, y otros envoltorios de NodeJS para cosas como llamadas al sistema de archivos. 
 
-- __Tests__: It's a simple testing library that uses [Node JS assert library](https://nodejs.org/api/assert.html) for it's validation and is based on Typescript classes with an integration to our dependency injection system. It's not aimed to be a full featured testing library as the already existing ones, and we know it's a personal choice of every team, so we offer it just a possibility for simple tests, and we use it for all our internal testing, so it will also have integration with other packages such as `data` and `web`.
+- __Tests__: Es una biblioteca de prueba simple que utiliza la [Node JS assert library](https://nodejs.org/api/assert.html) para su validación y se basa en clases de Typescript con una integración a nuestro sistema de inyección de dependencias. No pretende ser una biblioteca de pruebas con todas las funciones como las ya existentes, y sabemos que es una elección personal de cada equipo, por lo que ofrecemos sólo una posibilidad para pruebas simples, y la usamos para todas nuestras pruebas internas, por lo que También tendrá integración con otros paquetes de `datos` y `web`. 
 
-# Other Plugdata packages
-See more at [this link](https://github.com/plugdata/plugdata-framework).
+# Otros módulos de Plugdata.io
+Ver más en [este link](https://github.com/plugdata/plugdata).

@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 import { TypeChecker } from '../utils/type.checker';
 import { ClassParameter } from '../utils/typescript.utils';
 import {
@@ -16,7 +20,7 @@ export class ObjectValidatorDecoratorUtils {
 
 	/**
 	 * Adds metadata to the target class about it's hoow to validate this field
-	 * @param inp 
+	 * @param inp
 	 */
 	public static addProperty(inp: {
 		target: any;
@@ -34,7 +38,7 @@ export class ObjectValidatorDecoratorUtils {
 
 	/**
 	 * Retrieves all the metadata added by the validator decorator to the target classes
-	 * @param clazz 
+	 * @param clazz
 	 */
 	public static getClassProperties<T>(clazz: ClassParameter<T>): IPropertyValidatorMetadata<TObjectValidatorProeprtyOptions>[] {
 		const keys = Reflect.getMetadataKeys(clazz.prototype);
@@ -48,7 +52,7 @@ export class ObjectValidatorDecoratorUtils {
 		requiredProperties: IPropertyValidatorMetadata<undefined>[];
 	} {
 
-		const classProperties = this.getClassProperties(clazz);		
+		const classProperties = this.getClassProperties(clazz);
 		const requiredProperties = classProperties.filter(PropertyValidatorTypeChecker.isRequired);
 		const objectProperties = classProperties
 			.filter(rp => !PropertyValidatorTypeChecker.isRequired(rp))
@@ -56,7 +60,7 @@ export class ObjectValidatorDecoratorUtils {
 				prev[curr.property] = (prev[curr.property] || []).concat(curr);
 				return prev;
 			}, <Record<string, IPropertyValidatorMetadata<TObjectValidatorProeprtyOptions>[]>>{});
-		
+
 		return { requiredProperties, objectProperties };
 	}
 
@@ -69,9 +73,9 @@ export class ObjectValidatorUtils {
 
 	/**
 	 * Generates a valid [Json schema](https://json-schema.org/) from a decorated class
-	 * with any of the validator decorators like `@IsString()`, `@IsNumber()`, 
+	 * with any of the validator decorators like `@IsString()`, `@IsNumber()`,
 	 * `@IsArray()`, `@IsObject()` or `@RequiredProperty()`
-	 * @param clazz 
+	 * @param clazz
 	 */
 	public static generateJsonSchema<T>(clazz: ClassParameter<T>, options?: {
 		asArray?: boolean;
@@ -100,7 +104,7 @@ export class ObjectValidatorUtils {
 			const properties: Record<string, any> = {};
 
 			for (const objKey of Object.keys(objectProperties)) {
-				
+
 				const validatorTypes = objectProperties[objKey];
 				const objectProperty = validatorTypes.find(vt => vt.type === EObjectValidatorPropertyTypes.object);
 
@@ -113,10 +117,10 @@ export class ObjectValidatorUtils {
 					// Property is primitive type or Array
 					const property: Record<string, any> = {
 						title: StringUtils.capitalize(objKey),
-						type: (validatorTypes.length === 1) ? 
+						type: (validatorTypes.length === 1) ?
 							validatorTypes[0].type : validatorTypes.map(vt => vt.type)
 					};
-	
+
 					const propertiesToAdd = validatorTypes
 						.filter(vt => vt.options !== undefined)
 						.map(vt => vt.options)

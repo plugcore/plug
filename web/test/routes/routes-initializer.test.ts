@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 import { AfterTests, BeforeTests, Container, HttpClient, PlugTest, Test, TestClass } from '@plugdata/core';
 import { RoutesInitializer } from '../../src/routes/routes.initializer';
 import { RoutesService } from '../../src/routes/routes.service';
@@ -17,7 +21,7 @@ export class RoutesInitializerTest extends PlugTest {
 
 	@BeforeTests()
 	public async before() {
-		
+
 		const deps = await Promise.all([
 			Container.get<ControllerExample>(ControllerExample),
 			Container.get(Controller2Example),

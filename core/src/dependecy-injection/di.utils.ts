@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 import { FsUtils } from '../io/fs.utils';
 import { Container } from './di.container';
 import { IDiServiceMetadata } from './di.interfaces';
@@ -14,7 +18,7 @@ export class DiUtils {
 	 */
 	public static async waitForFolder(folderPath: string, recursive?: boolean, dependencyTimeout?: number): Promise<IDiServiceMetadata[]> {
 
-		
+
 		const jsFiles = await FsUtils.loadJsFolder(folderPath, recursive);
 		const services: IDiServiceMetadata[] = [];
 		const classes = this.getClasses(jsFiles);

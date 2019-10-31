@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 import { Logger, ProjectConfiguration, Service } from '@plugdata/core';
 import * as fastify from 'fastify';
 import { FastifyInstance } from 'fastify';
@@ -6,7 +10,7 @@ import { WebConfiguration } from '../configuration/configuration.default';
 
 @Service()
 export class RoutesService {
-	
+
 	public fastifyInstance: FastifyInstance<Server, IncomingMessage, ServerResponse>;
 	public httpPort: number;
 	public host: string;
@@ -33,7 +37,7 @@ export class RoutesService {
 	}
 
 	public async startHttpServer() {
-		this.addressListenning = await this.fastifyInstance.listen(this.httpPort);	
+		this.addressListenning = await this.fastifyInstance.listen(this.httpPort);
 	}
 
 	public async shutdownHttpServer() {

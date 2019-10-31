@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 import { FsUtils } from '../io/fs.utils';
 import { ConsoleColors } from '../logs/log.enums';
 import { Asserter } from './test.asserter';
@@ -45,8 +49,8 @@ export class TestManager {
 			configuration = PlugConfiguration.default;
 		}
 		const configurationService = new ProjectConfiguration(configuration);
-		Container.set(ProjectConfiguration, configurationService);		
-		
+		Container.set(ProjectConfiguration, configurationService);
+
 		// 3: Load all the classes inside the test folder
 		await this.loadTests(testFolder);
 

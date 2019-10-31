@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 import { join } from 'path';
 import { PlugdataConstants } from '../../constants/plugdata.constants';
 import { Service } from '../../dependecy-injection/di.decorators';
@@ -14,7 +18,7 @@ export class ExtsConfigurationChecker implements IDiOnInit {
 	public primaryExt: ExtConfiguration;
 
 	public async onInit() {
-		
+
 		// Base ext load
 		const extBaseFolder = process.cwd();
 		const baseExt = await this.generateExtensionConfiguration(extBaseFolder);
@@ -35,7 +39,7 @@ export class ExtsConfigurationChecker implements IDiOnInit {
 	 */
 	private async generateExtensionConfiguration(extBaseFolder: string): Promise<ExtConfiguration> {
 
-		
+
 		let extCfg: ExtConfiguration = new DefaultExtConfiguration();
 		const jsonPath = join(extBaseFolder, PlugdataConstants.pcmsCfgJson);
 		const extJsonCfg = JSON.parse(await FsUtils.loadFile(jsonPath));
