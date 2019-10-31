@@ -6,13 +6,12 @@ import { IConfiguration } from './configuration.interfaces';
 
 export class PlugConfiguration {
 
-	public static readonly default: IConfiguration<undefined> = {
+	public static readonly default: IConfiguration = {
 		init: {
 			distFolder: 'dist'
 		},
 		log: {
-		},
-		custom: undefined
+		}
 	};
 
 }

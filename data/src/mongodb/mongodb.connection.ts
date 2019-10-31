@@ -5,6 +5,7 @@
 import { ClassParameter, IDiOnInit, Logger, ObjectUtils, ProjectConfiguration, Service, TypeChecker } from '@plugdata/core';
 import { Collection, Db, MongoClient } from 'mongodb';
 import { IGetCollectionOptions } from './mongodb.interfaces';
+import { PlugDataConfiguration } from '../configuration/configuration.interfaces';
 
 @Service()
 export class MongoDbConnection implements IDiOnInit {
@@ -13,16 +14,22 @@ export class MongoDbConnection implements IDiOnInit {
 	private mongoClient: Omit<MongoClient, ''>;
 
 	private connectionName?: string;
+	private dataConfiguration: PlugDataConfiguration;
+
+	// private configuration: ProjectConfiguration;
 	constructor(
 		private log: Logger,
-		private configuration: ProjectConfiguration,
-	) { }
+		private configuration: ProjectConfiguration
+	) {
+		this.dataConfiguration = configuration.getProp<PlugDataConfiguration>('data');
+	}
 
 	public async onInit() {
-		if (this.configuration.data) {
+
+		if (this.dataConfiguration) {
 			try {
 				if (this.connectionName) {
-					const connection = (this.configuration.data.connections || []).find(c => c.name === this.connectionName);
+					const connection = (this.dataConfiguration.connections || []).find(c => c.name === this.connectionName);
 					if (connection) {
 						this.mongoClient = await MongoClient.connect(connection.url, Object.assign({
 							useNewUrlParser: true
@@ -33,10 +40,10 @@ export class MongoDbConnection implements IDiOnInit {
 					}
 				} else {
 					this.mongoClient = await MongoClient.connect(
-						this.configuration.data.defaultConnection.url, Object.assign({
+						this.dataConfiguration.defaultConnection.url, Object.assign({
 							useNewUrlParser: true
-						}, this.configuration.data.defaultConnection.options));
-					this.dbConnection = this.mongoClient.db(this.configuration.data.defaultConnection.databaseName);
+						}, this.dataConfiguration.defaultConnection.options));
+					this.dbConnection = this.mongoClient.db(this.dataConfiguration.defaultConnection.databaseName);
 				}
 			} catch (error) {
 				this.log.error('Error while connecting to MongoDB', error);

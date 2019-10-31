@@ -7,24 +7,45 @@ import { IConfiguration } from './configuration.interfaces';
 import { ObjectUtils } from '../utils/object.utils';
 
 @Service()
-export class ProjectConfiguration<T = undefined> implements IConfiguration<T> {
+export class ProjectConfiguration<T = undefined> implements IConfiguration {
 
-	public init: IConfiguration<T>['init'];
-	public log: IConfiguration<T>['log'];
-	public custom: IConfiguration<T>['custom'];
+	public init: IConfiguration['init'];
+	public log: IConfiguration['log'];
 
-	private frozenConfiguration: IConfiguration<T>;
+	private frozenConfiguration: IConfiguration;
 
 	constructor(
-		originalConfiguration: IConfiguration<T>
+		originalConfiguration: IConfiguration
 	) {
 		this.frozenConfiguration = ObjectUtils.deepFreeze(
 			ObjectUtils.deepClone(originalConfiguration || {})
 		);
-		for (const cfgKey of Object.keys(this.frozenConfiguration)) {
-			(<Record<string, any>>this)[cfgKey] = (<Record<string, any>>this).frozenConfiguration[cfgKey];
-		}
+		this.init = this.frozenConfiguration.init;
+		this.log = this.frozenConfiguration.log;
+		// return new Proxy(this, <any>this);
 	}
 
-}
+	public getProp<T>(path: string, defaultValue?: T): T {
+		const props = `${path}`.split('.');
+		let currVal: any | undefined = this.frozenConfiguration;
+		for (const currProp of props) {
+			currVal = currVal[currProp];
+			if (currVal === undefined || currVal === null) {
+				return <any>defaultValue;
+			}
+		}
+		if ((currVal === undefined || currVal === null) && defaultValue) {
+			return defaultValue;
+		}
+		return currVal;
+	}
+	/*
+	get(target: any, prop: string) {
+		if (target[prop]) {
+			return prop[target];
+		} else {
+			return (<any>target.frozenConfiguration)[prop];
+		}
+	} */
 
+}

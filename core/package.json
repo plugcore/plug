@@ -1,6 +1,6 @@
 {
 	"name": "@plugdata/core",
-	"version": "0.2.0",
+	"version": "0.5.0",
 	"description": "Plugdata.io core utilities",
 	"main": "index.js",
 	"repository": {

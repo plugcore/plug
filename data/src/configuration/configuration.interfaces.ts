@@ -15,12 +15,3 @@ export interface PlugDataConfiguration {
 	defaultConnection: MongodbConnection;
 	connections?: MongodbConnection[];
 }
-
-declare module '@plugdata/core' {
-	export interface IConfiguration<T> {
-		data?: PlugDataConfiguration;
-	}
-	export class ProjectConfiguration<T = undefined> implements IConfiguration<T> {
-		data?: PlugDataConfiguration;
-	}
-}

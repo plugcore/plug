@@ -7,7 +7,7 @@ import { Collection } from '../../src/mongodb/mongodb.interfaces';
 import { DbCollectionExample } from './examples/dbcollection.example';
 import { MongoDbConnection } from '../../src/mongodb/mongodb.connection';
 
-@TestClass()
+@TestClass({testThisOnly: true})
 export class MongoDbConnectionTest extends PlugTest {
 
 	private collection: Collection<DbCollectionExample>;
@@ -15,8 +15,8 @@ export class MongoDbConnectionTest extends PlugTest {
 
 	@BeforeTests()
 	public async before() {
-		const configuration = await Container.get<ProjectConfiguration>(ProjectConfiguration);
-		if (configuration.data) {
+		const configuration = await Container.get<ProjectConfiguration>('ProjectConfiguration');
+		if (configuration.getProp('data')) {
 			this.mongoDbConnection = await Container.get<MongoDbConnection>(MongoDbConnection);
 			this.collection = await this.mongoDbConnection.getCollection(DbCollectionExample);
 		}
@@ -24,7 +24,9 @@ export class MongoDbConnectionTest extends PlugTest {
 
 	@AfterTests()
 	public async after() {
-		this.mongoDbConnection.closeConnection();
+		if (this.mongoDbConnection) {
+			this.mongoDbConnection.closeConnection();
+		}
 	}
 
 	@Test()

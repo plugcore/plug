@@ -24,12 +24,3 @@ export interface PlugWebConfiguration {
 		tags?: TagObject[];
 	};
 }
-
-declare module '@plugdata/core' {
-	export interface IConfiguration<T> {
-		web?: PlugWebConfiguration;
-	}
-	export class ProjectConfiguration<T = undefined> implements IConfiguration<T> {
-		web?: PlugWebConfiguration;
-	}
-}

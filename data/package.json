@@ -1,6 +1,6 @@
 {
 	"name": "@plugdata/data",
-	"version": "0.2.0",
+	"version": "0.5.0",
 	"description": "Plugdata.io data utilities",
 	"main": "index.js",
 	"repository": {

@@ -27,13 +27,13 @@ export class ConfigurationLoader {
 	 * @param folder
 	 * @param environment
 	 */
-	public static async loadProject<T>(
+	public static async loadProject(
 		folder: string, options?: { environment?: string; configurationFileName?: string }
-	): Promise<IConfiguration<T>> {
+	): Promise<IConfiguration> {
 
-		const finalConfiguration = await this.loadFile<IConfiguration<T>>(folder, options);
+		const finalConfiguration = await this.loadFile<IConfiguration>(folder, options);
 
-		return <IConfiguration<T>>ObjectUtils.deepAssign(PlugConfiguration.default, finalConfiguration);
+		return <IConfiguration>ObjectUtils.deepAssign(PlugConfiguration.default, finalConfiguration);
 
 	}
 

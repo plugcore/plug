@@ -20,7 +20,7 @@ export class Logger {
 		private projectConfiguration: ProjectConfiguration
 	) {
 		this.pinoOptions = Object.assign(
-			ObjectUtils.deepClone(this.projectConfiguration.log),
+			ObjectUtils.deepClone(this.projectConfiguration.log || {}),
 			<pino.LoggerOptions>{
 				// TODO: Modify with extensions name in the future
 				name: 'main'
