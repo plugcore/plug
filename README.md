@@ -40,8 +40,10 @@ npm i
 ```json
 {
 	"data": {
-		"url": "mongodb://[USER]:[PASSWORD]@[IP_OR_DOMAIN]:27017/[LOGIN_DATABASE]",
-		"databaseName": "[DATABASE_NAME]"
+		"defaultConnection": {
+			"url": "mongodb://[USER]:[PASSWORD]@[IP_OR_DOMAIN]:27017/[LOGIN_DATABASE]",
+			"databaseName": "[DATABASE_NAME]"
+		}
 	}
 }
 ```
