@@ -11,7 +11,9 @@ export class PlugsService {
 	data: PlugFromDb[] = [
 		{
 			id: 1,
-			name: 'Plug de prueba 1',
+			type: 'best-tours',
+			name: 'Best tours',
+			desc: 'Contains the services provided by "Best tours" to help buy them online',
 			create_date: new Date().getTime(),
 			create_user: 'admin',
 			modify_date: new Date().getTime(),
@@ -19,7 +21,9 @@ export class PlugsService {
 		},
 		{
 			id: 2,
-			name: 'Plug de prueba 2',
+			type: 'holiday-hotels',
+			desc: 'Centralized API with the ability to book rooms from hundreds of hotels around the world',
+			name: 'Holiday hotels',
 			create_date: new Date().getTime(),
 			create_user: 'admin',
 			modify_date: new Date().getTime(),
@@ -27,7 +31,9 @@ export class PlugsService {
 		},
 		{
 			id: 3,
-			name: 'Plug de prueba 3',
+			type: 'my-rentacar',
+			name: 'My rentacar',
+			desc: 'Helps with the process of renting a car connecting with multiples companies at all the airports',
 			create_date: new Date().getTime(),
 			create_user: 'admin',
 			modify_date: new Date().getTime(),
@@ -35,23 +41,9 @@ export class PlugsService {
 		},
 		{
 			id: 4,
-			name: 'Plug de prueba 4',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
-		},
-		{
-			id: 5,
-			name: 'Plug de prueba 5',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
-		},
-		{
-			id: 6,
-			name: 'Plug de prueba 6',
+			type: 'world-airlines',
+			name: 'World airlines',
+			desc: 'All the airlines centralized in a single API',
 			create_date: new Date().getTime(),
 			create_user: 'admin',
 			modify_date: new Date().getTime(),

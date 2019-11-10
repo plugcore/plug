@@ -1,1 +1,10 @@
-<plug-table [tablesConfig]="tableConfig"></plug-table>
+<div class="container">
+		<mat-form-field class="methods-select">
+			<mat-select (selectionChange)="jobTypeSelectChanged($event)" [(value)]="jobTypeSelected">
+				<mat-option *ngFor="let jobTypeOption of jobTypes" [value]="jobTypeOption.value">
+					{{jobTypeOption.label}}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+	<plug-table [tablesConfig]="tableConfig"></plug-table>
+</div>

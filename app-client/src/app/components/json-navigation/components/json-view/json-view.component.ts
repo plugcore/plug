@@ -15,7 +15,7 @@ export class JsonNavigationJsonViewComponent implements OnInit {
 	constructor() { }
 
 	ngOnInit() {
-		this.output(this.syntaxHighlight(JSON.stringify(this.data, undefined, 4)));
+		this.output(this.syntaxHighlight(JSON.stringify(this.data, undefined, 8)));
 	}
 
 	syntaxHighlight(json) {

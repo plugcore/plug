@@ -1,179 +1,74 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { ITablesResults } from '../../../../../components/table/interfaces/table.interface';
-import { LogDetails, LogDetailsFromDb, LogFromDb, LogLevel } from '../models/log.model';
+import { TPartialLog, LogFromDb } from '../../../../../models/log.model';
+
+interface IJobLogProperties {
+	jobId: string;
+}
 
 @Injectable({
 	providedIn: 'root'
 })
 export class ScheduledJobsLogService {
 
-	data: LogFromDb[] = [
-		{
-			id: 1,
-			name: 'Log de prueba 1',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 2,
-			name: 'Log de prueba 2',
-			level: LogLevel.ERROR,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 3,
-			name: 'Log de prueba 3',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 4,
-			name: 'Log de prueba 4',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 5,
-			name: 'Log de prueba 5',
-			level: LogLevel.ERROR,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 6,
-			name: 'Log de prueba 6',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 7,
-			name: 'Log de prueba 7',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 8,
-			name: 'Log de prueba 8',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 9,
-			name: 'Log de prueba 9',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 10,
-			name: 'Log de prueba 10',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 11,
-			name: 'Log de prueba 11',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
+	public jobSelected = '0';
+
+
+	private baseLogs: TPartialLog<IJobLogProperties>[] = [
+		{ level: 20, msg: 'Loading mails to send to users. users found: 147', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 8617', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 142', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 2355', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 123', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to direction. Total tours booked today: 12', additionalProperties: { jobId: '2' } },
+		{ level: 30, msg: 'Mail sent to user 12342', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 8617', additionalProperties: { jobId: '1' } },
+		{ level: 50, msg: 'Error while sending mail to aasd%1fs@333.mail. Mail not found', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 2345', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 3457º1', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 134', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 6345', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 565623', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to direction. Total tours booked today: 73', additionalProperties: { jobId: '2' } },
+		{ level: 30, msg: 'Mail sent to user 12341', additionalProperties: { jobId: '1' } },
+		{ level: 50, msg: 'Error while sending mail to as`fs@test.mail. Mail not found', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 2341235', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 24612', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to user 62341', additionalProperties: { jobId: '1' } },
+		{ level: 30, msg: 'Mail sent to direction. Total tours booked today: 87', additionalProperties: { jobId: '2' } }
+	];
+	private logs: LogFromDb<IJobLogProperties>[] = [];
+
+	constructor() {
+		let currId = 4777;
+		let time = Date.now();
+		for (const basicLog of this.baseLogs) {
+			this.logs.push({
+				...basicLog,
+				...{
+					id: currId.toString(),
+					name: 'api-log',
+					time: time,
+					pid: 8754,
+					hostname: 'vps5662933',
+					v: '1'
+				}
+			});
+			currId ++;
+			time = time + (3.2 * 60 * 60 * 1013);
 		}
-	];
+	}
 
-	logDetails: LogDetailsFromDb[] = [
-		{
-			id: 1,
-			message: {
-				type: 'a',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 2,
-			message: {
-				type: 'b',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 3,
-			message: {
-				type: 'c',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 4,
-			message: {
-				type: 'd',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 5,
-			message: {
-				type: 'e',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 6,
-			message: {
-				type: 'f',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 7,
-			message: {
-				type: 'g',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 8,
-			message: {
-				type: 'h',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 9,
-			message: {
-				type: 'i',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 10,
-			message: {
-				type: 'j',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 11,
-			message: {
-				type: 'k',
-				log: 'Lorem ipsum'
-			}
-		},
-	];
-
-	public search(activeSort: string, direction: string, formValue: string[], pageIndex: number, pageSize: number):
+	public search(activeSort: string, direction: number, formValue: string[], pageIndex: number, pageSize: number):
 		Observable<ITablesResults<LogFromDb>> {
 
-		const lenght = this.data.length;
-		this.data = this.applySort(this.data, activeSort, direction);
-		const newData = this.applyPagination(this.data, pageIndex, pageSize);
+		const data = this.jobSelected !== '0' ?
+			this.logs.filter(res => res.additionalProperties.jobId === this.jobSelected) : this.logs;
+
+		const lenght = data.length;
+		this.applySort(data, activeSort, direction);
+		const newData = this.applyPagination(data, pageIndex, pageSize);
 		const result: ITablesResults<LogFromDb> = {
 			data: newData,
 			total: lenght
@@ -181,23 +76,23 @@ export class ScheduledJobsLogService {
 		return of(result);
 	}
 
-	public findById(id: number): Observable<LogFromDb> {
-		const log = this.data.find(l => {
+	public findById(id: string): Observable<LogFromDb> {
+		const log = this.logs.find(l => {
 			return l.id === id;
 		});
 		return of(log);
 	}
 
-	public findLogDetailsById(id: number): Observable<LogDetails> {
-		const logDetails = this.logDetails.find(ld => {
+	public findLogDetailsById(id: string): Observable<LogFromDb> {
+		const logDetails = this.logs.find(ld => {
 			return ld.id === id;
 		});
 		return of(logDetails);
 	}
 
-	private applySort(data: LogFromDb[], activeSort: string, direction: string): LogFromDb[] {
+	private applySort(data: LogFromDb[], activeSort: string, direction: number): LogFromDb[] {
 		if (activeSort !== undefined) {
-			if (direction === 'asc') {
+			if (direction === 1) {
 				data.sort((a, b) => {
 					if (a[activeSort] < b[activeSort]) {
 						return -1;

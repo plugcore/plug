@@ -14,7 +14,7 @@ export class ApiDocumentationComponent implements OnInit {
 
 	ngOnInit() {
 		const swaggerUi = new SwaggerUI({
-			url: 'http://localhost:4200/assets/swagger-pets.json',
+			url: '/assets/swagger-pets.json',
 			dom_id: '#swagger'
 		});
 	}

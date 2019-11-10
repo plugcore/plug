@@ -6,7 +6,7 @@ import { EventEmitter } from '@angular/core';
  */
 export interface ITablesConfig {
 	columns: ITablesColumn[];
-	searchMethod: (activeSort: string, direction: string, formValue: string[], pageIndex?: number, pageSize?: number) =>
+	searchMethod: (activeSort: string, direction: number, formValue: string[], pageIndex?: number, pageSize?: number) =>
 		Observable<ITablesResults>;
 	createMethod?: () => void;
 	reloadEvent?: EventEmitter<void>;
@@ -32,6 +32,7 @@ export interface ITablesColumn {
 	columnFilterHint?: string;
 	columnComponent?: any;
 	columnEditor?: (value: any, element: any) => any;
+	ngClass?: (element: any) => any;
 }
 
 /**

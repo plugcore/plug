@@ -1,8 +1,16 @@
 <div class="container">
-	<div class="category" *ngFor="let category of categories">
-		<h3>{{category.name}}</h3>
-		<ng-container *ngFor="let option of category.options">
-			<p><a routerLink="/{{option.path}}">{{option.name}}</a></p>
-		</ng-container>
-	</div>
+	<mat-card class="category" *ngFor="let category of categories">
+		<mat-card-title class="mat-bg-primary m-0">
+			<div class="card-title-text">
+				<span>{{category.name}}</span>
+			</div>
+		</mat-card-title>
+		<mat-card-content>
+			<div class="btn-wrapper" *ngFor="let option of category.options">
+				<button  mat-button routerLink="/{{option.path}}">
+					<mat-icon>{{option.icon}}</mat-icon> {{option.name}}
+				</button>
+			</div>
+		</mat-card-content>
+	</mat-card>
 </div>

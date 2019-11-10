@@ -1,179 +1,116 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { ITablesResults } from '../../../../../components/table/interfaces/table.interface';
-import { LogDetails, LogDetailsFromDb, LogFromDb, LogLevel } from '../models/log.model';
+import { LogFromDb, TPartialLog } from '../../../../../models/log.model';
+
+interface IApiLogProperties {
+	apiId: string;
+}
 
 @Injectable({
 	providedIn: 'root'
 })
 export class ApiLogService {
 
-	data: LogFromDb[] = [
-		{
-			id: 1,
-			name: 'Log de prueba 1',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 2,
-			name: 'Log de prueba 2',
-			level: LogLevel.ERROR,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 3,
-			name: 'Log de prueba 3',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 4,
-			name: 'Log de prueba 4',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 5,
-			name: 'Log de prueba 5',
-			level: LogLevel.ERROR,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 6,
-			name: 'Log de prueba 6',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 7,
-			name: 'Log de prueba 7',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 8,
-			name: 'Log de prueba 8',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 9,
-			name: 'Log de prueba 9',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 10,
-			name: 'Log de prueba 10',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 11,
-			name: 'Log de prueba 11',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
+	public apiSelected = '0';
+
+	private baseLogs: TPartialLog<IApiLogProperties>[] = [
+		{ level: 30, msg: 'Searching tours for city: PMI', additionalProperties: { apiId: '1' } },
+		{ level: 30, msg: 'Searching tours for city: BCN', additionalProperties: { apiId: '1' } },
+		{ level: 30, msg: 'Searching tours for city: MAD', additionalProperties: { apiId: '1' } },
+		{ level: 20, msg: 'Number of tours for PMI -> 25', additionalProperties: { apiId: '1' } },
+		{ level: 20, msg: 'Number of tours for MAD -> 40', additionalProperties: { apiId: '1' } },
+		{ level: 50, msg: 'No search results for city: PWQ', additionalProperties: { apiId: '1' } },
+		{ level: 20, msg: 'Number of tours for BCN -> 80', additionalProperties: { apiId: '1' } },
+		{ level: 50, msg: 'No search result for city: ARN', additionalProperties: { apiId: '1' } },
+		{ level: 30, msg: 'Searching realted products from tour {1482}', additionalProperties: { apiId: '2' } },
+		{ level: 30, msg: 'Searching realted products from tour {877669}', additionalProperties: { apiId: '2' } },
+		{ level: 30, msg: 'Searching realted products from tour {84177}', additionalProperties: { apiId: '2' } },
+		{ level: 50, msg: 'Error while trying to access vehicles services for city: PAW', additionalProperties: { apiId: '2' } },
+		{ level: 20, msg: 'Return flight results for tour {877669}: 51', additionalProperties: { apiId: '2' } },
+		{ level: 20, msg: 'Departing flight results for tour {84177}: 51', additionalProperties: { apiId: '2' } },
+		{ level: 20, msg: 'Veicle results for tour {877669}: 51', additionalProperties: { apiId: '2' } },
+		{ level: 20, msg: 'Veicle results for tour {84177}: 51', additionalProperties: { apiId: '2' } },
+		{ level: 20, msg: 'Veicle results for tour {1482}: 51', additionalProperties: { apiId: '2' } },
+		{ level: 20, msg: 'Hotel room results for tour {1482}: 51', additionalProperties: { apiId: '2' } },
+		{ level: 20, msg: 'Hotel room results for tour {84177}: 51', additionalProperties: { apiId: '2' } },
+		{ level: 30, msg: 'Creating a new reservation for user {147563} at 18/05/2020 in PMI', additionalProperties: { apiId: '3' } },
+		{ level: 30, additionalProperties: <any>{
+			apiId: '3',
+			userId: '147563',
+			tourId: '9987',
+			hotelRoomId: '79798561123',
+			flights: {
+				'departingFlight': '2345236347',
+				'returningFlight': '23542364567'
+			},
+			vehicleId: '9887641321564'
+		} },
+		{ level: 30, msg: 'Creating a new reservation for user {792} at 1/07/2020 in BCN', additionalProperties: { apiId: '3' } },
+		{ level: 30, additionalProperties: <any>{
+			apiId: '3',
+			userId: '792',
+			tourId: '9987',
+			hotelRoomId: '79798561123',
+			flights: {
+				'departingFlight': '2345236347',
+				'returningFlight': '23542364567'
+			},
+			vehicleId: '9887641321564'
+		} },
+		{ level: 30, msg: 'Creating a new reservation for user {1234} at 9/10/2020 in MAD', additionalProperties: { apiId: '3' } },
+		{ level: 30, additionalProperties: <any>{
+			apiId: '3',
+			userId: '1234',
+			tourId: '9987',
+			hotelRoomId: '79798561123',
+			flights: {
+				'departingFlight': '2345236347',
+				'returningFlight': '23542364567'
+			},
+			vehicleId: '9887641321564'
+		} },
+		{ level: 50, msg: 'Error creating a new reservation for user {6474567}, the date is from past', additionalProperties: { apiId: '3' } },
+		{ level: 20, msg: 'Reservations for user [7896]: 3', additionalProperties: { apiId: '4' } },
+		{ level: 20, msg: 'Reservations for user [1234]: 10', additionalProperties: { apiId: '4' } },
+		{ level: 20, msg: 'Reservations for user [67123]: 0', additionalProperties: { apiId: '4' } },
+		{ level: 50, msg: 'Unable to show reservations for user [a123]: User not found', additionalProperties: { apiId: '4' } },
+		{ level: 20, msg: 'Canceling reservation -1234-', additionalProperties: { apiId: '5' } },
+		{ level: 20, msg: 'Canceling reservation -98135-', additionalProperties: { apiId: '5' } },
+		{ level: 20, msg: 'Canceling reservation -8784-', additionalProperties: { apiId: '5' } },
+		{ level: 50, msg: 'Reservation doesn\'t exists: >5999-<', additionalProperties: { apiId: '5' } },
+	];
+	private logs: LogFromDb<IApiLogProperties>[] = [];
+
+	constructor() {
+		let currId = 3987;
+		let time = Date.now();
+		for (const basicLog of this.baseLogs) {
+			this.logs.push({
+				...basicLog,
+				...{
+					id: currId.toString(),
+					name: 'api-log',
+					time: time,
+					pid: 8754,
+					hostname: 'vps5662933',
+					v: '1'
+				}
+			});
+			currId ++;
+			time = time + (3.2 * 60 * 1013);
 		}
-	];
+	}
 
-	logDetails: LogDetailsFromDb[] = [
-		{
-			id: 1,
-			message: {
-				type: 'a',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 2,
-			message: {
-				type: 'b',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 3,
-			message: {
-				type: 'c',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 4,
-			message: {
-				type: 'd',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 5,
-			message: {
-				type: 'e',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 6,
-			message: {
-				type: 'f',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 7,
-			message: {
-				type: 'g',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 8,
-			message: {
-				type: 'h',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 9,
-			message: {
-				type: 'i',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 10,
-			message: {
-				type: 'j',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 11,
-			message: {
-				type: 'k',
-				log: 'Lorem ipsum'
-			}
-		},
-	];
-
-	public search(activeSort: string, direction: string, formValue: string[], pageIndex: number, pageSize: number):
+	public search(activeSort: string, direction: number, formValue: string[], pageIndex: number, pageSize: number):
 		Observable<ITablesResults<LogFromDb>> {
 
-		const lenght = this.data.length;
-		this.data = this.applySort(this.data, activeSort, direction);
-		const newData = this.applyPagination(this.data, pageIndex, pageSize);
+		const data = this.apiSelected !== '0' ?
+			this.logs.filter(res => res.additionalProperties.apiId === this.apiSelected) : this.logs;
+
+		const lenght = data.length;
+		this.applySort(data, activeSort, direction);
+		const newData = this.applyPagination(data, pageIndex, pageSize);
 		const result: ITablesResults<LogFromDb> = {
 			data: newData,
 			total: lenght
@@ -181,23 +118,23 @@ export class ApiLogService {
 		return of(result);
 	}
 
-	public findById(id: number): Observable<LogFromDb> {
-		const log = this.data.find(l => {
+	public findById(id: string): Observable<LogFromDb> {
+		const log = this.logs.find(l => {
 			return l.id === id;
 		});
 		return of(log);
 	}
 
-	public findLogDetailsById(id: number): Observable<LogDetails> {
-		const logDetails = this.logDetails.find(ld => {
+	public findLogDetailsById(id: string): Observable<LogFromDb> {
+		const logDetails = this.logs.find(ld => {
 			return ld.id === id;
 		});
 		return of(logDetails);
 	}
 
-	private applySort(data: LogFromDb[], activeSort: string, direction: string): LogFromDb[] {
+	private applySort(data: LogFromDb[], activeSort: string, direction: number) {
 		if (activeSort !== undefined) {
-			if (direction === 'asc') {
+			if (direction === 1) {
 				data.sort((a, b) => {
 					if (a[activeSort] < b[activeSort]) {
 						return -1;
@@ -219,7 +156,6 @@ export class ApiLogService {
 				});
 			}
 		}
-		return data;
 	}
 
 	private applyPagination(data: LogFromDb[], pageIndex: number, pageSize: number): LogFromDb[] {

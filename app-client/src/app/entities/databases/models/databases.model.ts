@@ -1,10 +1,14 @@
 export interface Database {
 	name: string;
-	id?: number;
-	create_date?: number;
-	create_user?: string;
-	modify_date?: number;
-	modify_user?: string;
+	desc: string;
+	type: 'MongoDb' | 'Postgres' | 'MySQL';
+	url: string;
+	credentials: Record<string, any>;
+	extraSettings?: Record<string, any>;
+	schemas: {
+		url: string;
+		name: string;
+	}[];
 }
 
 export type DatabaseFromDb = Required<Database>;

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatInputModule, MatSelectModule } from '@angular/material';
+import { MatButtonModule, MatCardModule, MatInputModule, MatSelectModule } from '@angular/material';
 import { MembershipUsersUpdateComponent } from '../components/update.component';
 import { MembershipUsersUpdateRoutesModule } from './update.routes.module';
 
@@ -12,7 +12,8 @@ import { MembershipUsersUpdateRoutesModule } from './update.routes.module';
 		ReactiveFormsModule,
 		MatInputModule,
 		MatButtonModule,
-		MatSelectModule
+		MatSelectModule,
+		MatCardModule
 	],
 	declarations: [
 		MembershipUsersUpdateComponent

@@ -8,7 +8,7 @@ import { SystemLogService } from '../../services/log.service';
 })
 export class SystemLogDetailsComponent implements OnInit {
 
-	@Input() public data: number;
+	@Input() public data: string;
 	@Output() public eventEmmiter = new EventEmitter<any>();
 
 	public log: Object;

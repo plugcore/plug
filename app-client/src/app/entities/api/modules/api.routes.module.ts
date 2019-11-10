@@ -3,6 +3,11 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
 	{
+		path: '',
+		pathMatch: 'full',
+		redirectTo: 'documentation'
+	},
+	{
 		path: 'documentation',
 		loadChildren: '../../api/entities/documentation/modules/documentation.module#ApiDocumentationModule',
 		data: {
@@ -24,6 +29,22 @@ const routes: Routes = [
 		data: {
 			title: 'Log',
 			breadcrumb: 'Log'
+		}
+	},
+	{
+		path: 'designer',
+		loadChildren: () => import('../../api/entities/designer/modules/designer.module').then(c => c.ApiDesignerModule),
+		data: {
+			title: 'Api designer',
+			breadcrumb: 'Api designer'
+		}
+	},
+	{
+		path: 'api-token',
+		loadChildren: () => import('../../api/entities/api-token/modules/api-token.module').then(c => c.ApiApiTokenModule),
+		data: {
+			title: 'Api token',
+			breadcrumb: 'Api token'
 		}
 	}
 ];

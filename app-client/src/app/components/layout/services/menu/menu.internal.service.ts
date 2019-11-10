@@ -80,6 +80,13 @@ export class LayoutMenuService {
 			state: 'api/status'
 		},
 		{
+			name: 'Designer',
+			type: 'link',
+			tooltip: 'Designer',
+			icon: 'cloud',
+			state: 'api/designer'
+		},
+		{
 			name: 'Documentation',
 			type: 'link',
 			tooltip: 'Documentation',
@@ -92,6 +99,13 @@ export class LayoutMenuService {
 			tooltip: 'Log',
 			icon: 'line_style',
 			state: 'api/log'
+		},
+		{
+			name: 'Api token',
+			type: 'link',
+			tooltip: 'Api token',
+			icon: 'person',
+			state: 'api/api-token'
 		},
 		{
 			type: 'separator',

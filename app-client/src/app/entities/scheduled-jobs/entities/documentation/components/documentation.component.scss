@@ -5,12 +5,21 @@
 }
 
 .card {
-	width: 20%;
+	max-width: 33.3%;
+    width: 100%;
+    min-width: 350px;
 	.card-content {
 		margin: 0 16px;
 	}
 	.card-actions {
 		margin: 0 16px;
 		float: right;
+		button {
+			background-color: #2a3551;
+		}
+	}
+	.desc-p {
+		height: 63px;
+		overflow: auto;
 	}
 }

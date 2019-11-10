@@ -1,9 +1,9 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
-import { ITablesConfig } from '../../../../../components/table/interfaces/table.interface';
-import { ApiLogService } from '../services/log.service';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { PlugDialogService } from '../../../../../components/dialog/services/dialog.service';
-import { PlugToastService } from '../../../../../components/toast/services/toast.service';
-import { Router } from '@angular/router';
+import { ITablesConfig } from '../../../../../components/table/interfaces/table.interface';
+import { LEVELS } from '../../../../../models/log.model';
+import { DateInternalService } from '../../../../../services/date/date.internal.service';
+import { ApiLogService } from '../services/log.service';
 import { ApiLogDetailsComponent } from './details/details.component';
 
 @Component({
@@ -14,38 +14,73 @@ import { ApiLogDetailsComponent } from './details/details.component';
 export class ApiLogComponent implements OnInit {
 
 	public tableConfig: ITablesConfig;
-	reloadEvent = new EventEmitter<void>();
+	private reloadEvent = new EventEmitter<void>();
+
+	public logTypeSelected = '0';
+	public logTypes = [
+		{
+			value: '0',
+			label: 'ALL'
+		},
+		{
+			value: '1',
+			label: 'GET /tours/find-future-tours-in-city/{cityId}'
+		},
+		{
+			value: '2',
+			label: 'GET /tours/find-related-products-for-tour/{tourId}'
+		},
+		{
+			value: '3',
+			label: 'POST /reservations/'
+		},
+		{
+			value: '4',
+			label: 'GET /reservations/find-user-reservations/{userId}'
+		},
+		{
+			value: '5',
+			label: 'DELETE /reservations/cancel-reservation/{reservationId}'
+		},
+	];
 
 	constructor(
 		private apiLogService: ApiLogService,
 		private dialogService: PlugDialogService,
-		private plugToastService: PlugToastService,
-		private router: Router
+		private dateInternalService: DateInternalService
 	) { }
 
 	ngOnInit() {
+		this.setLogTableConfig();
+	}
+
+	public logTypeSelectChanged(event: any) {
+		this.apiLogService.apiSelected = event.value;
+		this.logTypeSelected = event.value;
+		this.reloadEvent.emit();
+	}
+
+	private setLogTableConfig() {
 		this.tableConfig = {
 			searchMethod: this.apiLogService.search.bind(this.apiLogService),
 			columns: [
 				{
-					columnName: 'ID', columnAttribute: 'id', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
-				},
-				{
-					columnName: 'NAME', columnAttribute: 'name', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
+					columnName: 'TIME', columnAttribute: 'time', columnSort: true,
+					columnExpansion: { desktop: false, tablet: true, mobile: true },
+					columnEditor: this.formatDate.bind(this)
 				},
 				{
 					columnName: 'LEVEL', columnAttribute: 'level', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
+					columnExpansion: { desktop: false, tablet: false, mobile: false },
+					columnEditor: this.getLogLevelName.bind(this),
+					ngClass: log => ({
+						[LEVELS[log.level] || LEVELS.default]: true
+					})
 				},
 				{
-					columnName: 'CREATED ON', columnAttribute: 'create_date', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
-				},
-				{
-					columnName: 'CREATED BY', columnAttribute: 'create_user', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
+					columnName: 'MSG', columnAttribute: 'msg', columnSort: true,
+					columnExpansion: { desktop: false, tablet: true, mobile: true },
+					columnEditor: this.messageOrObject.bind(this)
 				}
 			],
 			reloadEvent: this.reloadEvent,
@@ -59,6 +94,18 @@ export class ApiLogComponent implements OnInit {
 	private view(element: any): any {
 		this.dialogService.openModal(ApiLogDetailsComponent, 'Log Details', element.id).subscribe();
 		return true;
+	}
+
+	private formatDate(date: number) {
+		return this.dateInternalService.getFormatDateTime(date);
+	}
+
+	private messageOrObject(msg?: any) {
+		return msg ? msg : '[OBJECT]';
+	}
+
+	private getLogLevelName(level: string) {
+		return LEVELS[level];
 	}
 
 }

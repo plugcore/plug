@@ -4,7 +4,8 @@ export const DASHBOARD_MENU = [
 		options: [
 			{
 				name: 'Documentation',
-				path: 'data-models/documentation'
+				path: 'data-models/documentation',
+				icon: 'chrome_reader_mode'
 			}
 		]
 	},
@@ -13,15 +14,18 @@ export const DASHBOARD_MENU = [
 		options: [
 			{
 				name: 'Status',
-				path: 'databases/status'
+				path: 'databases/status',
+				icon: 'assessment'
 			},
 			{
 				name: 'Documentation',
-				path: 'databases/documentation'
+				path: 'databases/documentation',
+				icon: 'chrome_reader_mode'
 			},
 			{
 				name: 'Log',
-				path: 'databases/log'
+				path: 'databases/log',
+				icon: 'line_style'
 			}
 		]
 	},
@@ -30,15 +34,28 @@ export const DASHBOARD_MENU = [
 		options: [
 			{
 				name: 'Status',
-				path: 'api/status'
+				path: 'api/status',
+				icon: 'assessment'
+			},
+			{
+				name: 'Designer',
+				path: 'api/designer',
+				icon: 'cloud'
 			},
 			{
 				name: 'Documentation',
-				path: 'api/documentation'
+				path: 'api/documentation',
+				icon: 'chrome_reader_mode'
 			},
 			{
 				name: 'Log',
-				path: 'api/log'
+				path: 'api/log',
+				icon: 'line_style'
+			},
+			{
+				name: 'Api token',
+				path: 'api/api-token',
+				icon: 'person'
 			}
 		]
 	},
@@ -47,15 +64,18 @@ export const DASHBOARD_MENU = [
 		options: [
 			{
 				name: 'Status',
-				path: 'plugs/status'
+				path: 'plugs/status',
+				icon: 'assessment'
 			},
 			{
 				name: 'Documentation',
-				path: 'plugs/documentation'
+				path: 'plugs/documentation',
+				icon: 'chrome_reader_mode'
 			},
 			{
 				name: 'Log',
-				path: 'plugs/log'
+				path: 'plugs/log',
+				icon: 'line_style'
 			}
 		]
 	},
@@ -64,15 +84,18 @@ export const DASHBOARD_MENU = [
 		options: [
 			{
 				name: 'Status',
-				path: 'scheduled-jobs/status'
+				path: 'scheduled-jobs/status',
+				icon: 'assessment'
 			},
 			{
 				name: 'Documentation',
-				path: 'scheduled-jobs/documentation'
+				path: 'scheduled-jobs/documentation',
+				icon: 'chrome_reader_mode'
 			},
 			{
 				name: 'Log',
-				path: 'scheduled-jobs/log'
+				path: 'scheduled-jobs/log',
+				icon: 'line_style'
 			}
 		]
 	},
@@ -81,11 +104,13 @@ export const DASHBOARD_MENU = [
 		options: [
 			{
 				name: 'Users',
-				path: 'membership/users'
+				path: 'membership/users',
+				icon: 'person'
 			},
 			{
 				name: 'Roles',
-				path: 'membership/roles'
+				path: 'membership/roles',
+				icon: 'directions_walk'
 			}
 		]
 	},
@@ -94,11 +119,13 @@ export const DASHBOARD_MENU = [
 		options: [
 			{
 				name: 'Configuration',
-				path: 'system/configuration'
+				path: 'system/configuration',
+				icon: 'settings'
 			},
 			{
 				name: 'Log',
-				path: 'system/log'
+				path: 'system/log',
+				icon: 'line_style'
 			}
 		]
 	}

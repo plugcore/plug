@@ -7,11 +7,27 @@
 .category {
 	flex-grow: 1;
 	width: 33%;
+	padding: 0;
+	margin: 10px;
+	.mat-card-title {
+		padding: 10px 15px;
+	}
+	.mat-card-content {
+		padding: 10px;
+		display: flex;
+		flex-wrap: wrap;
+		.btn-wrapper {
+			width: 50%;
+			button {
+				width: 100%;
+				text-align: left;
+			}
+		}
+	}
 }
 @media(max-width: 959px) {
 	.category {
 		width: 100%;
-		text-align: center;
 	}
 }
 

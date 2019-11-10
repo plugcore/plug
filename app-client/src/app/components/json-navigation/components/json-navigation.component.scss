@@ -1,5 +1,19 @@
+.navigation {
+	margin-bottom: 43px;;
+}
 .json-view {
-	text-align: center;
+	position: absolute;
+    bottom: 9px;
+    left: 0;
+    right: 0;
+    height: 34px;
+	button {
+		margin: 0 auto;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+	}
 }
 
 p.break-word {
@@ -8,17 +22,21 @@ p.break-word {
 
 p > span {
 	&.string {
-		color: green;
+		color: #448C27;
 	}
 	&.boolean {
-		color: blue;
+		color: #569CD6;
 	}
 	&.number {
-		color: darkorange;
+		color: #569CD6;
 	}
 	&.null {
-		color: magenta;
+		color: #d69456;
 	}
+}
+
+.break-word .key {
+	color: #9C5D27;
 }
 
 span.show-properties:hover {

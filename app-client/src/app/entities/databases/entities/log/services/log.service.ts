@@ -1,179 +1,85 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { ITablesResults } from '../../../../../components/table/interfaces/table.interface';
-import { LogDetails, LogDetailsFromDb, LogFromDb, LogLevel } from '../models/log.model';
+import { TPartialLog, LogFromDb } from '../../../../../models/log.model';
+
+interface IDatabaseLogProperties {
+	database: string;
+}
 
 @Injectable({
 	providedIn: 'root'
 })
 export class DatabasesLogService {
 
-	data: LogFromDb[] = [
-		{
-			id: 1,
-			name: 'Log de prueba 1',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 2,
-			name: 'Log de prueba 2',
-			level: LogLevel.ERROR,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 3,
-			name: 'Log de prueba 3',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 4,
-			name: 'Log de prueba 4',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 5,
-			name: 'Log de prueba 5',
-			level: LogLevel.ERROR,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 6,
-			name: 'Log de prueba 6',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 7,
-			name: 'Log de prueba 7',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 8,
-			name: 'Log de prueba 8',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 9,
-			name: 'Log de prueba 9',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 10,
-			name: 'Log de prueba 10',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 11,
-			name: 'Log de prueba 11',
-			level: LogLevel.INFO,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
+	public databseSelected = '0';
+
+	private baseLogs: TPartialLog<IDatabaseLogProperties>[] = [
+		{ level: 30, msg: 'Creating new reservation: 149932', additionalProperties: { database: '1' } },
+		{ level: 30, msg: 'Updaring reservation: 350217', additionalProperties: { database: '1' } },
+		{ level: 30, msg: 'Updaring reservation: 126245', additionalProperties: { database: '1' } },
+		{ level: 50, msg: 'Unable to create reservation with id [126245], already exists', additionalProperties: { database: '1' } },
+		{ level: 30, msg: 'Removing: 69191', additionalProperties: { database: '1' } },
+		{ level: 30, msg: 'Removing: 3456', additionalProperties: { database: '1' } },
+		{ level: 30, msg: 'Updaring reservation: 34671332', additionalProperties: { database: '1' } },
+		{ level: 30, msg: 'Removing: 123412342', additionalProperties: { database: '1' } },
+		{ level: 30, msg: 'Removing: 54', additionalProperties: { database: '1' } },
+		{ level: 30, msg: 'Creating new reservation: 149932', additionalProperties: { database: '1' } },
+		{ level: 50, msg: 'Unable to remove reservation with id [9999], not found', additionalProperties: { database: '1' } },
+		{ level: 30, msg: 'Creating reserfation log for [PMI|BCN|TRUE]', additionalProperties: { database: '2' } },
+		{ level: 30, msg: 'Creating reserfation log for [ERT|PMI|FALSE]', additionalProperties: { database: '2' } },
+		{ level: 30, msg: 'Creating reserfation log for [PE|PMI|FALSE]', additionalProperties: { database: '2' } },
+		{ level: 30, msg: 'Creating reserfation log for [VDW|BCN|TRUE]', additionalProperties: { database: '2' } },
+		{ level: 30, msg: 'Creating reserfation log for [QPD|MAD|TRUE]', additionalProperties: { database: '2' } },
+		{ level: 30, msg: 'Creating reserfation log for [REP|MAD|FALSE]', additionalProperties: { database: '2' } },
+		{ level: 30, msg: 'Creating reserfation log for [HAT|BCN|FALSE]', additionalProperties: { database: '2' } },
+		{ level: 30, msg: 'Creating reserfation log for [VDW|BCN|TRUE]', additionalProperties: { database: '2' } },
+		{ level: 30, msg: 'Creating reserfation log for [QPD|MAD|TRUE]', additionalProperties: { database: '2' } },
+		{ level: 30, msg: 'Creating reserfation log for [REP|MAD|FALSE]', additionalProperties: { database: '2' } },
+		{ level: 30, msg: 'Creating reserfation log for [HAT|BCN|FALSE]', additionalProperties: { database: '2' } },
+		{ level: 20, msg: 'Registered API CALL at GET /reservations/find-user-reservations/{userId}', additionalProperties: { database: '3' } },
+		{ level: 20, msg: 'Registered API CALL at GET /tours/find-future-tours-in-city/{cityId}', additionalProperties: { database: '3' } },
+		{ level: 20, msg: 'Registered API CALL at GET /tours/find-related-products-for-tour/{tourId}', additionalProperties: { database: '3' } },
+		{ level: 20, msg: 'Registered API CALL at POST /reservations/', additionalProperties: { database: '3' } },
+		{ level: 50, msg: 'Attemted to user an API token that is not registered: a8s93-asdf9291', additionalProperties: { database: '3' } },
+		{ level: 20, msg: 'Registered API CALL at GET /tours/find-future-tours-in-city/{cityId}', additionalProperties: { database: '3' } },
+		{ level: 20, msg: 'Registered API CALL at GET /tours/find-related-products-for-tour/{tourId}', additionalProperties: { database: '3' } },
+		{ level: 20, msg: 'Registered API CALL at GET /reservations/find-user-reservations/{userId}', additionalProperties: { database: '3' } },
+		{ level: 20, msg: 'Registered API CALL at DELETE /reservations/cancel-reservation/{reservationId}',
+			additionalProperties: { database: '3' } },
+		{ level: 50, msg: 'Dashboard user created [50] with rol [97]', additionalProperties: { database: '3' } },
+	];
+	private logs: LogFromDb<IDatabaseLogProperties>[] = [];
+
+	constructor() {
+		let currId = 5417;
+		let time = Date.now();
+		for (const basicLog of this.baseLogs) {
+			this.logs.push({
+				...basicLog,
+				...{
+					id: currId.toString(),
+					name: 'api-log',
+					time: time,
+					pid: 8754,
+					hostname: 'vps5662933',
+					v: '1'
+				}
+			});
+			currId ++;
+			time = time + (3.2 * 60 * 1013);
 		}
-	];
+	}
 
-	logDetails: LogDetailsFromDb[] = [
-		{
-			id: 1,
-			message: {
-				type: 'a',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 2,
-			message: {
-				type: 'b',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 3,
-			message: {
-				type: 'c',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 4,
-			message: {
-				type: 'd',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 5,
-			message: {
-				type: 'e',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 6,
-			message: {
-				type: 'f',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 7,
-			message: {
-				type: 'g',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 8,
-			message: {
-				type: 'h',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 9,
-			message: {
-				type: 'i',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 10,
-			message: {
-				type: 'j',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 11,
-			message: {
-				type: 'k',
-				log: 'Lorem ipsum'
-			}
-		},
-	];
-
-	public search(activeSort: string, direction: string, formValue: string[], pageIndex: number, pageSize: number):
+	public search(activeSort: string, direction: number, formValue: string[], pageIndex: number, pageSize: number):
 		Observable<ITablesResults<LogFromDb>> {
 
-		const lenght = this.data.length;
-		this.data = this.applySort(this.data, activeSort, direction);
-		const newData = this.applyPagination(this.data, pageIndex, pageSize);
+		const data = this.databseSelected !== '0' ?
+		this.logs.filter(res => res.additionalProperties.database === this.databseSelected) : this.logs;
+
+		const lenght = data.length;
+		this.applySort(data, activeSort, direction);
+		const newData = this.applyPagination(data, pageIndex, pageSize);
 		const result: ITablesResults<LogFromDb> = {
 			data: newData,
 			total: lenght
@@ -181,23 +87,23 @@ export class DatabasesLogService {
 		return of(result);
 	}
 
-	public findById(id: number): Observable<LogFromDb> {
-		const log = this.data.find(l => {
+	public findById(id: string): Observable<LogFromDb> {
+		const log = this.logs.find(l => {
 			return l.id === id;
 		});
 		return of(log);
 	}
 
-	public findLogDetailsById(id: number): Observable<LogDetails> {
-		const logDetails = this.logDetails.find(ld => {
+	public findLogDetailsById(id: string): Observable<LogFromDb> {
+		const logDetails = this.logs.find(ld => {
 			return ld.id === id;
 		});
 		return of(logDetails);
 	}
 
-	private applySort(data: LogFromDb[], activeSort: string, direction: string): LogFromDb[] {
+	private applySort(data: LogFromDb[], activeSort: string, direction: number): LogFromDb[] {
 		if (activeSort !== undefined) {
-			if (direction === 'asc') {
+			if (direction === 1) {
 				data.sort((a, b) => {
 					if (a[activeSort] < b[activeSort]) {
 						return -1;

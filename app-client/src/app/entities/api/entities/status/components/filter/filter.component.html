@@ -1,0 +1,40 @@
+<div class="tabs">
+	<mat-tab-group>
+		<mat-tab label="Select time range">
+			<mat-radio-group aria-label="Select an option" class="columnDisplay" [formControl]="optionSelectedControl">
+				<mat-radio-button value="1">Last 7 days</mat-radio-button>
+				<mat-radio-button value="2">Last 14 days</mat-radio-button>
+				<mat-radio-button value="3">Last 28 days</mat-radio-button>
+				<mat-radio-button value="4">Last 1 months</mat-radio-button>
+				<mat-radio-button value="5">Last 3 months</mat-radio-button>
+				<mat-radio-button value="6">Last 6 months</mat-radio-button>
+				<mat-radio-button value="7">Custom</mat-radio-button>
+			</mat-radio-group>
+			<mat-form-field>
+				<input matInput [matDatepicker]="initDatePicker" placeholder="Choose a date" [formControl]="initDateControl">
+				<mat-datepicker-toggle matSuffix [for]="initDatePicker"></mat-datepicker-toggle>
+				<mat-datepicker #initDatePicker></mat-datepicker>
+			</mat-form-field>
+			<mat-form-field>
+				<input matInput [matDatepicker]="finalDatePicker" placeholder="Choose a date" [formControl]="finalDateControl">
+				<mat-datepicker-toggle matSuffix [for]="finalDatePicker"></mat-datepicker-toggle>
+				<mat-datepicker #finalDatePicker></mat-datepicker>
+			</mat-form-field>
+		</mat-tab>
+		<mat-tab label="Filter API Metehods">
+			<div class="tab-apis">
+				<plug-table [tablesConfig]="tableConfig"></plug-table>
+			</div>
+		</mat-tab>
+		<mat-tab label="Filter API Tokens">
+			<div class="tab-apis">
+				<plug-table [tablesConfig]="tokenTables"></plug-table>
+			</div>
+		</mat-tab>
+	</mat-tab-group>
+</div>
+
+<div class="actions">
+	<button mat-button color="primary" (click)="closeDialog()">Cancel</button>
+	<button mat-button color="primary" (click)="applyFilters()">Apply</button>
+</div>

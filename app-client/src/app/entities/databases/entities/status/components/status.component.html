@@ -1,21 +1,28 @@
 <div class="container">
-	<mat-card *ngFor="let database of databases" class="card">
-		<mat-card-header>
-			<mat-card-title>{{database.name}}</mat-card-title>
-		</mat-card-header>
-		<mat-card-content class="card-content">
-			<p>
-				On/Off
-			</p>
-			<p>
-				Nombre
-			</p>
-			<p>
-				Datos de conexión
-			</p>
-			<p>
-				Icono
-			</p>
-		</mat-card-content>
-	</mat-card>
+	<div class="database-wrapper"*ngFor="let database of databases" >
+		<mat-card>
+			<mat-card-header>
+				<mat-card-title>{{database.name}}</mat-card-title>
+			</mat-card-header>
+			<mat-card-content class="card-content">
+				<div class="database-icon">
+					<img src="{{
+						database.type === 'Postgres' ? pgImage :
+						database.type === 'MySQL' ? mysqlImage :
+						database.type === 'MongoDb' ? mongoImage :
+						pgImage
+					}}" alt="{{database.type}}">
+				</div>
+				<p>
+					<strong>Type</strong> {{database.type}}
+				</p>
+				<p>
+					<strong>Status</strong> <mat-icon class="db-status">fiber_manual_record</mat-icon>
+				</p>
+				<p class="desc-p">
+					<strong>Description</strong> {{database.desc}}
+				</p>
+			</mat-card-content>
+		</mat-card>
+	</div>
 </div>

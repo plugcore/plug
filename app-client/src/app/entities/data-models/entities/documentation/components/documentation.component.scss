@@ -2,15 +2,44 @@
 	display: flex;
 	justify-content: flex-start;
 	flex-wrap: wrap;
+	margin: 0 auto;
 }
 
 .card {
-	width: 20%;
+    flex-basis: 25%;
+	flex-grow: 0;
+	align-self: flex-start;
+	min-width: 150px;
+	padding-bottom: 30px;
+	mat-card-title {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		width: 100%;
+	}
 	.card-content {
-		margin: 0 16px;
+		height: 90px;
+		overflow: auto;
+		padding: 0 15px 0 15px;
 	}
 	.card-actions {
-		margin: 0 16px;
-		float: right;
+		position: absolute;
+		bottom: 15px;
+		right: 15px;
+		button {
+			background-color: #2A3551;
+		}
+	}
+	&.database-model {
+		background-color: #2af5984a;
+	}
+	&.plug-model {
+		background-color: #009efd4a;
+	}
+	&.custom-model {
+		background-color: white;
+	}
+	&.is-mobile {
+		flex-basis: 100%;
 	}
 }

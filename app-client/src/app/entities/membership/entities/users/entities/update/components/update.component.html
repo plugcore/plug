@@ -1,13 +1,31 @@
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-	<mat-form-field>
-		<input matInput placeholder="User Name" formControlName="name">
-	</mat-form-field>
-	<mat-form-field>
-		<mat-select formControlName="role">
-			<mat-option *ngFor="let role of roles" [value]="role.id">
-				{{role.name}}
-			</mat-option>
-		</mat-select>
-	</mat-form-field>
-	<button mat-raised-button type="submit" [disabled]="!userForm.valid">{{isUpdate ? 'Update' : 'Create'}}</button>
-</form>
+<div class="container">
+	<mat-card>
+		<mat-card-header>
+			<mat-card-title>{{isUpdate ? 'Update user' : 'Create user'}}</mat-card-title>
+		</mat-card-header>
+		<mat-card-content>
+			<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+				<div>
+					<mat-form-field>
+						<input matInput placeholder="User Name" formControlName="name">
+					</mat-form-field>
+				</div>
+				<div>
+					<mat-form-field>
+						<mat-label>Role</mat-label>
+						<mat-select formControlName="role">
+							<mat-option *ngFor="let role of roles" [value]="role.id">
+								{{role.name}}
+							</mat-option>
+						</mat-select>
+					</mat-form-field>
+				</div>
+				<div>
+					<button mat-raised-button type="submit" [disabled]="!userForm.valid" color="primary">
+						{{isUpdate ? 'Update' : 'Create'}}
+					</button>
+				</div>
+			</form>
+		</mat-card-content>
+	</mat-card>
+</div>

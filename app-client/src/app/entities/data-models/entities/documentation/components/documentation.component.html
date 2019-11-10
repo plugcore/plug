@@ -1,12 +1,20 @@
 <div class="container">
-	<mat-card *ngFor="let dataModel of dataModels" class="card">
+	<mat-card *ngFor="let dataModel of dataModels" class="card" [ngClass]="{
+		'database-model': dataModel.type === 'database',
+		'plug-model': dataModel.type === 'plug',
+		'custom-model': dataModel.type === 'custom',
+		'is-mobile': routeConf.isMobile
+	}">
 		<mat-card-header>
 			<mat-card-title>{{dataModel.name}}</mat-card-title>
 		</mat-card-header>
 		<mat-card-content class="card-content">
-			<p>
-				Lorem...
-			</p>
+			<div class="model-type">
+				<strong>Type</strong>: {{dataModel.type === 'database' ? 'Database' : dataModel.type === 'plug' ? 'Plug' : 'Custom'}}
+			</div>
+			<div class="model-desc">
+				<strong>Description:</strong> {{dataModel.desc}}
+			</div>
 		</mat-card-content>
 		<mat-card-actions class="card-actions">
 			<button mat-raised-button color="primary" routerLink="{{dataModel.id}}">View</button>

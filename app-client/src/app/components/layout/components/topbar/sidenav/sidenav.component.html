@@ -37,22 +37,22 @@
 		<span class="notification-number mat-bg-warn">3</span>
 	</button> -->
 		<!-- Top left user menu -->
-		<!-- <button mat-icon-button [matMenuTriggerFor]="accountMenu" class="topbar-button-right img-button">
-			<img src="assets/images/face.jpg" alt="">
+		<button mat-icon-button [matMenuTriggerFor]="accountMenu" class="topbar-button-right img-button">
+			<mat-icon>person</mat-icon>
 		</button>
 		<mat-menu #accountMenu="matMenu">
-			<button mat-menu-item routerLink="/profile">
+			<!-- <button mat-menu-item routerLink="/profile">
 				<mat-icon>settings</mat-icon>
 				<span>Account Settings</span>
 			</button>
 			<button mat-menu-item>
 				<mat-icon>notifications_off</mat-icon>
 				<span>Disable alerts</span>
-			</button>
-			<button mat-menu-item [routerLink]="['/sessions/signin']">
+			</button> -->
+			<button mat-menu-item (click)="signOut()">
 				<mat-icon>exit_to_app</mat-icon>
 				<span>Sign out</span>
 			</button>
-		</mat-menu> -->
+		</mat-menu>
 	</mat-toolbar>
 </div>

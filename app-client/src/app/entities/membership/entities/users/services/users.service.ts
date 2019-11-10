@@ -10,62 +10,62 @@ export class TablesUsersService {
 
 	data: UserFromDb[] = [
 		{
-			id: 1,
-			role: 1,
-			name: 'User de prueba 1',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
-		},
-		{
-			id: 2,
-			role: 1,
-			name: 'User de prueba 2',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
-		},
-		{
-			id: 3,
-			role: 1,
-			name: 'User de prueba 3',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
-		},
-		{
 			id: 4,
 			role: 1,
-			name: 'User de prueba 4',
-			create_date: new Date().getTime(),
+			name: 'Javi',
+			create_date: new Date().getTime() - (225 * 60 * 60 * 1000),
 			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
-		},
-		{
-			id: 5,
-			role: 1,
-			name: 'User de prueba 5',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
+			modify_date: new Date().getTime() - (24 * 60 * 60 * 1000),
+			modify_user: 'Javi'
 		},
 		{
 			id: 6,
-			role: 1,
-			name: 'User de prueba 6',
-			create_date: new Date().getTime(),
+			role: 3,
+			name: 'Alba',
+			create_date: new Date().getTime() - (224 * 60 * 60 * 1000),
 			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
+			modify_date: new Date().getTime() - (80 * 60 * 60 * 1000),
+			modify_user: 'Javi'
+		},
+		{
+			id: 12,
+			role: 2,
+			name: 'Pascual',
+			create_date: new Date().getTime() - (223.6 * 60 * 60 * 1000),
+			create_user: 'admin',
+			modify_date: new Date().getTime() - (223.6 * 60 * 60 * 1000),
+			modify_user: 'admin'
+		},
+		{
+			id: 15,
+			role: 1,
+			name: 'Jordi',
+			create_date: new Date().getTime() - (223.2 * 60 * 60 * 1000),
+			create_user: 'admin',
+			modify_date: new Date().getTime() - (98 * 60 * 60 * 1000),
+			modify_user: 'Javi'
+		},
+		{
+			id: 20,
+			role: 1,
+			name: 'Manuel',
+			create_date: new Date().getTime() - (222 * 60 * 60 * 1000),
+			create_user: 'admin',
+			modify_date: new Date().getTime() - (125 * 60 * 60 * 1000),
+			modify_user: 'Javi'
+		},
+		{
+			id: 23,
+			role: 4,
+			name: 'Silvia',
+			create_date: new Date().getTime() - (221 * 60 * 60 * 1000),
+			create_user: 'admin',
+			modify_date: new Date().getTime() - (221 * 60 * 60 * 1000),
+			modify_user: 'Manuel'
 		}
 	];
 
-	public search(activeSort: string, direction: string, formValue: string[], pageIndex: number, pageSize: number):
+	public search(activeSort: string, direction: number, formValue: string[], pageIndex: number, pageSize: number):
 		Observable<ITablesResults<UserFromDb>> {
 
 		const lenght = this.data.length;
@@ -113,9 +113,9 @@ export class TablesUsersService {
 		return of(user);
 	}
 
-	private applySort(data: UserFromDb[], activeSort: string, direction: string): UserFromDb[] {
+	private applySort(data: UserFromDb[], activeSort: string, direction: number): UserFromDb[] {
 		if (activeSort !== undefined) {
-			if (direction === 'asc') {
+			if (direction === 1) {
 				data.sort((a, b) => {
 					if (a[activeSort] < b[activeSort]) {
 						return -1;

@@ -1,1 +1,12 @@
-<plug-table [tablesConfig]="tableConfig"></plug-table>
+<div class="container">
+	<mat-form-field class="methods-select">
+		<mat-select (selectionChange)="logTypeSelectChanged($event)" [(value)]="logTypeSelected">
+			<mat-option *ngFor="let logTypeOption of logTypes" [value]="logTypeOption.value">
+				{{logTypeOption.label}}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
+	<div class="logs-table">
+		<plug-table [tablesConfig]="tableConfig"></plug-table>
+	</div>
+</div>

@@ -1,18 +1,28 @@
 <div class="container">
-	<mat-card *ngFor="let plug of plugs" class="card">
-		<mat-card-header>
-			<mat-card-title>{{plug.name}}</mat-card-title>
-		</mat-card-header>
-		<mat-card-content class="card-content">
-			<p>
-				On/Off
-			</p>
-			<p>
-				Nombre
-			</p>
-			<p>
-				Icono
-			</p>
-		</mat-card-content>
-	</mat-card>
+	<div class="database-wrapper"*ngFor="let plug of plugs" >
+		<mat-card>
+			<mat-card-header>
+				<mat-card-title>{{plug.name}}</mat-card-title>
+			</mat-card-header>
+			<mat-card-content class="card-content">
+				<div class="database-icon">
+					<img src="{{
+						plug.type === 'best-tours' ? tourUrl :
+						plug.type === 'holiday-hotels' ? hotelUrl :
+						plug.type === 'my-rentacar' ? rentacarUrl :
+						flightUtl
+					}}" alt="{{plug.type}}">
+				</div>
+				<p>
+					<strong>Status</strong> <mat-icon class="db-status">fiber_manual_record</mat-icon>
+				</p>
+				<p class="desc-p">
+					<strong>Description</strong> {{plug.desc}}
+				</p>
+			</mat-card-content>
+			<mat-card-actions class="card-actions">
+				<button mat-raised-button color="primary" routerLink="{{plug.type}}">View</button>
+			</mat-card-actions>
+		</mat-card>
+	</div>
 </div>

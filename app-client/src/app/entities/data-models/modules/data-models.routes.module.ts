@@ -3,6 +3,11 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
 	{
+		path: '',
+		pathMatch: 'full',
+		redirectTo: 'documentation'
+	},
+	{
 		path: 'documentation',
 		loadChildren: '../../data-models/entities/documentation/modules/documentation.module#DataModelsDocumentationModule',
 		data: {

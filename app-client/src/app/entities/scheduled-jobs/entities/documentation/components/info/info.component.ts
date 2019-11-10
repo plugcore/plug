@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map, switchMap, takeWhile, tap } from 'rxjs/operators';
 import { ScheduledJobsService } from '../../../../services/scheduled-jobs.service';
+import { ScheduledJobFromDb } from '../../../../models/scheduled-jobs.model';
+import { DateInternalService } from '../../../../../../services/date/date.internal.service';
 
 @Component({
 	selector: 'plug-scheduled-jobs-documentation-info',
@@ -11,10 +13,12 @@ import { ScheduledJobsService } from '../../../../services/scheduled-jobs.servic
 export class ScheduledJobsDocumentationInfoComponent implements OnInit {
 
 	private id: number;
+	public scheduledJob: ScheduledJobFromDb;
 
 	constructor(
 		private scheduledJobsService: ScheduledJobsService,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		public dateInternalService: DateInternalService
 	) {
 	}
 
@@ -25,7 +29,7 @@ export class ScheduledJobsDocumentationInfoComponent implements OnInit {
 			tap(id => { this.id = id; }),
 			switchMap(() => this.scheduledJobsService.findById(this.id))
 		).subscribe(scheduledJob => {
-			console.log(scheduledJob);
+			this.scheduledJob = scheduledJob;
 		});
 	}
 

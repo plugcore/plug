@@ -1,12 +1,13 @@
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppComponent } from '../components/app.component';
+import { PlugLayoutModule } from '../components/layout/modules/layout.module';
 import { PlugOverlayModule } from '../components/overlay/modules/overlay.module';
 import { PlugToastModule } from '../components/toast/modules/toast.module';
+import { TokenInterceptor } from '../interceptors/token.interceptor';
 import { AppRoutesModule } from './app.routes.module';
-import { PlugLayoutModule } from '../components/layout/modules/layout.module';
-import { MatDialogModule } from '@angular/material';
+
 
 @NgModule({
 	imports: [
@@ -14,10 +15,18 @@ import { MatDialogModule } from '@angular/material';
 		AppRoutesModule,
 		PlugLayoutModule,
 		PlugToastModule,
-		PlugOverlayModule
+		PlugOverlayModule,
+		HttpClientModule
 	],
 	declarations: [
 		AppComponent
+	],
+	providers: [
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: TokenInterceptor,
+			multi: true
+		}
 	],
 	bootstrap: [AppComponent]
 })

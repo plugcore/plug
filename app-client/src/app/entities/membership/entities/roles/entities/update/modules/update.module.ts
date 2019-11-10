@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatInputModule, MatCheckboxModule } from '@angular/material';
+import { MatButtonModule, MatCardModule, MatCheckboxModule, MatInputModule } from '@angular/material';
 import { MembershipRolesUpdateComponent } from '../components/update.component';
 import { MembershipRolesUpdateRoutesModule } from './update.routes.module';
 
@@ -12,7 +12,8 @@ import { MembershipRolesUpdateRoutesModule } from './update.routes.module';
 		ReactiveFormsModule,
 		MatInputModule,
 		MatButtonModule,
-		MatCheckboxModule
+		MatCheckboxModule,
+		MatCardModule
 	],
 	declarations: [
 		MembershipRolesUpdateComponent

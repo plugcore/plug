@@ -7,7 +7,6 @@
 }
 .session-progress {
   position: relative;
-  bottom: -5px;
   z-index: 9999;
 }
 .session-form-hold {
@@ -16,7 +15,7 @@
   margin: 0 auto;
 }
 .session-form-hold > .mat-card {
-  margin: 0;    
+  margin: 0;
 }
 .session-lockscreen {
   max-width: 320px;

@@ -2,27 +2,27 @@
 	padding: 5px;
 	margin: 5px;
 	white-space: pre;
-	max-width: 800px;
-	max-height: 700px;
-	overflow: scroll;
+	min-width: 50vw;
+	width: 400px;
+	max-width: 90vw;
+	max-height: 90vh;
+	overflow: auto;
 }
 
-::ng-deep .string {
-	color: green;
-}
-
-::ng-deep .number {
-	color: darkorange;
-}
-
-::ng-deep .boolean {
-	color: blue;
-}
-
-::ng-deep .null {
-	color: magenta;
-}
-
-::ng-deep .key {
-	color: red;
+::ng-deep {
+	.string {
+		color: #448C27;
+	}
+	.number {
+		color: #569CD6;
+	}
+	.boolean {
+		color: #569CD6;
+	}
+	.null {
+		color: #d69456;
+	}
+	.key {
+		color: #9C5D27;
+	}
 }

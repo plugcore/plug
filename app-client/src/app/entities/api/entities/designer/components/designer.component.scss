@@ -1,0 +1,34 @@
+.container ::ng-deep table {
+	background-color: white;
+	border: 1px solid #eee;
+	@media(min-width: 959px) {
+		.no-wrap {
+			white-space: nowrap;
+		}
+	}
+	.GET {
+		background-color: #61affe;
+		color: white;
+		padding: 5px;
+	}
+	.POST {
+		background-color: #49cc90;
+		color: white;
+		padding: 5px;
+	}
+	.DELETE {
+		background-color: #f93e3e;
+		color: white;
+		padding: 5px;
+	}
+	.PUT {
+		background-color: #49cc90;
+		color: white;
+		padding: 5px;
+	}
+	.PATCH {
+		background-color: #49cc90;
+		color: white;
+		padding: 5px;
+	}
+}

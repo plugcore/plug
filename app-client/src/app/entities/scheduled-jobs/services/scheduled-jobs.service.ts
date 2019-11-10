@@ -11,51 +11,34 @@ export class ScheduledJobsService {
 	data: ScheduledJobFromDb[] = [
 		{
 			id: 1,
-			name: 'Scheduled Job de prueba 1',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
+			name: 'Mail to users',
+			cron: 'Every 6h',
+			desc: 'Sends a mail with a remainder of incoming purchased tours to the selected users',
+			nextExecution: new Date().getTime() + (6 * 60 * 60 * 1000),
+			inputModel: {
+				title: 'SelectedUsersForMail',
+				type: 'object',
+				properties:
+				{
+					users:
+					{
+						title: 'Users mails',
+						type: 'array',
+						items: {
+							type: 'string'
+						},
+						uniqueItems: true
+					}
+				},
+				required: ['users']
+			}
 		},
 		{
 			id: 2,
-			name: 'Scheduled Job de prueba 2',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
-		},
-		{
-			id: 3,
-			name: 'Scheduled Job de prueba 3',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
-		},
-		{
-			id: 4,
-			name: 'Scheduled Job de prueba 4',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
-		},
-		{
-			id: 5,
-			name: 'Scheduled Job de prueba 5',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
-		},
-		{
-			id: 6,
-			name: 'Scheduled Job de prueba 6',
-			create_date: new Date().getTime(),
-			create_user: 'admin',
-			modify_date: new Date().getTime(),
-			modify_user: 'nimda'
+			name: 'Daily stats to direction',
+			cron: 'Every day at 09:00',
+			desc: 'Generates a report with all the relevant information about the day',
+			nextExecution: new Date().getTime() + (12 * 60 * 60 * 1000)
 		}
 	];
 

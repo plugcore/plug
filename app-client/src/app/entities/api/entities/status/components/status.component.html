@@ -1,5 +1,19 @@
+
+
 <div class="container">
-	<google-chart #chart [title]="title" [type]="type" [data]="data" [columnNames]="columnNames" [options]="options"
-		[width]="width" [height]="height">
-	</google-chart>
+	<mat-form-field>
+		<mat-label>Chart type</mat-label>
+		<mat-select (selectionChange)="chartTypeChanged($event)" [(value)]="chartType.name" >
+			<mat-option *ngFor="let ct of chartTypes" [value]="ct.name">
+				{{ct.name}}
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
+	<button mat-button color="primary" (click)="openFilter()" class="filter">Filter</button>
+	<div class="chart-wrap">
+		<google-chart #chart [title]="chartSelected.title" [type]="chartSelected.type" [data]="chartSelected.data"
+			[columnNames]="chartSelected.columnNames" [options]="chartSelected.options"
+			[height]="chartSelected.height">
+		</google-chart>
+	</div>
 </div>

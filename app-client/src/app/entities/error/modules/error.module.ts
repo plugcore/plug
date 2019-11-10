@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Error404Component } from '../components/404/404.component';
 import { Error500Component } from '../components/500/500.component';
 import { ErrorRoutesModule } from './error.routes.module';
+import { Error403Component } from '../components/403/403.component';
 
 @NgModule({
 	imports: [
@@ -15,6 +16,7 @@ import { ErrorRoutesModule } from './error.routes.module';
 		MatButtonModule,
 	],
 	declarations: [
+		Error403Component,
 		Error404Component,
 		Error500Component
 	]

@@ -8,10 +8,10 @@ import { ScheduledJobsLogService } from '../../services/log.service';
 })
 export class ScheduledJobsLogDetailsComponent implements OnInit {
 
-	@Input() public data: number;
+	@Input() public data: string;
 	@Output() public eventEmmiter = new EventEmitter<any>();
 
-	public log: string;
+	public log: any;
 
 	constructor(
 		private scheduledJobsLogService: ScheduledJobsLogService
@@ -19,7 +19,7 @@ export class ScheduledJobsLogDetailsComponent implements OnInit {
 
 	ngOnInit() {
 		this.scheduledJobsLogService.findLogDetailsById(this.data).subscribe(res => {
-			this.log = JSON.stringify(res);
+			this.log = res;
 		});
 	}
 

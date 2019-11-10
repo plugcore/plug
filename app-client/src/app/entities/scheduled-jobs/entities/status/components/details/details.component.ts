@@ -11,7 +11,7 @@ export class ScheduledJobsStatusDetailsComponent implements OnInit {
 	@Input() public data: number;
 	@Output() public eventEmmiter = new EventEmitter<any>();
 
-	public event: string;
+	public event: any;
 
 	constructor(
 		private scheduledJobsEventService: ScheduledJobsEventService
@@ -19,7 +19,7 @@ export class ScheduledJobsStatusDetailsComponent implements OnInit {
 
 	ngOnInit() {
 		this.scheduledJobsEventService.findEventDetailsById(this.data).subscribe(res => {
-			this.event = JSON.stringify(res);
+			this.event = res;
 		});
 	}
 

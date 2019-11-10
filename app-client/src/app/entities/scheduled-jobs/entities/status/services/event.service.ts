@@ -8,172 +8,198 @@ import { EventDetails, EventDetailsFromDb, EventFromDb, EventStatus } from '../m
 })
 export class ScheduledJobsEventService {
 
-	data: EventFromDb[] = [
+	public jobTypeSelected = '0';
+
+	private data: EventFromDb[] = [
 		{
-			id: 1,
-			name: 'Evento de prueba 1',
-			status: EventStatus.COMPLETED,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 2,
-			name: 'Evento de prueba 2',
-			status: EventStatus.QUEUED,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 3,
-			name: 'Evento de prueba 3',
-			status: EventStatus.FAILED,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 4,
-			name: 'Evento de prueba 4',
+			id: 789,
+			name: 'Daily stats to direction',
 			status: EventStatus.SCHEDULED,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
+			jobType: '2',
+			create_date: new Date().getTime() + (5 * 60 * 60 * 1000),
+			create_user: 'System'
 		},
 		{
-			id: 5,
-			name: 'Evento de prueba 5',
+			id: 789,
+			name: 'Mail to users',
 			status: EventStatus.RUNNING,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
+			jobType: '1',
+			create_date: new Date().getTime() + (1.9 * 60 * 60 * 1000),
+			create_user: 'System',
+			eventDetails: {
+				input: {
+					users: [
+						'8manhalofficial0@worldbibleschool.name',
+						'vphenomene.su@sempuranadi.cf',
+						'pfar@awer.icu',
+						'ghair@fonsview.ml',
+						'azakari@whatsmyspeed.info'
+					]
+				}
+			}
 		},
 		{
-			id: 6,
-			name: 'Evento de prueba 6',
+			id: 788,
+			name: 'Mail to users',
 			status: EventStatus.COMPLETED,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
+			jobType: '1',
+			create_date: new Date().getTime() - (6 * 60 * 60 * 1000),
+			create_user: 'System',
+			eventDetails: {
+				input: {
+					users: [
+						'vapdhaliwal.77@dalamanporttransfer.xyz',
+						'pfar@awer.icu',
+						'ghair@fonsview.ml',
+						'2paulo.pereira.8r@modety.online'
+					]
+				}
+			}
 		},
 		{
-			id: 7,
-			name: 'Evento de prueba 7',
-			status: EventStatus.COMPLETED,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 8,
-			name: 'Evento de prueba 8',
-			status: EventStatus.RUNNING,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 9,
-			name: 'Evento de prueba 9',
-			status: EventStatus.QUEUED,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
-		},
-		{
-			id: 10,
-			name: 'Evento de prueba 10',
+			id: 787,
+			name: 'Mail to users',
 			status: EventStatus.FAILED,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
+			jobType: '1',
+			create_date: new Date().getTime() - (12 * 60 * 60 * 1000),
+			create_user: 'System',
+			eventDetails: {
+				input: {
+					users: [
+						'vphenomene.su@sempuranadi.cf',
+						'pfar@awer.icu',
+						'ghair@fonsview.ml',
+						'azakari@whatsmyspeed.info',
+						'a\'20asdf.ws'
+					]
+				},
+				errors: [
+					'User [6752] not found',
+					'Invalid mail [a\'20asdf.ws]'
+				]
+			}
 		},
 		{
-			id: 11,
-			name: 'Evento de prueba 11',
+			id: 786,
+			name: 'Daily stats to direction',
 			status: EventStatus.COMPLETED,
-			create_date: new Date().getTime(),
-			create_user: 'admin'
+			jobType: '2',
+			create_date: new Date().getTime() - (12 * 60 * 60 * 1000),
+			create_user: 'System'
+		},
+		{
+			id: 785,
+			name: 'Mail to users',
+			status: EventStatus.COMPLETED,
+			jobType: '1',
+			create_date: new Date().getTime() - (18 * 60 * 60 * 1000),
+			create_user: 'System',
+			eventDetails: {
+				input: {
+					users: [
+						'vphenomene.su@sempuranadi.cf',
+						'pfar@awer.icu',
+						'ghair@fonsview.ml',
+						'azakari@whatsmyspeed.info'
+					]
+				}
+			}
+		},
+		{
+			id: 784,
+			name: 'Mail to users',
+			status: EventStatus.COMPLETED,
+			jobType: '1',
+			create_date: new Date().getTime() - (24 * 60 * 60 * 1000),
+			create_user: 'System',
+			eventDetails: {
+				input: {
+					users: [
+						'vphenomene.su@sempuranadi.cf',
+						'4pkvolv@cosmeticprocedure.org',
+						'azakari@whatsmyspeed.info'
+					]
+				}
+			}
+		},
+		{
+			id: 783,
+			name: 'Daily stats to direction',
+			status: EventStatus.COMPLETED,
+			jobType: '2',
+			create_date: new Date().getTime() - (24 * 60 * 60 * 1000),
+			create_user: 'System'
+		},
+		{
+			id: 782,
+			name: 'Mail to users',
+			status: EventStatus.COMPLETED,
+			jobType: '1',
+			create_date: new Date().getTime() - (30 * 60 * 60 * 1000),
+			create_user: 'System',
+			eventDetails: {
+				input: {
+					users: [
+						'vphenomene.su@sempuranadi.cf',
+						'pfar@awer.icu',
+						'ghair@fonsview.ml',
+						'azakari@whatsmyspeed.info',
+						'osamuel14_fernane@toplinewindow.com'
+					]
+				}
+			}
+		},
+		{
+			id: 781,
+			name: 'Mail to users',
+			status: EventStatus.COMPLETED,
+			jobType: '1',
+			create_date: new Date().getTime() - (36 * 60 * 60 * 1000),
+			create_user: 'System',
+			eventDetails: {
+				input: {
+					users: [
+						'ghair@fonsview.ml',
+						'azakari@whatsmyspeed.info'
+					]
+				}
+			}
+		},
+		{
+			id: 780,
+			name: 'Daily stats to direction',
+			jobType: '2',
+			status: EventStatus.COMPLETED,
+			create_date: new Date().getTime() - (36 * 60 * 60 * 1000),
+			create_user: 'System'
+		},
+		{
+			id: 779,
+			name: 'Mail to users',
+			status: EventStatus.COMPLETED,
+			jobType: '1',
+			create_date: new Date().getTime() - (42 * 60 * 60 * 1000),
+			create_user: 'System',
+			eventDetails: {
+				input: {
+					users: [
+						'vphenomene.su@sempuranadi.cf',
+						'pfar@awer.icu',
+						'azakari@whatsmyspeed.info'
+					]
+				}
+			}
 		}
 	];
 
-	eventDetails: EventDetailsFromDb[] = [
-		{
-			id: 1,
-			message: {
-				type: 'a',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 2,
-			message: {
-				type: 'b',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 3,
-			message: {
-				type: 'c',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 4,
-			message: {
-				type: 'd',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 5,
-			message: {
-				type: 'e',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 6,
-			message: {
-				type: 'f',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 7,
-			message: {
-				type: 'g',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 8,
-			message: {
-				type: 'h',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 9,
-			message: {
-				type: 'i',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 10,
-			message: {
-				type: 'j',
-				log: 'Lorem ipsum'
-			}
-		},
-		{
-			id: 11,
-			message: {
-				type: 'k',
-				log: 'Lorem ipsum'
-			}
-		},
-	];
-
-	public search(activeSort: string, direction: string, formValue: string[], pageIndex: number, pageSize: number):
+	public search(activeSort: string, direction: number, formValue: string[], pageIndex: number, pageSize: number):
 		Observable<ITablesResults<EventFromDb>> {
 
-		const lenght = this.data.length;
-		this.data = this.applySort(this.data, activeSort, direction);
-		const newData = this.applyPagination(this.data, pageIndex, pageSize);
+		const data = this.jobTypeSelected !== '0' ?
+			this.data.filter(res => res.jobType === this.jobTypeSelected) : this.data;
+		const lenght = data.length;
+		this.applySort(data, activeSort, direction);
+		const newData = this.applyPagination(data, pageIndex, pageSize);
 		const result: ITablesResults<EventFromDb> = {
 			data: newData,
 			total: lenght
@@ -189,15 +215,15 @@ export class ScheduledJobsEventService {
 	}
 
 	public findEventDetailsById(id: number): Observable<EventDetails> {
-		const eventDetails = this.eventDetails.find(ed => {
-			return ed.id === id;
+		const event = this.data.find(e => {
+			return e.id === id;
 		});
-		return of(eventDetails);
+		return of(event.eventDetails);
 	}
 
-	private applySort(data: EventFromDb[], activeSort: string, direction: string): EventFromDb[] {
+	private applySort(data: EventFromDb[], activeSort: string, direction: number): EventFromDb[] {
 		if (activeSort !== undefined) {
-			if (direction === 'asc') {
+			if (direction === 1) {
 				data.sort((a, b) => {
 					if (a[activeSort] < b[activeSort]) {
 						return -1;

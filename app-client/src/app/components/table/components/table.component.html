@@ -9,22 +9,30 @@
 		 cdk-cell *cdkCellDef='let element'>
 			<div class="cell-content">
 				<!-- If there aren't levels, there aren't editor and it isn't an actions column, show the result -->
-				<span *ngIf="!thereAreLevels(column.columnAttribute) && column.columnEditor === undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined">
+				<span *ngIf="!thereAreLevels(column.columnAttribute) && column.columnEditor === undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined"
+					[ngClass]="applyNgClass(element[column.columnAttribute], element, column.ngClass)"
+				>
 					{{element[column.columnAttribute]}}
 				</span>
 
 				<!-- If there are levels, there aren't editor and it isn't an actions column, "	low" those levels and show the result -->
-				<span *ngIf="thereAreLevels(column.columnAttribute) && column.columnEditor === undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined">
+				<span *ngIf="thereAreLevels(column.columnAttribute) && column.columnEditor === undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined"
+					[ngClass]="applyNgClass(element[column.columnAttribute], element, column.ngClass)"
+				>
 					{{getObjectAttribute(column.columnAttribute, element)}}
 				</span>
 
 				<!-- If there aren't levels, there aren't editor and it isn't an actions column, apply editor and show the result -->
-				<span *ngIf="!thereAreLevels(column.columnAttribute) && column.columnEditor !== undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined">
+				<span *ngIf="!thereAreLevels(column.columnAttribute) && column.columnEditor !== undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined"
+					[ngClass]="applyNgClass(element[column.columnAttribute], element, column.ngClass)"
+				>
 					{{applyEditor(element[column.columnAttribute], element, column.columnEditor)}}
 				</span>
 
 				<!-- If there are levels, there are editor and it isn't an actions column, "low" those levels, apply editor and show the result-->
-				<span *ngIf="thereAreLevels(column.columnAttribute) && column.columnEditor !== undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined">
+				<span *ngIf="thereAreLevels(column.columnAttribute) && column.columnEditor !== undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined"
+					[ngClass]="applyNgClass(element[column.columnAttribute], element, column.ngClass)"
+				>
 					{{applyEditor(getObjectAttribute(column.columnAttribute, element), element, column.columnEditor)}}
 				</span>
 
@@ -68,22 +76,30 @@
 				<mat-list>
 					<ng-container *ngFor="let column of tablesConfig.columns | expansionFilter:columnExpansions:true">
 						<mat-list-item>
-							<span *ngIf="!thereAreLevels(column.columnAttribute) && column.columnEditor === undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined">
+							<span *ngIf="!thereAreLevels(column.columnAttribute) && column.columnEditor === undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined"
+								[ngClass]="applyNgClass(element[column.columnAttribute], element, column.ngClass)"
+							>
 								{{element[column.columnAttribute]}}
 							</span>
 
 							<!-- If there are levels, there aren't editor and it isn't an actions column, "low" those levels and show the result -->
-							<span *ngIf="thereAreLevels(column.columnAttribute) && column.columnEditor === undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined">
+							<span *ngIf="thereAreLevels(column.columnAttribute) && column.columnEditor === undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined"
+								[ngClass]="applyNgClass(element[column.columnAttribute], element, column.ngClass)"
+							>
 								{{getObjectAttribute(column.columnAttribute, element)}}
 							</span>
 
 							<!-- If there aren't levels, there aren't editor and it isn't an actions column, apply editor and show the result -->
-							<span *ngIf="!thereAreLevels(column.columnAttribute) && column.columnEditor !== undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined">
+							<span *ngIf="!thereAreLevels(column.columnAttribute) && column.columnEditor !== undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined"
+								[ngClass]="applyNgClass(element[column.columnAttribute], element, column.ngClass)"
+							>
 								{{applyEditor(element[column.columnAttribute], element, column.columnEditor)}}
 							</span>
 
 							<!-- If there are levels, there are editor and it isn't an actions column, "low" those levels, apply editor and show the result-->
-							<span *ngIf="thereAreLevels(column.columnAttribute) && column.columnEditor !== undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined">
+							<span *ngIf="thereAreLevels(column.columnAttribute) && column.columnEditor !== undefined && column.columnAttribute !== 'actions' && column.columnComponent === undefined"
+								[ngClass]="applyNgClass(element[column.columnAttribute], element, column.ngClass)"
+							>
 								{{applyEditor(getObjectAttribute(column.columnAttribute, element), element, column.columnEditor)}}
 							</span>
 

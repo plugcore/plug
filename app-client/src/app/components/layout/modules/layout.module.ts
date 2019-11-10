@@ -3,7 +3,8 @@ import localeEs from '@angular/common/locales/es';
 import localeEsExtra from '@angular/common/locales/extra/es';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule, MatInputModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -17,7 +18,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-
 import { LayoutBreadcrumbComponent } from '../components/breadcrumb/breadcrumb.component';
 import { LayoutComponent } from '../components/layout.component';
 import { LayoutMainContentComponent } from '../components/main-content/main-content.component';
@@ -31,6 +31,7 @@ import { DropdownDirective } from '../directives/dropdown.directive';
 import { DropdownLinkDirective } from '../directives/link.dropdown.directive';
 import { LayoutMenuService } from '../services/menu/menu.internal.service';
 import { LayoutRouterService } from '../services/router/router.internal.service';
+
 
 // Importing Pipes for Spanish
 registerLocaleData(localeEs, 'es', localeEsExtra);
@@ -52,7 +53,10 @@ registerLocaleData(localeEs, 'es', localeEsExtra);
 		MatSidenavModule,
 		MatListModule,
 		MatGridListModule,
-		MatExpansionModule
+		MatExpansionModule,
+		MatCardModule,
+		MatInputModule,
+		ReactiveFormsModule
 	],
 	providers: [
 		LayoutRouterService,

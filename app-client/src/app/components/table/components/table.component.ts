@@ -153,9 +153,9 @@ export class TableComponent implements OnInit {
 			directionSort = this.sort.direction === 'desc' ? '1' : directionSort;
 		}
 		if (this.tablesConfig.pagination === true) {
-			this.doSearch(activeSort, directionSort, this.formGroup.value, this.paginator.pageIndex, this.paginator.pageSize);
+			this.doSearch(activeSort, parseInt(directionSort, 10), this.formGroup.value, this.paginator.pageIndex, this.paginator.pageSize);
 		} else {
-			this.doSearch(activeSort, directionSort, this.formGroup.value);
+			this.doSearch(activeSort, parseInt(directionSort, 10), this.formGroup.value);
 		}
 	}
 
@@ -201,6 +201,10 @@ export class TableComponent implements OnInit {
 	 */
 	public applyEditor(value: string, element: any, columnEditor: (value: string, element: any) => string): string {
 		return columnEditor(value, element);
+	}
+
+	public applyNgClass(value: string, element: any, columnEditor: (element: any) => any): string {
+		return columnEditor ? columnEditor(element) : {};
 	}
 
 	/**
@@ -404,7 +408,7 @@ export class TableComponent implements OnInit {
 	 * @param pageIndex
 	 * @param pageSize
 	 */
-	private doSearch(activeSort: string, direction: string, formValue: string[], pageIndex?: number, pageSize?: number): void {
+	private doSearch(activeSort: string, direction: number, formValue: string[], pageIndex?: number, pageSize?: number): void {
 		this.overlayService.start('generictables.dosearch');
 		this.tablesConfig.searchMethod(activeSort, direction, formValue, pageIndex, pageSize).subscribe((results: ITablesResults) => {
 			this.lenght = results.total;

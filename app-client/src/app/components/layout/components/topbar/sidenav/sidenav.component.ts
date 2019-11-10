@@ -1,6 +1,7 @@
 import { Component, Inject, Input, LOCALE_ID, OnInit } from '@angular/core';
 
 import { IRouteConf, LayoutRouterService } from '../../../services/router/router.internal.service';
+import { AuthService } from '../../../../../services/auth/auth.service';
 
 @Component({
   selector: 'plug-topbar-sidenav',
@@ -13,11 +14,13 @@ export class TopbarSidenavComponent implements OnInit {
 
 	public routeConf: IRouteConf;
 
-	constructor(private routerService: LayoutRouterService, @Inject(LOCALE_ID) protected localeId: string) {
+	constructor(
+		private routerService: LayoutRouterService,
+		@Inject(LOCALE_ID) protected localeId: string,
+		private authService: AuthService
+	) {
 		this.routerService.routeConfObs.subscribe((routeConf) => {
 			this.routeConf = routeConf;
-			console.log(this.routeConf);
-
 		});
 	}
 
@@ -44,6 +47,10 @@ export class TopbarSidenavComponent implements OnInit {
 			this.routeConf.sidebarStyle = 'compact';
 		}
 		this.routerService.publishLayoutChange(this.routeConf, {transitionClass: true});
+	}
+
+	public signOut() {
+		this.authService.logout().subscribe();
 	}
 
 }

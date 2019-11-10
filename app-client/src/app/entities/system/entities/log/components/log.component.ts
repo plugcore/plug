@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { PlugDialogService } from '../../../../../components/dialog/services/dialog.service';
 import { SystemLogDetailsComponent } from './details/details.component';
 import { DateInternalService } from '../../../../../services/date/date.internal.service';
+import { LEVELS } from '../../../../../models/log.model';
 
 
 @Component({
@@ -21,9 +22,7 @@ export class SystemLogComponent implements OnInit {
 	constructor(
 		private systemLogService: SystemLogService,
 		private dialogService: PlugDialogService,
-		private dateInternalService: DateInternalService,
-		private plugToastService: PlugToastService,
-		private router: Router
+		private dateInternalService: DateInternalService
 	) { }
 
 	ngOnInit() {
@@ -31,25 +30,22 @@ export class SystemLogComponent implements OnInit {
 			searchMethod: this.systemLogService.search.bind(this.systemLogService),
 			columns: [
 				{
-					columnName: 'ID', columnAttribute: 'id', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
-				},
-				{
-					columnName: 'NAME', columnAttribute: 'name', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
-				},
-				{
-					columnName: 'LEVEL', columnAttribute: 'level', columnSort: true,
-					columnExpansion: { desktop: false, tablet: false, mobile: false }
-				},
-				{
-					columnName: 'CREATED ON', columnAttribute: 'create_date', columnSort: true,
+					columnName: 'TIME', columnAttribute: 'time', columnSort: true,
 					columnExpansion: { desktop: false, tablet: true, mobile: true },
 					columnEditor: this.formatDate.bind(this)
 				},
 				{
-					columnName: 'CREATED BY', columnAttribute: 'create_user', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
+					columnName: 'LEVEL', columnAttribute: 'level', columnSort: true,
+					columnExpansion: { desktop: false, tablet: false, mobile: false },
+					columnEditor: this.getLogLevelName.bind(this),
+					ngClass: log => ({
+						[LEVELS[log.level] || LEVELS.default]: true
+					})
+				},
+				{
+					columnName: 'MSG', columnAttribute: 'msg', columnSort: true,
+					columnExpansion: { desktop: false, tablet: true, mobile: true },
+					columnEditor: this.messageOrObject.bind(this)
 				}
 			],
 			reloadEvent: this.reloadEvent,
@@ -66,7 +62,15 @@ export class SystemLogComponent implements OnInit {
 	}
 
 	private formatDate(date: number) {
-		return this.dateInternalService.numberToDate(date);
+		return this.dateInternalService.getFormatDateTime(date);
+	}
+
+	private messageOrObject(msg?: any) {
+		return msg ? msg : '[OBJECT]';
+	}
+
+	private getLogLevelName(level: string) {
+		return LEVELS[level];
 	}
 
 }

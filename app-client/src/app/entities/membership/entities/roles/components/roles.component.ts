@@ -3,6 +3,7 @@ import { ITablesConfig } from '../../../../../components/table/interfaces/table.
 import { TablesRolesService } from '../services/roles.service';
 import { PlugToastService } from '../../../../../components/toast/services/toast.service';
 import { Router } from '@angular/router';
+import { DateInternalService } from '../../../../../services/date/date.internal.service';
 
 @Component({
 	selector: 'plug-membership-roles',
@@ -17,7 +18,8 @@ export class MembershipRolesComponent implements OnInit {
 	constructor(
 		private tablesRolesService: TablesRolesService,
 		private plugToastService: PlugToastService,
-		private router: Router
+		private router: Router,
+		private dateInternalService: DateInternalService
 	) { }
 
 	ngOnInit() {
@@ -27,15 +29,16 @@ export class MembershipRolesComponent implements OnInit {
 			columns: [
 				{
 					columnName: 'ID', columnAttribute: 'id', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
+					columnExpansion: { desktop: false, tablet: false, mobile: false }
 				},
 				{
 					columnName: 'NAME', columnAttribute: 'name', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
+					columnExpansion: { desktop: false, tablet: false, mobile: false }
 				},
 				{
 					columnName: 'CREATED ON', columnAttribute: 'create_date', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
+					columnExpansion: { desktop: false, tablet: true, mobile: true },
+					columnEditor: this.formatDate.bind(this)
 				},
 				{
 					columnName: 'CREATED BY', columnAttribute: 'create_user', columnSort: true,
@@ -43,7 +46,8 @@ export class MembershipRolesComponent implements OnInit {
 				},
 				{
 					columnName: 'MODIFIED ON', columnAttribute: 'modify_date', columnSort: true,
-					columnExpansion: { desktop: false, tablet: true, mobile: true }
+					columnExpansion: { desktop: false, tablet: true, mobile: true },
+					columnEditor: this.formatDate.bind(this)
 				},
 				{
 					columnName: 'MODIFIED BY', columnAttribute: 'modify_user', columnSort: true,
@@ -72,6 +76,10 @@ export class MembershipRolesComponent implements OnInit {
 			this.plugToastService.showToast(3000, `Role '${element.name}' deleted correctly`);
 			this.reloadEvent.emit();
 		});
+	}
+
+	private formatDate(date: number) {
+		return this.dateInternalService.getFormatDateTime(date);
 	}
 
 }

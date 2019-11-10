@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { DataModel } from '../../../models/data-models.model';
+import { DataModel, PossibleDatamodels } from '../../../models/data-models.model';
 import { DataModelsService } from '../../../services/data-models.service';
+import { IRouteConf, LayoutRouterService } from '../../../../../components/layout/services/router/router.internal.service';
 
 @Component({
 	selector: 'plug-data-models-documentation',
@@ -9,13 +10,18 @@ import { DataModelsService } from '../../../services/data-models.service';
 })
 export class DataModelsDocumentationComponent implements OnInit {
 
-	public dataModels: DataModel[] = [];
+	public dataModels: DataModel<PossibleDatamodels>[] = [];
+	public routeConf: IRouteConf;
 
 	constructor(
-		private dataModelsService: DataModelsService
+		private dataModelsService: DataModelsService,
+		private routerService: LayoutRouterService
 	) {
 		this.dataModelsService.search().subscribe(res => {
 			this.dataModels = res.data;
+		});
+		this.routerService.routeConfObs.subscribe((routeConf) => {
+			this.routeConf = routeConf;
 		});
 	}
 

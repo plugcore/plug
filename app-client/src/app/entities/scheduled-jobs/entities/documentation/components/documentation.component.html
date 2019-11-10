@@ -4,9 +4,8 @@
 			<mat-card-title>{{scheduledJob.name}}</mat-card-title>
 		</mat-card-header>
 		<mat-card-content class="card-content">
-			<p>
-				Lorem...
-			</p>
+			<p><strong>Next execution:</strong>  {{dateInternalService.getFormatDateTime(scheduledJob.nextExecution)}}</p>
+			<p class="desc-p"><strong>Description:</strong>  {{scheduledJob.desc}}</p>
 		</mat-card-content>
 		<mat-card-actions class="card-actions">
 			<button mat-raised-button color="primary" routerLink="{{scheduledJob.id}}">View</button>

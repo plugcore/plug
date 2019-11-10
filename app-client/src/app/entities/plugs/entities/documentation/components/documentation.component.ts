@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Plug } from '../../../models/plugs.model';
-import { PlugsService } from '../../../services/plugs.service';
+import * as SwaggerUI from 'swagger-ui';
 
 @Component({
 	selector: 'plug-plugs-documentation',
@@ -9,17 +8,14 @@ import { PlugsService } from '../../../services/plugs.service';
 })
 export class PlugsDocumentationComponent implements OnInit {
 
-	public plugs: Plug[] = [];
-
 	constructor(
-		private plugsService: PlugsService
 	) {
-		this.plugsService.search().subscribe(res => {
-			this.plugs = res.data;
-		});
 	}
 
 	ngOnInit() {
+		const swaggerUi = new SwaggerUI({
+			url: '/assets/swagger-plug.json',
+			dom_id: '#swagger'
+		});
 	}
-
 }

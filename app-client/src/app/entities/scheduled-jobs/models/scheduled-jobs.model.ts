@@ -1,10 +1,10 @@
 export interface ScheduledJob {
 	name: string;
+	cron: string;
+	nextExecution: number;
+	desc: string;
+	inputModel?: Record<string, any>;
 	id?: number;
-	create_date?: number;
-	create_user?: string;
-	modify_date?: number;
-	modify_user?: string;
 }
 
-export type ScheduledJobFromDb = Required<ScheduledJob>;
+export type ScheduledJobFromDb = ScheduledJob & { id: number };

@@ -1,5 +1,5 @@
 <div>
-	<div class="breadcrumb">
+	<div *ngIf="!hideControls" class="breadcrumb">
 		<a (click)="navigate()"> / </a>
 		<ng-container *ngFor="let item of breadcrumb; let i = index">
 			<a (click)="navigate(i)">{{item}} / </a>
@@ -8,26 +8,26 @@
 	<div class="navigation">
 		<ng-container *ngFor="let property of keyProperties">
 			<ng-container *ngIf="isString(properties[property])">
-				<p class="break-word"><b>{{property}}: </b><span class="string">{{properties[property]}}</span></p>
+				<p class="break-word"><span class="key">{{property}}: </span><span class="string">{{properties[property]}}</span></p>
 			</ng-container>
 			<ng-container *ngIf="isBoolean(properties[property])">
-				<p class="break-word"><b>{{property}}: </b><span class="boolean">{{properties[property]}}</span></p>
+				<p class="break-word"><span class="key">{{property}}: </span><span class="boolean">{{properties[property]}}</span></p>
 			</ng-container>
 			<ng-container *ngIf="isNumber(properties[property])">
-				<p class="break-word"><b>{{property}}: </b><span class="number">{{properties[property]}}</span></p>
+				<p class="break-word"><span class="key">{{property}}: </span><span class="number">{{properties[property]}}</span></p>
 			</ng-container>
 			<ng-container *ngIf="isObject(properties[property])">
-				<p class="break-word"><b>{{property}}: </b><span class="show-properties" (click)="showProperties(property)">show</span></p>
+				<p class="break-word"><span class="key">{{property}}: </span><span class="show-properties" (click)="showProperties(property)">[show]</span></p>
 			</ng-container>
 			<ng-container *ngIf="isNull(properties[property])">
-				<p class="break-word"><b>{{property}}: </b><span class="null">{{properties[property]}}</span></p>
+				<p class="break-word"><span class="key">{{property}}: </span><span class="null">{{properties[property]}}</span></p>
 			</ng-container>
 			<ng-container *ngIf="isUndefined(properties[property])">
-				<p class="break-word"><b>{{property}}: </b><span class="null">{{properties[property]}}</span></p>
+				<p class="break-word"><span class="key">{{property}}: </span><span class="null">{{properties[property]}}</span></p>
 			</ng-container>
 		</ng-container>
 	</div>
-	<div class="json-view">
-		<button mat-button color="primary" (click)="viewJSON()">View JSON</button>
+	<div *ngIf="!hideControls" class="json-view">
+		<button mat-button type="button" color="primary" (click)="viewJSON()">View JSON</button>
 	</div>
 </div>

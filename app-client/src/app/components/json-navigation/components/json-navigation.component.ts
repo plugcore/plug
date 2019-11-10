@@ -10,6 +10,7 @@ import { JsonNavigationJsonViewComponent } from './json-view/json-view.component
 export class JsonNavigationComponent implements OnInit {
 
 	@Input() data;
+	@Input() hideControls: boolean;
 	breadcrumb = [];
 	keyProperties;
 	properties;

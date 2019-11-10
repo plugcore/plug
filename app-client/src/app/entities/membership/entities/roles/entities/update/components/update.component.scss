@@ -1,10 +1,16 @@
 form {
 	padding: 20px;
-	mat-form-field {
-		padding: 10px;
-	}
 }
 
-.example-margin {
-	margin: 20px;
+.permissions-groups {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	margin-bottom: 10px;
+	div {
+		min-width: 250px;
+		mat-checkbox {
+			display: block;
+		}
+	}
 }
