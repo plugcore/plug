@@ -30,7 +30,10 @@
 		"link-published": "npm i && node _scripts/set-packages-version.js force same && npx run-s link-published:**",
 		"link-published:core": "cd core/publish & npm link ",
 		"link-published:web": "cd web/publish & npm link ",
-		"link-published:data": "cd data/publish & npm link "
+		"link-published:data": "cd data/publish & npm link ",
+		"app-start": "npm run build && npx run-p app-start:** && ",
+		"app-start:back": "cd app-server & tsc & ",
+		"app-start:front": "cd app-client & ng serve"
 	},
 	"repository": {
 		"type": "git",

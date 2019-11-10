@@ -22,7 +22,6 @@
 	},
 	"dependencies": {
 		"@plugdata/core": "file:../core/publish",
-		"@plugdata/data": "file:../data/publish",
 		"@plugdata/web": "file:../web/publish"
 	},
 	"devDependencies": {

@@ -5,7 +5,7 @@ import { DiService } from './di.service';
 
 export class DiUtils {
 
-	private static readonly defaultDependencyTimeout = 120 * 1000;
+	private static readonly defaultDependencyTimeout = 10 * 1000;
 
 	/**
 	 * Loads all the js files recursively in the given path, and waits for all the
@@ -14,7 +14,6 @@ export class DiUtils {
 	 */
 	public static async waitForFolder(folderPath: string, recursive?: boolean, dependencyTimeout?: number): Promise<IDiServiceMetadata[]> {
 
-		
 		const jsFiles = await FsUtils.loadJsFolder(folderPath, recursive);
 		const services: IDiServiceMetadata[] = [];
 		const classes = this.getClasses(jsFiles);
@@ -38,6 +37,7 @@ export class DiUtils {
 				} else if (!entry.isReady) {
 					const depsLeft = entry.depsLeft || <{ targetServiceId: string; depMet: boolean }[]> [];
 					const missingDeps = depsLeft.filter(dep => !dep.depMet).map(dl => dl.targetServiceId);
+					console.log(missingDeps, entry);
 					console.error(
 						`The following dependencies couldn't be found for service: ${serviceId} ` +
 						`in context: ${service.ctx} => ${missingDeps.join(',')}`);

@@ -13,6 +13,7 @@ import { PlugsStatusInfoComponent } from '../components/info/info.component';
 import { PlugsStatusComponent } from '../components/status.component';
 import { PlugsStatusRoutesModule } from './status.routes.module';
 import { PlugTableModule } from '../../../../../components/table/modules/table.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
 	imports: [
@@ -31,7 +32,8 @@ import { PlugTableModule } from '../../../../../components/table/modules/table.m
 		PlugTableModule,
 		MatTabsModule,
 		MatButtonModule,
-		MatInputModule
+		MatInputModule,
+		HttpClientModule
 	],
 	declarations: [
 		PlugsStatusComponent,
