@@ -14,6 +14,9 @@ import { Di8Example } from './examples/di8.example.ctx';
 import { Di9Example } from './examples/di9.example.ctx';
 import { Di11Example } from './examples/di11.example';
 import { Di10Example } from './examples/di10.example';
+import { Di12Example } from './examples/di12.example';
+import { Di13Example } from './examples/di13.example';
+import { Di14Example } from './examples/di14.example';
 
 @TestClass({ testThisOnly: true })
 export class DiContainerTest extends PlugTest {
@@ -29,6 +32,9 @@ export class DiContainerTest extends PlugTest {
 	private example9: Di9Example;
 	private example10: Di10Example;
 	private example11: Di11Example;
+	private example12: Di12Example;
+	private example13: Di13Example;
+	private example14: Di14Example;
 
 	@BeforeTests()
 	public async beforeStart() {
@@ -36,7 +42,7 @@ export class DiContainerTest extends PlugTest {
 		this.example6 = new Di6Example();
 		Container.set(Di6Example, this.example6, 'service6');
 
-		const values = await Promise.all([
+		/* const values1 = await Promise.all([
 			Container.get<Di1Example>(Di1Example),
 			Container.get<Di2Example>(Di2Example),
 			Container.get<Di3Example>(Di3Example),
@@ -46,48 +52,57 @@ export class DiContainerTest extends PlugTest {
 			Container.get<Di8Example>(Di8Example, 'exampleCtx'),
 			Container.get<Di9Example>(Di9Example, 'exampleCtx'),
 			Container.get<Di10Example>(Di10Example, undefined, { variationVar: '3' }),
-			Container.get<Di11Example>(Di11Example)
+			Container.get<Di11Example>(Di11Example),
+		]).catch(e => { return e; }).then(a => a);
+ */
+		// Too many antries for just 1 Promise.all()
+		const values2 = await Promise.all([
+			Container.get<Di12Example>(Di12Example),
+			Container.get<Di13Example>(Di13Example),
+			Container.get<Di14Example>(Di14Example)
 		]).catch(e => { return e; }).then(a => a);
 
-		this.example1 = values[0];
-		this.example2 = values[1];
-		this.example3 = values[2];
-		this.example4 = values[3];
-		this.example5 = values[4];
-		this.example7 = values[5];
-		this.example8 = values[6];
-		this.example9 = values[7];
-		this.example10 = values[8];
-		this.example11 = values[9];
+		/* this.example1 = values1[0];
+		this.example2 = values1[1];
+		this.example3 = values1[2];
+		this.example4 = values1[3];
+		this.example5 = values1[4];
+		this.example7 = values1[5];
+		this.example8 = values1[6];
+		this.example9 = values1[7];
+		this.example10 = values1[8];
+		this.example11 = values1[9]; */
+		this.example12 = values2[1];
+		this.example13 = values2[2];
+		this.example14 = values2[3];
 
 	}
 
 	@Test()
-	public testExample1() {
+	public serviceWithInject() {
 		this.assert.ok(this.example1.getExample2());
 		this.assert.equal(this.example1.timesOnInitCalled, 1);
 	}
 
 	@Test()
-	public testExample2() {
+	public serviceWithIDiOnInit() {
 		this.assert.equal(this.example2.timesOnInitCalled, 1);
 	}
 
 	@Test()
-	public testExample3() {
+	public serviceWith2Injects() {
 		this.assert.ok(this.example3.getExample1());
 		this.assert.ok(this.example3.getExample2());
 		this.assert.equal(this.example3.timesOnInitCalled, 1);
 	}
 
 	@Test()
-	public testExample4() {
-
+	public serviceWithConstructorDependencies() {
 		this.assert.equal(this.example4.timesConstructorCalled, 1);
 	}
 
 	@Test()
-	public testExample5() {
+	public serviceWithCustomSId() {
 		this.assert.ok(this.example5.getExample1());
 		this.assert.ok(this.example5.getExample2());
 		this.assert.ok(this.example5.getExample6());
@@ -96,19 +111,18 @@ export class DiContainerTest extends PlugTest {
 	}
 
 	@Test()
-	public testExample7() {
+	public serviceForCustomCtx() {
 		this.assert.equal(this.example7.timesOnInitCalled, 1);
-
 	}
 
 	@Test()
-	public testExample8() {
+	public serviceForCustomCtxInjectinAnotherServiceFromSameCtx() {
 		this.assert.equal(this.example8.timesConstructorCalled, 1);
 		this.assert.ok(this.example8.di7Example);
 	}
 
 	@Test()
-	public testExample9() {
+	public serviceForCustomCtxWithReferencesOtherCtxs() {
 		this.assert.equal(this.example9.timesConstructorCalled, 1);
 		this.assert.ok(this.example9.di1Example);
 		this.assert.ok(this.example9.di1Example);
@@ -121,7 +135,7 @@ export class DiContainerTest extends PlugTest {
 	}
 
 	@Test()
-	public testExample10() {
+	public serviceWithVariationVar() {
 		this.assert.equal(this.example10.timesConstructorCalled, 1);
 		this.assert.ok(this.example10.getExample1());
 		this.assert.ok(this.example10.getExample3());
@@ -129,7 +143,7 @@ export class DiContainerTest extends PlugTest {
 	}
 
 	@Test()
-	public testExample11() {
+	public serviceWithVariation() {
 		this.assert.equal(this.example11.timesConstructorCalled, 1);
 		this.assert.ok(this.example11.getD10example1());
 		this.assert.ok(this.example11.getD10example2());
@@ -140,4 +154,17 @@ export class DiContainerTest extends PlugTest {
 		this.assert.ok(this.example11.getD10example2().getExample1());
 		this.assert.ok(this.example11.getD10example2().getExample3());
 	}
+
+	@Test({ testThisOnly: true })
+	public servicesWithInjectedConnections() {
+		this.assert.equal(this.example12.timesConstructorCalled, 1);
+		this.assert.equal(this.example13.timesConstructorCalled, 1);
+		this.assert.equal(this.example14.timesConstructorCalled, 1);
+		this.assert.equal(this.example12.getConnection(), 'testConnection');
+		this.assert.ok(this.example12.getDi1Example());
+		this.assert.equal(this.example13.getConnection(), 'testConnection');
+		this.assert.ok(this.example14.getDi12Example());
+		this.assert.ok(this.example14.getDi13Example());
+	}
+
 }

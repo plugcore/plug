@@ -1,4 +1,4 @@
-import { TPrimitive } from './typescript.utils';
+import { TPrimitive, ClassParameter } from './typescript.utils';
 
 export class TypeChecker {
 
@@ -39,8 +39,23 @@ export class TypeChecker {
 	public static isArray<T>(arg: any): arg is T[] {
 		return (this.hasValue(arg) && Array.isArray(arg));
 	}
+
 	public static isError(arg: any): arg is Error {
 		return (this.hasValue(arg) && arg instanceof Error );
+	}
+
+	public static isClass(arg: any): arg is ClassParameter<any> {
+		// https://stackoverflow.com/questions/29093396/how-do-you-check-the-difference-between-an-ecmascript-6-class-and-function#answer-32235645
+		// eslint-disable-next-line no-prototype-builtins
+		return (this.hasValue(arg) && typeof arg === 'function' && (<any>arg).hasOwnProperty('prototype') && !(<any>arg).hasOwnProperty('arguments'));
+	}
+
+	public static isBuffer(arg: any): arg is Buffer {
+		return Buffer.isBuffer(arg);
+	}
+
+	public static isPromise<T = unknown>(arg: any): arg is Promise<T> {
+		return arg instanceof Promise;
 	}
 
 	public static typeIsString(arg: Function): boolean {
@@ -55,14 +70,9 @@ export class TypeChecker {
 		return (this.hasValue(arg) && arg === Boolean);
 	}
 
-	public static isBuffer(arg: any): arg is Buffer {
-		return Buffer.isBuffer(arg);
+	public static typeIsPrimitive(arg: any): arg is TPrimitive {
+		return this.typeIsString(arg) || this.typeIsNumber(arg) || this.typeIsBoolean(arg);
 	}
-
-	public static isPromise<T = unknown>(arg: any): arg is Promise<T> {
-		return arg instanceof Promise;
-	}
-
 	private static hasValue(val: any) {
 		return val !== null && val !== undefined;
 	}

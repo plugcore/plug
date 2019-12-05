@@ -1,10 +1,10 @@
 
 import { Inject, Service } from '../../../src/dependecy-injection/di.decorators';
-import { IDiOnInit } from '../../../src/dependecy-injection/di.interfaces';
+import { OnInit } from '../../../src/dependecy-injection/di.interfaces';
 import { Di2Example } from './di2.example';
 
 @Service()
-export class Di1Example implements IDiOnInit {
+export class Di1Example implements OnInit {
 
 	@Inject()
 	private example2: Di2Example;
@@ -19,7 +19,7 @@ export class Di1Example implements IDiOnInit {
 	}
 
 	public async asyncLoad() {
-		await new Promise<Boolean>((callBack) => {
+		await new Promise<boolean>((callBack) => {
 			setTimeout(() => { callBack(true); }, 500);
 		});
 	}

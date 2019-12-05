@@ -5,13 +5,14 @@ import { DiService } from '../dependecy-injection/di.service';
 import { ExtCtxGenerator } from '../extensions/ext-ctx.generator';
 import { JsStackUtils } from '../utils/js-stack.utils';
 import { CronUtils } from './scheduler';
+import { TypeChecker } from '../utils/type.checker';
 
 export function Scheduler({ sId, ctx }: IServiceArgs = {}) {
 
 	return (target: Function) => {
 
 		// If arguments size is 1 it means its a class definition
-		if (arguments.length === 1) {
+		if (arguments.length === 1 && TypeChecker.isClass(target)) {
 
 			// Setting ctx
 

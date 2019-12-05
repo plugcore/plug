@@ -49,7 +49,7 @@ export function IsObject<T>(clazz: ClassParameter<T>) {
 	};
 }
 
-export function RequiredProperty() {
+export function Required() {
 	return (target: any, propertyKey: string) => {
 		ObjectValidatorDecoratorUtils.addProperty({
 			target, propertyKey, type: EObjectValidatorPropertyTypes.required

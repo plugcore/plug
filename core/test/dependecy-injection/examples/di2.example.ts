@@ -1,8 +1,8 @@
 import { Service } from '../../../src/dependecy-injection/di.decorators';
-import { IDiOnInit } from '../../../src/dependecy-injection/di.interfaces';
+import { OnInit } from '../../../src/dependecy-injection/di.interfaces';
 
 @Service()
-export class Di2Example implements IDiOnInit {
+export class Di2Example implements OnInit {
 	public testNumber = 10;
 	public timesOnInitCalled = 0;
 	public async onInit() {

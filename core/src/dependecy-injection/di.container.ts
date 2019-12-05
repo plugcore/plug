@@ -1,7 +1,9 @@
-import { IDiEntry, IDiOnInit, IDiServiceMetadata, IServiceIdentifier } from './di.interfaces';
+import { IDiEntry, OnInit, IDiServiceMetadata, IServiceIdentifier } from './di.interfaces';
 import { DiService } from './di.service';
 import { EventUtils } from '../events/event.utils';
 import { ObjectUtils } from '../utils/object.utils';
+import { ClassParameter } from '../utils/typescript.utils';
+import { DiConstants } from './di.constnats';
 
 /**
  * Service container.
@@ -23,24 +25,36 @@ export class Container {
 	 * Registers the given Class as a new service and it will try to create a new instance
 	 * and return it to any Container.get requesting this IServiceIdentifier as soon as
 	 * all the dependecies are met
-	 * @param id
-	 * @param clazz
-	 * @param params
-	 * @param ctx
 	 */
-	public static registrerService(id: IServiceIdentifier, clazz: Function, params?: Function[], ctx?: string) {
-		const serviceId = DiService.genServiceId(id);
-		const entry = DiService.getTmpEnrySafely(serviceId, clazz);
+	public static registrerService<T>(inp: {
+		id: IServiceIdentifier<T>;
+		clazz: ClassParameter<T>;
+		params?: ClassParameter<any>[];
+		ctx?: string;
+		connection?: string;
+	}) {
 
-		this.setServiceMetadata(clazz, id, ctx);
+		const serviceId = DiService.genServiceId(inp.id);
+		const entry = DiService.getTmpEnrySafely(serviceId, inp.clazz);
+
+		this.setServiceMetadata(inp.clazz, inp.id, inp.ctx);
 		DiService.discardTmpEntry(serviceId);
-		entry.serviceId = DiService.genServiceId(id);
+		entry.serviceId = DiService.genServiceId(inp.id);
 
+		// Check if there is any dependency with @Inject
+		// that requires the connection
+		this.updateDependencyWithConnectionIfNecessary(entry.depsLeft, inp.connection);
 
-		if (params && params.length > 0) {
-			this.initConstructorService(entry, params, ctx);
+		if (inp.params && inp.params.length > 0) {
+			this.initConstructorService({
+				entry, params: inp.params, ctx: inp.ctx, connection: inp.connection
+			});
 		} else {
-			this.initService(entry, ctx);
+			this.initService(entry, inp.ctx);
+		}
+
+		if (inp.connection || entry.serviceId === 'Di12Example' || entry.serviceId === 'Di13Example') {
+			console.log('entry', entry);
 		}
 
 	}
@@ -53,7 +67,7 @@ export class Container {
 	 * @param serviceId
 	 * @param ctx
 	 */
-	public static set(serviceClass: Function, instance: Record<string, any>, id?: string, ctx?: string) {
+	public static set<T>(serviceClass: ClassParameter<T>, instance: Record<string, any>, id?: string, ctx?: string) {
 
 		const serviceId = id || serviceClass;
 
@@ -259,47 +273,56 @@ export class Container {
 		return inp.entry;
 	}
 
-	private static initConstructorService(entry: IDiEntry, params: Function[], ctx?: string) {
+	private static initConstructorService(inp: {
+		entry: IDiEntry;
+		params: ClassParameter<any>[];
+		ctx?: string;
+		connection?: string;
+	}) {
 
-		params.forEach((targetClass, index) => {
+		for (const [index, targetClass] of inp.params.entries()) {
 			const targetServiceName = DiService.genServiceId(targetClass);
 			// This will create a dep only if it's not been decorated iwth @inject() before
-			entry = this.updateConstructorHandler({
-				entry,
+			inp.entry = this.updateConstructorHandler({
+				entry: inp.entry,
 				index,
 				targetServiceName,
-				targetCtx: ctx
-			});
-		});
-
-		if (entry.constructorHandlers) {
-			entry.constructorHandlers.forEach(element => {
-				entry = this.registerEntryDepLeft({
-					entry,
-					targetServiceName: element.targetServiceId,
-					targetCtx: element.targetCtx || ctx,
-					variationVarName: element.variationVarName
-				});
-				if (element.variation) {
-					const targetEntry = DiService.getEntry(element.targetServiceId, element.targetCtx || ctx);
-					if (entry.depsLeft && targetEntry && targetEntry.isReady) {
-						const targetDep = entry.depsLeft.find(dl => dl.targetServiceId === element.targetServiceId);
-						if (targetDep) {
-							targetDep.depMet = true;
-						}
-					}
-
-					if (!targetEntry) {
-						this.waitForDep(element.targetServiceId, element.targetCtx || ctx, element.variation).then();
-					}
-				}
+				targetCtx: inp.ctx
 			});
 		}
 
-		entry.depsClosed = true;
-		entry.isOnlyTemplate = entry.depsLeft && entry.depsLeft.some(dl => dl.variationVarName !== undefined) || false;
-		DiService.updateEntry(entry, ctx);
-		this.checkIfReady(entry, ctx);
+		// Check if there is any dependency with @Inject
+		// that requires the connection
+		this.updateDependencyWithConnectionIfNecessary(inp.entry.constructorHandlers, inp.connection);
+
+		for (const element of inp.entry.constructorHandlers || []) {
+
+			inp.entry = this.registerEntryDepLeft({
+				entry: inp.entry,
+				targetServiceName: element.targetServiceId,
+				targetCtx: element.targetCtx || inp.ctx,
+				variationVarName: element.variationVarName
+			});
+
+			if (element.variation) {
+				const targetEntry = DiService.getEntry(element.targetServiceId, element.targetCtx || inp.ctx);
+				if (inp.entry.depsLeft && targetEntry && targetEntry.isReady) {
+					const targetDep = inp.entry.depsLeft.find(dl => dl.targetServiceId === element.targetServiceId);
+					if (targetDep) {
+						targetDep.depMet = true;
+					}
+				}
+
+				if (!targetEntry) {
+					this.waitForDep(element.targetServiceId, element.targetCtx || inp.ctx, element.variation).then();
+				}
+			}
+		}
+
+		inp.entry.depsClosed = true;
+		inp.entry.isOnlyTemplate = inp.entry.depsLeft && inp.entry.depsLeft.some(dl => dl.variationVarName !== undefined) || false;
+		DiService.updateEntry(inp.entry, inp.ctx);
+		this.checkIfReady(inp.entry, inp.ctx);
 
 	}
 
@@ -483,8 +506,8 @@ export class Container {
 
 	}
 
-	private static hasOnInit(arg: Record<string, any>): arg is IDiOnInit {
-		return arg && (arg as IDiOnInit).onInit !== undefined;
+	private static hasOnInit(arg: Record<string, any>): arg is OnInit {
+		return arg && (arg as OnInit).onInit !== undefined;
 	}
 
 	private static hasAllDeps(entry: IDiEntry): boolean {
@@ -518,6 +541,27 @@ export class Container {
 	private static setServiceMetadata(clazz: Function, serviceId: IServiceIdentifier, ctx?: string) {
 
 		(<any>clazz)[this.serviceMetadata] = <IDiServiceMetadata>{ serviceId, ctx };
+	}
+
+	private static updateDependencyWithConnectionIfNecessary(
+		deps: IDiEntry['constructorHandlers'] | IDiEntry['depsLeft'],
+		connection?: string
+	) {
+		if (connection && deps) {
+			for (const dep of deps) {
+
+				const targetService = DiService.getEntry(dep.targetServiceId, dep.targetCtx);
+				if (
+					targetService && targetService.depsLeft &&
+					targetService.depsLeft.findIndex(d => d.variationVarName === DiConstants.connection)
+				) {
+					const variation = { [DiConstants.connection]: connection };
+					const variationTargetId = DiService.genServiceId(dep.targetServiceId, variation);
+					dep.targetServiceId = variationTargetId;
+				}
+
+			}
+		}
 	}
 
 }

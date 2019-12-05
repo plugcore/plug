@@ -1,20 +1,20 @@
 import { join } from 'path';
 import { PlugdataConstants } from '../../constants/plugdata.constants';
 import { Service } from '../../dependecy-injection/di.decorators';
-import { IDiOnInit } from '../../dependecy-injection/di.interfaces';
+import { OnInit } from '../../dependecy-injection/di.interfaces';
 import { FsUtils } from '../../io/fs.utils';
 import { ObjectUtils } from '../../utils/object.utils';
 import { ExtConfiguration } from './ext-configuration.interface';
 import { DefaultExtConfiguration } from './ext-default.configuration';
 
 @Service()
-export class ExtsConfigurationChecker implements IDiOnInit {
+export class ExtsConfigurationChecker implements OnInit {
 
 	public scannedExts: ExtConfiguration[] = [];
 	public primaryExt: ExtConfiguration;
 
 	public async onInit() {
-		
+
 		// Base ext load
 		const extBaseFolder = process.cwd();
 		const baseExt = await this.generateExtensionConfiguration(extBaseFolder);
@@ -35,7 +35,7 @@ export class ExtsConfigurationChecker implements IDiOnInit {
 	 */
 	private async generateExtensionConfiguration(extBaseFolder: string): Promise<ExtConfiguration> {
 
-		
+
 		let extCfg: ExtConfiguration = new DefaultExtConfiguration();
 		const jsonPath = join(extBaseFolder, PlugdataConstants.pcmsCfgJson);
 		const extJsonCfg = JSON.parse(await FsUtils.loadFile(jsonPath));

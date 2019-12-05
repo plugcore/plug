@@ -1,6 +1,7 @@
 import { Container } from './di.container';
 import { IDiEntry, IServiceIdentifier } from './di.interfaces';
 import { ValidatorUtils } from '../utils/validator.utils';
+import { ClassParameter } from '../utils/typescript.utils';
 
 export class DiService {
 
@@ -65,7 +66,7 @@ export class DiService {
 	 * @param serviceId
 	 * @param clazz
 	 */
-	public static createBasicEntry(serviceId: string, clazz?: Function): IDiEntry {
+	public static createBasicEntry(serviceId: string, clazz?: ClassParameter<any>): IDiEntry {
 
 		return <IDiEntry>{
 			serviceId,
@@ -142,7 +143,7 @@ export class DiService {
 	 * @param clazz
 	 * @param ctx
 	 */
-	public static getEnrySafely(serviceId: string, clazz?: Function, ctx?: string): IDiEntry {
+	public static getEnrySafely(serviceId: string, clazz?: ClassParameter<any>, ctx?: string): IDiEntry {
 
 		const entry = this.getEntry(serviceId, ctx);
 		if (entry) {
@@ -184,7 +185,7 @@ export class DiService {
 	 * @param serviceId
 	 * @param clazz
 	 */
-	public static getTmpEnrySafely(serviceId: string, clazz?: Function): IDiEntry {
+	public static getTmpEnrySafely(serviceId: string, clazz?: ClassParameter<any>): IDiEntry {
 
 		const entry = this.getEntry(serviceId, this.tmpCtx);
 		if (entry) {

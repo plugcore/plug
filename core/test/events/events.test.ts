@@ -9,11 +9,11 @@ export class EventsTest extends PlugTest {
 
 	@Test()
 	public async executeEvent() {
-		
+
 		const examplePayload = { a: 1, b: '2' };
 		const eventDispatcher = await Container.get<EventDispatcher>(EventDispatcher);
 		const eventsExample = await Container.get<EventsExample>(EventsExample);
-		
+
 		const waitForEventToExecute = new Promise((resolve) => {
 			eventsExample.readyFunc = resolve;
 		});

@@ -1,5 +1,5 @@
 import {
-	RequiredProperty, IsArray, IsNumber, IsObject, IsString, IsBoolean
+	Required, IsArray, IsNumber, IsObject, IsString, IsBoolean
 } from '../../src/object-validator/object-validator.decorators';
 import { ObjectValidatorUtils } from '../../src/object-validator/object-validator.utils';
 import { Test, TestClass, BeforeTests } from '../../src/test/test.decorators';
@@ -86,7 +86,7 @@ class ObjectValidatorDecoratorsTestSubClass {
 	@IsString()
 	public stringProp: string;
 
-	@RequiredProperty()
+	@Required()
 	@IsBoolean()
 	public boolPropr: boolean;
 
@@ -94,7 +94,7 @@ class ObjectValidatorDecoratorsTestSubClass {
 
 class ObjectValidatorDecoratorsTestClass {
 
-	@RequiredProperty()
+	@Required()
 	@IsNumber({
 		minimum: 2
 	})
@@ -106,7 +106,7 @@ class ObjectValidatorDecoratorsTestClass {
 	@IsArray()
 	public arrayProp: string[];
 
-	@RequiredProperty()
+	@Required()
 	@IsObject(ObjectValidatorDecoratorsTestSubClass)
 	public subPropr: ObjectValidatorDecoratorsTestSubClass;
 

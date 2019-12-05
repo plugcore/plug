@@ -1,10 +1,11 @@
+import { ClassParameter } from '../utils/typescript.utils';
 
 /**
  * Use this interface when your class has an async
  * condition in order to be ready. All dependencies
- * will be loaded when calling this method
+ * will be loaded before calling this method
  */
-export interface IDiOnInit {
+export interface OnInit {
 
 	onInit(): Promise<void>;
 
@@ -14,14 +15,15 @@ export interface IDiOnInit {
  * Service interface.
  */
 
-export type IServiceIdentifier = Function | string;
+export type IServiceIdentifier<T = any> = ClassParameter<T> | string;
 
-export interface IServiceArgs {
-	sId?: IServiceIdentifier;
+export interface IServiceArgs<T = any> {
+	sId?: IServiceIdentifier<T>;
 	ctx?: string;
+	connection?: string;
 }
 
-export interface IInjectArgs extends IServiceArgs{
+export interface IInjectArgs<T = any> extends IServiceArgs<T> {
 	variationVarName?: string;
 	variation?: Record<string, any>;
 }
@@ -38,12 +40,12 @@ export interface IConstructorHandler {
 /**
  * Entry model, internal usage only
  */
-export interface IDiEntry {
+export interface IDiEntry<T = any> {
 	serviceId: string;
 	isReady: boolean;
 	depsClosed: boolean;
 	isOnlyTemplate: boolean;
-	serviceClass?: Function;
+	serviceClass?: ClassParameter<T>;
 	object?: any;
 	constructorHandlers?: {
 		targetServiceId: string;

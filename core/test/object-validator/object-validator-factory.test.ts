@@ -34,7 +34,7 @@ export class ObjectVlidatorFactoryTest extends PlugTest {
 		const compiledFromObject = this.objectValidatorFactory.compile(this.basicSchema);
 		const resultOk = this.objectValidatorFactory.validate(compiledFromObject, this.basicDataOk);
 		const resultErrors = this.objectValidatorFactory.validate(compiledFromObject, this.basicDataErrors);
-		
+
 		this.assert.ok(resultOk.valid);
 		this.assert.ok(resultOk.errors.length === 0);
 
@@ -49,7 +49,7 @@ export class ObjectVlidatorFactoryTest extends PlugTest {
 		const compiledFromObject = await this.objectValidatorFactory.compileFromFile(this.basicSchemaPath);
 		const resultOk = this.objectValidatorFactory.validate(compiledFromObject, this.basicDataOk);
 		const resultErrors = this.objectValidatorFactory.validate(compiledFromObject, this.basicDataErrors);
-		
+
 		this.assert.ok(resultOk.valid);
 		this.assert.ok(resultOk.errors.length === 0);
 
@@ -63,7 +63,7 @@ export class ObjectVlidatorFactoryTest extends PlugTest {
 
 		const resultOk = this.objectValidatorFactory.validate(this.basicSchema, this.basicDataOk);
 		const resultErrors = this.objectValidatorFactory.validate(this.basicSchema, this.basicDataErrors);
-		
+
 		this.assert.ok(resultOk.valid);
 		this.assert.ok(resultOk.errors.length === 0);
 

@@ -1,11 +1,11 @@
 
 import { Service } from '../../../src/dependecy-injection/di.decorators';
-import { IDiOnInit } from '../../../src/dependecy-injection/di.interfaces';
+import { OnInit } from '../../../src/dependecy-injection/di.interfaces';
 import { Di1Example } from './di1.example';
 import { Di3Example } from './di3.example';
 
 @Service()
-export class Di4Example implements IDiOnInit {
+export class Di4Example implements OnInit {
 
 	public timesConstructorCalled = 0;
 

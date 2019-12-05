@@ -13,7 +13,7 @@ export class EventUtils {
 
 	public static onServiceReady(entry: IDiEntry) {
 		if (entry.object && entry.serviceClass) {
-			const regsiteredEvents = this.getRegisteredEvents(<ClassParameter<any>>entry.serviceClass);
+			const regsiteredEvents = this.getRegisteredEvents(entry.serviceClass);
 			if (regsiteredEvents.length > 0) {
 				for (const regsiteredEvent of regsiteredEvents) {
 					globalEventEmitter.on(regsiteredEvent.event, entry.object[regsiteredEvent.methodName], entry.object);

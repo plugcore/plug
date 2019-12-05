@@ -1,10 +1,10 @@
 import { Inject, Service } from '../../../src/dependecy-injection/di.decorators';
-import { IDiOnInit } from '../../../src/dependecy-injection/di.interfaces';
+import { OnInit } from '../../../src/dependecy-injection/di.interfaces';
 import { Di1Example } from './di1.example';
 import { Di2Example } from './di2.example';
 
 @Service()
-export class Di3Example implements IDiOnInit {
+export class Di3Example implements OnInit {
 	public testNumber = 18;
 
 	@Inject()
