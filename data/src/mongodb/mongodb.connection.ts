@@ -1,9 +1,9 @@
-import { ClassParameter, IDiOnInit, Logger, ObjectUtils, ProjectConfiguration, Service, TypeChecker } from '@plugdata/core';
+import { ClassParameter, OnInit, Logger, ObjectUtils, ProjectConfiguration, Service, TypeChecker } from '@plugdata/core';
 import { Collection, Db, MongoClient } from 'mongodb';
 import { IGetCollectionOptions } from './mongodb.interfaces';
 
 @Service()
-export class MongoDbConnection implements IDiOnInit {
+export class MongoDbConnection implements OnInit {
 
 	private dbConnection: Db;
 	private mongoClient: Omit<MongoClient, ''>;

@@ -45,8 +45,8 @@ export class TestManager {
 			configuration = PlugConfiguration.default;
 		}
 		const configurationService = new ProjectConfiguration(configuration);
-		Container.set(ProjectConfiguration, configurationService);		
-		
+		Container.set(ProjectConfiguration, configurationService);
+
 		// 3: Load all the classes inside the test folder
 		await this.loadTests(testFolder);
 

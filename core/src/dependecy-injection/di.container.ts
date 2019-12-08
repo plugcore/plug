@@ -1,9 +1,9 @@
-import { IDiEntry, OnInit, IDiServiceMetadata, IServiceIdentifier } from './di.interfaces';
-import { DiService } from './di.service';
 import { EventUtils } from '../events/event.utils';
 import { ObjectUtils } from '../utils/object.utils';
 import { ClassParameter } from '../utils/typescript.utils';
 import { DiConstants } from './di.constnats';
+import { IDiConstructorHandler, IDiDepLeft, IDiEntry, IDiServiceMetadata, IServiceIdentifier, OnInit } from './di.interfaces';
+import { DiService } from './di.service';
 
 /**
  * Service container.
@@ -43,7 +43,11 @@ export class Container {
 
 		// Check if there is any dependency with @Inject
 		// that requires the connection
-		this.updateDependencyWithConnectionIfNecessary(entry.depsLeft, inp.connection);
+		this.updateDependenciesWithConnectionIfNecessary(entry.depsLeft, inp.connection);
+
+		// All property dependencies that are queued have to be called.
+		// This also checks if the serviceId changes becouse of the connection
+		this.resolveServiceProperties(entry, inp.connection);
 
 		if (inp.params && inp.params.length > 0) {
 			this.initConstructorService({
@@ -53,9 +57,7 @@ export class Container {
 			this.initService(entry, inp.ctx);
 		}
 
-		if (inp.connection || entry.serviceId === 'Di12Example' || entry.serviceId === 'Di13Example') {
-			console.log('entry', entry);
-		}
+
 
 	}
 
@@ -67,15 +69,17 @@ export class Container {
 	 * @param serviceId
 	 * @param ctx
 	 */
-	public static set<T>(serviceClass: ClassParameter<T>, instance: Record<string, any>, id?: string, ctx?: string) {
+	public static set<T>(serviceClass: ClassParameter<T>, instance: T, id?: string, ctx?: string) {
 
 		const serviceId = id || serviceClass;
 
 		this.setServiceMetadata(serviceClass, serviceId, ctx);
 
-		const entry: IDiEntry = DiService.createBasicEntry(
-			DiService.genServiceId(serviceId), serviceClass);
+		const serviceName = DiService.genServiceId(serviceId);
+		const entry = DiService.getEnrySafely(serviceName, serviceClass, ctx);
 		entry.object = instance;
+		entry.depsLeft = undefined;
+		entry.constructorHandlers = undefined;
 
 		this.initService(entry, ctx);
 
@@ -89,7 +93,7 @@ export class Container {
 	 * @param ctx
 	 */
 	public static async get<T>(
-		serviceId: IServiceIdentifier, ctx?: string, variation?: Record<string, any>
+		serviceId: string | ClassParameter<T>, variation?: Record<string, any>, ctx?: string
 	): Promise<T> {
 
 		const serviceName = DiService.genServiceId(serviceId, variation);
@@ -100,6 +104,43 @@ export class Container {
 		} else {
 			return await this.waitForDep<T>(serviceName, ctx, variation);
 		}
+
+	}
+
+	/**
+	 * * Used for internal operations *
+	 * This will wait for the target service to be ready and returns it.
+	 * It takes into consideration the service connection
+	 * @param serviceId
+	 * @param ctx
+	 */
+	public static async getServiceProperty<T>(inp: {
+		originalService: {
+			id: IServiceIdentifier;
+			clazz: ClassParameter<T>;
+		};
+		targetService: {
+			id: IServiceIdentifier;
+			ctx?: string;
+			variation?: Record<string, any>;
+		};
+	}): Promise<T> {
+
+		const originalServiceId = DiService.genServiceId(inp.originalService.id);
+		const orignalService = DiService.getTmpEnrySafely(originalServiceId, inp.originalService.clazz);
+
+		if (!orignalService) {
+			throw new Error('Service not found for this property');
+		}
+
+		return new Promise(resolve => {
+			orignalService.propertiesWaiting = (orignalService.propertiesWaiting || []).concat({
+				id: inp.targetService.id,
+				ctx: inp.targetService.ctx,
+				variation: inp.targetService.variation,
+				cb: resolve
+			});
+		});
 
 	}
 
@@ -185,7 +226,7 @@ export class Container {
 
 			const contDeps: Promise<any>[] = [];
 			deps.forEach(dep => {
-				contDeps.push(Container.get(dep.serviceId, dep.ctx));
+				contDeps.push(Container.get(dep.serviceId, undefined ,dep.ctx));
 			});
 
 			await Promise.all(contDeps);
@@ -293,7 +334,7 @@ export class Container {
 
 		// Check if there is any dependency with @Inject
 		// that requires the connection
-		this.updateDependencyWithConnectionIfNecessary(inp.entry.constructorHandlers, inp.connection);
+		this.updateDependenciesWithConnectionIfNecessary(inp.entry.constructorHandlers, inp.connection);
 
 		for (const element of inp.entry.constructorHandlers || []) {
 
@@ -306,6 +347,7 @@ export class Container {
 
 			if (element.variation) {
 				const targetEntry = DiService.getEntry(element.targetServiceId, element.targetCtx || inp.ctx);
+
 				if (inp.entry.depsLeft && targetEntry && targetEntry.isReady) {
 					const targetDep = inp.entry.depsLeft.find(dl => dl.targetServiceId === element.targetServiceId);
 					if (targetDep) {
@@ -314,7 +356,19 @@ export class Container {
 				}
 
 				if (!targetEntry) {
-					this.waitForDep(element.targetServiceId, element.targetCtx || inp.ctx, element.variation).then();
+
+					this.waitForDep(element.targetServiceId, element.targetCtx || inp.ctx, element.variation).then(() => {
+						const updatedEntry = DiService.getEntry(inp.entry.serviceId, inp.ctx);
+						if (updatedEntry && !updatedEntry.isReady && updatedEntry.depsLeft) {
+							for (const depLeft of updatedEntry.depsLeft) {
+								const targetService = DiService.getEntry(depLeft.targetServiceId, depLeft.targetCtx);
+								if (targetService && targetService.isReady) {
+									depLeft.depMet = true;
+								}
+							}
+							this.checkIfReady(inp.entry, inp.ctx);
+						}
+					});
 				}
 			}
 		}
@@ -328,7 +382,7 @@ export class Container {
 
 	private static initService(entry: IDiEntry, ctx?: string) {
 
-		if (!entry.object && entry.serviceClass) {
+		if (entry.object === undefined && entry.serviceClass) {
 			const clazz = entry.serviceClass;
 			entry.object = new (<any>clazz)();
 		}
@@ -368,7 +422,7 @@ export class Container {
 
 		}
 
-		if (!entry.object) {
+		if (entry.object === undefined) {
 			entry.object = new (<any>entry.serviceClass)();
 		}
 
@@ -400,12 +454,14 @@ export class Container {
 		}
 
 		const matchedDeps = DiService.getAllRelatedDeps(entry.serviceId, ctx);
+
 		Object.keys(matchedDeps).forEach(matCtx => {
 			(<IDiEntry[]>matchedDeps[matCtx]).forEach(matEntry => {
 				if (matEntry.depsLeft) {
 					const dep = matEntry.depsLeft.find(depL => depL.targetServiceId === entry.serviceId);
 					if (dep) { dep.depMet = true; }
 				}
+
 				if (this.hasAllDeps(matEntry)) {
 					servicesToSetAsReady.push({ entry: matEntry, ctx: matCtx });
 				} else {
@@ -531,19 +587,16 @@ export class Container {
 	}
 
 	private static checkIfReady(entry: IDiEntry, ctx?: string) {
-
 		if (!entry.isOnlyTemplate && this.hasAllDeps(entry)) {
 			this.setServiceAsReady(entry, ctx);
 		}
-
 	}
 
 	private static setServiceMetadata(clazz: Function, serviceId: IServiceIdentifier, ctx?: string) {
-
 		(<any>clazz)[this.serviceMetadata] = <IDiServiceMetadata>{ serviceId, ctx };
 	}
 
-	private static updateDependencyWithConnectionIfNecessary(
+	private static updateDependenciesWithConnectionIfNecessary(
 		deps: IDiEntry['constructorHandlers'] | IDiEntry['depsLeft'],
 		connection?: string
 	) {
@@ -553,15 +606,56 @@ export class Container {
 				const targetService = DiService.getEntry(dep.targetServiceId, dep.targetCtx);
 				if (
 					targetService && targetService.depsLeft &&
-					targetService.depsLeft.findIndex(d => d.variationVarName === DiConstants.connection)
+					targetService.depsLeft.findIndex(d => d.variationVarName === DiConstants.connection) >= 0
 				) {
 					const variation = { [DiConstants.connection]: connection };
 					const variationTargetId = DiService.genServiceId(dep.targetServiceId, variation);
 					dep.targetServiceId = variationTargetId;
+					if (this.isConstructorHandler(dep)) {
+						dep.variation = variation;
+					} else if (!dep.depMet) {
+						this.waitForDep(variationTargetId, dep.targetCtx, variation).then();
+					}
 				}
 
 			}
 		}
+	}
+
+	private static isConstructorHandler(dep: IDiDepLeft | IDiConstructorHandler): dep is IDiConstructorHandler {
+		return typeof (<any>dep).index === 'number' || false;
+	}
+
+	private static resolveServiceProperties(entry: IDiEntry, connection?: string) {
+
+		if (entry.propertiesWaiting) {
+			for (const propWaiting of entry.propertiesWaiting) {
+
+				if (connection) {
+					const targetServiceId = DiService.genServiceId(propWaiting.id);
+					const targetService = DiService.getEntry(targetServiceId, propWaiting.ctx);
+
+					// If we are setting the properties of a service with a connection
+					// then the service id and varation of the dependency will change
+
+					if (
+						targetService && targetService.depsLeft &&
+						targetService.depsLeft.findIndex(d => d.variationVarName === DiConstants.connection) >= 0
+					) {
+						const variation = Object.assign(propWaiting.variation || {}, { [DiConstants.connection]: connection });
+						const newTargetId = DiService.genServiceId(propWaiting.id, variation);
+						Container.get(newTargetId, propWaiting.variation, propWaiting.ctx).then(propWaiting.cb);
+					} else {
+						Container.get(propWaiting.id, propWaiting.variation, propWaiting.ctx).then(propWaiting.cb);
+					}
+
+				} else {
+					Container.get(propWaiting.id, propWaiting.variation, propWaiting.ctx).then(propWaiting.cb);
+				}
+
+			}
+		}
+
 	}
 
 }

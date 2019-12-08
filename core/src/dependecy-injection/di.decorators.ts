@@ -87,7 +87,7 @@ export function Inject(inp?: IServiceIdentifier<any> | IInjectArgs): Function {
 					variationVarName
 				});
 
-			} else if (target instanceof Object) {
+			} else if (target instanceof Object && TypeChecker.isClass(target.constructor)) {
 
 
 				// Property inject
@@ -99,14 +99,22 @@ export function Inject(inp?: IServiceIdentifier<any> | IInjectArgs): Function {
 					variation,
 					variationVarName
 				});
-				Container.get(sId, ctx, variation).then(dep => {
+
+				Container.getServiceProperty({
+					originalService: {
+						id: target.constructor.name,
+						clazz: target.constructor
+					},
+					targetService: {
+						id: sId, variation, ctx
+					}
+				}).then(dep => {
 					Object.defineProperty(target, propertyName, {
 						enumerable: true,
 						writable: true,
 						configurable: true,
 						value: dep
 					});
-
 				});
 
 			}
@@ -121,9 +129,9 @@ export function Inject(inp?: IServiceIdentifier<any> | IInjectArgs): Function {
  * definition at class level or at constructor level
  * @param sId
  */
-export function InjectConnection(): Function {
+export function InjectConnection(inp?: { optional: boolean }): Function {
 	return (target: Record<string, any> | Function, propertyName: string, index?: number) => {
-		Inject({ variationVarName: DiConstants.connection })(target, propertyName, index);
+		Inject({ variationVarName: DiConstants.connection, variationIsOptional: inp && inp.optional })(target, propertyName, index);
 	};
 }
 

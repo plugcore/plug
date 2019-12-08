@@ -1,4 +1,4 @@
-import { ClassParameter, IsBoolean, IServiceArgs, IsNumber, IsString, RequiredProperty } from '@plugdata/core';
+import { ClassParameter, IsBoolean, IServiceArgs, IsNumber, IsString, Required } from '@plugdata/core';
 import { DefaultParams, DefaultQuery, FastifyReply, FastifyRequest, HTTPMethod, RequestHandler, RouteShorthandOptions } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'http';
 
@@ -23,7 +23,7 @@ export interface IRegsiteredMethod {
  * This object represents a list of validators for the route.
  * All properties are ment to be class decorated with _@plugdata/core_
  * validator decorators. These could be `@IsString()`, `@IsNumber()`,
- * `@IsBoolean()`, `@IsArray()`, `@IsObject()` or `@RequiredProperty()`
+ * `@IsBoolean()`, `@IsArray()`, `@IsObject()` or `@Required()`
  */
 export interface IRouteSchemas {
 	/**
@@ -77,19 +77,19 @@ export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, De
 
 export class ErrorResponseModel {
 	@IsNumber()
-	@RequiredProperty()
+	@Required()
 	statusCode: number;
 	@IsString()
-	@RequiredProperty()
+	@Required()
 	error: string;
 	@IsString()
-	@RequiredProperty()
+	@Required()
 	message: string;
 }
 
 export class DefaultResponseModel {
 	@IsBoolean()
-	@RequiredProperty()
+	@Required()
 	success: boolean;
 }
 

@@ -8,7 +8,7 @@ export class EventDispatcher {
 
 	constructor(
 		private log: Logger
-	) { }
+	) {}
 
 	private readonly eventEmitter = globalEventEmitter;
 

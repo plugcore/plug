@@ -1,13 +1,13 @@
-import { IsString, RequiredProperty, IsNumber, IsBoolean } from '@plugdata/core';
+import { IsString, Required, IsNumber, IsBoolean } from '@plugdata/core';
 
 export class ExampleParams {
 
 	@IsString({ maxLength: 10 })
-	@RequiredProperty()
+	@Required()
 	public customId: string;
 
 	@IsNumber({ maximum: 999 })
-	@RequiredProperty()
+	@Required()
 	public num: number;
 
 }
@@ -15,7 +15,7 @@ export class ExampleParams {
 export class ExampleRequest {
 
 	@IsString({ maxLength: 50 })
-	@RequiredProperty()
+	@Required()
 	public name: string;
 
 	@IsBoolean()

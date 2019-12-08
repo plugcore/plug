@@ -57,7 +57,7 @@ export class RoutesInitializer {
 				controller.options.service.sId : controller.controller;
 			const context = (controller.options && controller.options.service && controller.options.service.ctx) ?
 				controller.options.service.ctx : undefined;
-			const controllerService = await Container.get<any>(serviceId, context);
+			const controllerService = await Container.get<any>(serviceId, undefined, context);
 			const methods = RoutesUtils.getRegisteredMethods(controller.controller);
 
 			// 2: Attach al controller methods to fastify methods

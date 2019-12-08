@@ -26,6 +26,7 @@ export interface IServiceArgs<T = any> {
 export interface IInjectArgs<T = any> extends IServiceArgs<T> {
 	variationVarName?: string;
 	variation?: Record<string, any>;
+	variationIsOptional?: boolean;
 }
 
 /**
@@ -47,23 +48,29 @@ export interface IDiEntry<T = any> {
 	isOnlyTemplate: boolean;
 	serviceClass?: ClassParameter<T>;
 	object?: any;
-	constructorHandlers?: {
-		targetServiceId: string;
-		index: number;
-		targetCtx?: string;
-		variationVarName?: string;
-		variation?: Record<string, any>;
-		variationVarValue?: any;
-	}[];
-	depsLeft?: {
-		targetServiceId: string;
-		depMet: boolean;
-		targetCtx?: string;
-		variationVarName?: string;
-		variationVarValue?: any;
-	}[];
+	constructorHandlers?: IDiConstructorHandler[];
+	depsLeft?: IDiDepLeft[];
 	cbWaiting?: Function[];
+	propertiesWaiting?: {
+		id: IServiceIdentifier;
+		ctx?: string;
+		variation?: Record<string, any>;
+		cb: (service: any) => void;
+	}[];
 	metadata?: any;
+	variation?: Record<string, any>;
+}
+
+export interface IDiDepLeft {
+	targetServiceId: string;
+	depMet: boolean;
+	targetCtx?: string;
+	variationVarName?: string;
+	variationVarValue?: any;
+}
+
+export interface IDiConstructorHandler extends Omit<IDiDepLeft, 'depMet'> {
+	index: number;
 	variation?: Record<string, any>;
 }
 

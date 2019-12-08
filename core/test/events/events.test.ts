@@ -11,8 +11,8 @@ export class EventsTest extends PlugTest {
 	public async executeEvent() {
 
 		const examplePayload = { a: 1, b: '2' };
-		const eventDispatcher = await Container.get<EventDispatcher>(EventDispatcher);
-		const eventsExample = await Container.get<EventsExample>(EventsExample);
+		const eventDispatcher = await Container.get(EventDispatcher);
+		const eventsExample = await Container.get(EventsExample);
 
 		const waitForEventToExecute = new Promise((resolve) => {
 			eventsExample.readyFunc = resolve;
@@ -20,6 +20,7 @@ export class EventsTest extends PlugTest {
 		eventDispatcher.emmit(testEventName, examplePayload);
 
 		await waitForEventToExecute;
+
 		this.assert.deepEqual(examplePayload, eventsExample.payload);
 
 	}
