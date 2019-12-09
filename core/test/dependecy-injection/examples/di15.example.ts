@@ -3,7 +3,7 @@ import { Inject, InjectConnection, Service } from '../../../src/dependecy-inject
 @Service()
 export class Di15Example {
 
-	@InjectConnection({ optional: true })
+	@InjectConnection()
 	private connection?: string;
 
 	constructor(

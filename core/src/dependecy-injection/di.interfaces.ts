@@ -26,7 +26,6 @@ export interface IServiceArgs<T = any> {
 export interface IInjectArgs<T = any> extends IServiceArgs<T> {
 	variationVarName?: string;
 	variation?: Record<string, any>;
-	variationIsOptional?: boolean;
 }
 
 /**

@@ -7,6 +7,10 @@ export class DiUtils {
 
 	private static readonly defaultDependencyTimeout = 10 * 1000;
 
+	// -------------------------------------------------------------------------
+	// Public methods
+	// -------------------------------------------------------------------------
+
 	/**
 	 * Loads all the js files recursively in the given path, and waits for all the
 	 * services to be loaded.
@@ -55,25 +59,6 @@ export class DiUtils {
 	}
 
 	/**
-	 * Returns a list of all the classes loaded by the loadFolder function
-	 * @param jsFiles
-	 */
-	public static getClasses(jsFiles: any[]): Function[] {
-		const result: Function[] = [];
-
-		jsFiles.forEach(jsFile => {
-			Object.keys(jsFile).forEach(key => {
-				const moduleExport = jsFile[key];
-				if (moduleExport instanceof Function) {
-					result.push(moduleExport);
-				}
-			});
-		});
-
-		return result;
-	}
-
-	/**
 	 * Reads the result from waitForFolder function and generates an string
 	 * with the prefix, a comma separated list of services, and if the services are empty
 	 * or null/undefined, then the result will be the notFound parameter
@@ -94,6 +79,29 @@ export class DiUtils {
 			result = prefix + serviceIds.join(', ');
 
 		}
+
+		return result;
+	}
+
+	// -------------------------------------------------------------------------
+	// Private methods
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Returns a list of all the classes loaded by the loadFolder function
+	 * @param jsFiles
+	 */
+	private static getClasses(jsFiles: any[]): Function[] {
+		const result: Function[] = [];
+
+		jsFiles.forEach(jsFile => {
+			Object.keys(jsFile).forEach(key => {
+				const moduleExport = jsFile[key];
+				if (moduleExport instanceof Function) {
+					result.push(moduleExport);
+				}
+			});
+		});
 
 		return result;
 	}

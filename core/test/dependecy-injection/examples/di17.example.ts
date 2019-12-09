@@ -3,13 +3,13 @@ import { Inject, Service } from '../../../src/dependecy-injection/di.decorators'
 @Service()
 export class Di17Example {
 
-	@Inject({ variationVarName: 'optionalVariationString', variationIsOptional: true })
+	@Inject({ variationVarName: 'optionalVariationString' })
 	private optionalVariationString?: string;
 
 	constructor(
 		@Inject('booleanExample')
 		private booleanExample: boolean,
-		@Inject({ variationVarName: 'optionalVariationNumber', variationIsOptional: true })
+		@Inject({ variationVarName: 'optionalVariationNumber' })
 		private optionalVariationNumber?: number
 	) {
 	}

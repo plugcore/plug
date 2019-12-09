@@ -6,7 +6,7 @@ export class Di16Example {
 	@Inject('numberExample') private numberExample: number;
 
 	constructor(
-		@InjectConnection({ optional: true }) private connection?: string
+		@InjectConnection() private connection?: string
 	) {
 	}
 

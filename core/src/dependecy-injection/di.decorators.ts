@@ -1,12 +1,10 @@
 import 'reflect-metadata';
 import { RmdConstats } from '../constants/reflect-metadata.constants';
-import { ExtCtxGenerator } from '../extensions/ext-ctx.generator';
-import { JsStackUtils } from '../utils/js-stack.utils';
-import { Container } from './di.container';
-import { IServiceArgs, IInjectArgs, IServiceIdentifier } from './di.interfaces';
 import { TypeChecker } from '../utils/type.checker';
 import { ClassParameter } from '../utils/typescript.utils';
 import { DiConstants } from './di.constants';
+import { Container } from './di.container';
+import { IInjectArgs, IServiceArgs, IServiceIdentifier } from './di.interfaces';
 
 /**
  * Service decortor made to easily registrer the class into the container
@@ -20,7 +18,8 @@ export function Service({ ctx, sId, connection }: IServiceArgs = {}): Function {
 		if (TypeChecker.isClass(target)) {
 
 			const constructorParms = Reflect.getMetadata(RmdConstats.constructorParams, target);
-			ctx = ctx || ExtCtxGenerator.generateCtx(JsStackUtils.getLastCallFromStack(3));
+			// Waiting for extension funcionality
+			/* ctx = ctx || ExtCtxGenerator.generateCtx(JsStackUtils.getLastCallFromStack(3)); */
 
 			// We can register the service either by its Class or by a custom name
 			sId = sId ? sId : target;
@@ -129,9 +128,9 @@ export function Inject(inp?: IServiceIdentifier<any> | IInjectArgs): Function {
  * definition at class level or at constructor level
  * @param sId
  */
-export function InjectConnection(inp?: { optional: boolean }): Function {
+export function InjectConnection(): Function {
 	return (target: Record<string, any> | Function, propertyName: string, index?: number) => {
-		Inject({ variationVarName: DiConstants.connection, variationIsOptional: inp && inp.optional })(target, propertyName, index);
+		Inject({ variationVarName: DiConstants.connection })(target, propertyName, index);
 	};
 }
 

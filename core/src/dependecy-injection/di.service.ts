@@ -13,7 +13,7 @@ export class DiService {
 	// -------------------------------------------------------------------------
 
 	private static readonly tmpCtx = 'tmpCtx';
-	private static mainCtx: any = {};
+	private static contexts: Record<string, Record<string, any>> = {}; // First level = Context, second level = ServiceId
 	private static variationsMap: Record<string, any[]> = {};
 
 	// -------------------------------------------------------------------------
@@ -57,7 +57,7 @@ export class DiService {
 		const currctx = ctx || Container.globalCtx;
 		const entries = this.getCtx(currctx);
 		entries.push(entry);
-		this.mainCtx[currctx] = entries;
+		this.contexts[currctx] = entries;
 
 	}
 
@@ -91,7 +91,7 @@ export class DiService {
 		if (index >= 0) {
 			const entries = this.getCtx(currctx);
 			entries[index] = entry;
-			this.mainCtx[currctx] = entries;
+			this.contexts[currctx] = entries;
 		} else {
 			this.addEntry(entry, currctx);
 		}
@@ -120,19 +120,6 @@ export class DiService {
 	public static getEntry(serviceId: string, ctx?: string): IDiEntry | undefined {
 
 		return this.getCtx(ctx || Container.globalCtx).find(entry => entry.serviceId === serviceId);
-
-	}
-
-	/**
-	 * Tries to find the index an IDiEntry with the given serviceId in the provided context.
-	 * If no entry is found, it will return -1.
-	 * If no context is provided, then the global context will be used.
-	 * @param serviceId
-	 * @param ctx
-	 */
-	public static getIndexOf(serviceId: string, ctx?: string): number {
-
-		return this.getCtx(ctx || Container.globalCtx).findIndex(el => el.serviceId === serviceId);
 
 	}
 
@@ -166,16 +153,6 @@ export class DiService {
 
 		const entry = this.getEntry(serviceId, ctx);
 		return entry ? entry.isReady : false;
-
-	}
-
-	/**
-	 * Returns all the IDiEntry inside the provided context
-	 * @param ctx
-	 */
-	public static getAll(ctx?: string): IDiEntry[] {
-
-		return this.getCtx(ctx || Container.globalCtx);
 
 	}
 
@@ -235,11 +212,11 @@ export class DiService {
 	 * @param serviceId
 	 * @param ctx
 	 */
-	public static getAllRelatedDeps(serviceId: string, ctx?: string): any {
+	public static getAllRelatedDeps(serviceId: string, ctx?: string): Record<string, Record<string, any>> {
 
-		const result: any = {};
+		const result: Record<string, Record<string, any>> = {};
 		ctx = ctx || Container.globalCtx;
-		Object.keys(this.mainCtx).forEach(matCtx => {
+		Object.keys(this.contexts).forEach(matCtx => {
 			const foundDeps = this.getCtx(matCtx).filter(entry => {
 				if (entry.depsLeft) {
 					return entry.depsLeft.find(
@@ -319,7 +296,7 @@ export class DiService {
 
 	private static getCtx(ctx: string): IDiEntry[] {
 
-		let result = this.mainCtx[ctx];
+		let result = this.contexts[ctx];
 		if (!result) { result = []; }
 		return <IDiEntry[]>result;
 
@@ -327,7 +304,20 @@ export class DiService {
 
 	private static updateCtx(ctx: string, entries: IDiEntry[]) {
 
-		this.mainCtx[ctx] = entries;
+		this.contexts[ctx] = entries;
+
+	}
+
+	/**
+	 * Tries to find the index an IDiEntry with the given serviceId in the provided context.
+	 * If no entry is found, it will return -1.
+	 * If no context is provided, then the global context will be used.
+	 * @param serviceId
+	 * @param ctx
+	 */
+	private static getIndexOf(serviceId: string, ctx?: string): number {
+
+		return this.getCtx(ctx || Container.globalCtx).findIndex(el => el.serviceId === serviceId);
 
 	}
 
