@@ -1,7 +1,7 @@
 import { EventUtils } from '../events/event.utils';
 import { ObjectUtils } from '../utils/object.utils';
 import { ClassParameter } from '../utils/typescript.utils';
-import { DiConstants } from './di.constnats';
+import { DiConstants } from './di.constants';
 import { IDiConstructorHandler, IDiDepLeft, IDiEntry, IDiServiceMetadata, IServiceIdentifier, OnInit } from './di.interfaces';
 import { DiService } from './di.service';
 

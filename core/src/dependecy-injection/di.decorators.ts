@@ -6,7 +6,7 @@ import { Container } from './di.container';
 import { IServiceArgs, IInjectArgs, IServiceIdentifier } from './di.interfaces';
 import { TypeChecker } from '../utils/type.checker';
 import { ClassParameter } from '../utils/typescript.utils';
-import { DiConstants } from './di.constnats';
+import { DiConstants } from './di.constants';
 
 /**
  * Service decortor made to easily registrer the class into the container
