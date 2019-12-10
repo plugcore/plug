@@ -1,4 +1,4 @@
-import { Logger, ProjectConfiguration, Service } from '@plugdata/core';
+import { Logger, ProjectConfiguration, Service, InjectLogger } from '@plugdata/core';
 import * as fastify from 'fastify';
 import { FastifyInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
@@ -6,14 +6,14 @@ import { WebConfiguration } from '../configuration/configuration.default';
 
 @Service()
 export class RoutesService {
-	
+
 	public fastifyInstance: FastifyInstance<Server, IncomingMessage, ServerResponse>;
 	public httpPort: number;
 	public host: string;
 	public addressListenning: string;
 
 	constructor(
-		private log: Logger,
+		@InjectLogger('httpcontroller') private log: Logger,
 		configuration: ProjectConfiguration
 	) {
 
@@ -27,13 +27,17 @@ export class RoutesService {
 
 		// Fastify initialization
 		this.fastifyInstance = fastify({
-			logger: this.log.pinoOptions
+			logger: Object.assign(this.log.pinoOptions,{
+				/* serializers: {
+					req: (req: any) => ({ url: req.url })
+				} */
+			})
 		});
 
 	}
 
 	public async startHttpServer() {
-		this.addressListenning = await this.fastifyInstance.listen(this.httpPort);	
+		this.addressListenning = await this.fastifyInstance.listen(this.httpPort);
 	}
 
 	public async shutdownHttpServer() {

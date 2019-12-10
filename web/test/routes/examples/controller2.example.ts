@@ -1,41 +1,40 @@
-import { Controller, Get, Head, Post, Put, Delete, Options, Patch } from '../../../src/routes/routes.decorators';
-import { Request, Response } from '../../../src/routes/routes.shared';
+import { Controller, Delete, Get, Head, Options, Patch, Post, Put } from '../../../src/routes/routes.decorators';
 
 @Controller({ urlBase: '/test2' })
 export class Controller2Example {
 
 	@Get()
-	public async getTest(req: Request, res: Response) {
+	public async getTest() {
 		return { method: 'getTest', test: 2 };
 	}
 
 	@Head()
-	public async headTest(req: Request, res: Response) {
+	public async headTest() {
 		return { method: 'headTest', test: 2 };
 	}
 
 	@Post()
-	public async postTest(req: Request, res: Response) {
+	public async postTest() {
 		return { method: 'postTest', test: 2 };
 	}
 
 	@Put()
-	public async putTest(req: Request, res: Response) {
+	public async putTest() {
 		return { method: 'putTest', test: 2 };
 	}
 
 	@Delete()
-	public async deleteTest(req: Request, res: Response) {
+	public async deleteTest() {
 		return { method: 'deleteTest', test: 2 };
 	}
 
 	@Options()
-	public async optionsTest(req: Request, res: Response) {
+	public async optionsTest() {
 		return { method: 'optionsTest', test: 2 };
 	}
 
 	@Patch()
-	public async patchTest(req: Request, res: Response) {
+	public async patchTest() {
 		return { method: 'patchTest', test: 2 };
 	}
 

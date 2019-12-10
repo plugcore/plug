@@ -1,6 +1,6 @@
 import {
 	ArrayUtils, ClassParameter, Container, Logger, ObjectUtils, ObjectValidatorUtils,
-	OnEvent, ProjectConfiguration, PublicEvents, Service
+	OnEvent, ProjectConfiguration, PublicEvents, Service, InjectLogger
 } from '@plugdata/core';
 import { RouteSchema } from 'fastify';
 import * as oas from 'fastify-oas';
@@ -15,7 +15,7 @@ export class RoutesInitializer {
 	private readonly eventNames = ['onRequest', 'preParsing', 'preValidation', 'preHandler', 'preSerialization'];
 
 	constructor(
-		private log: Logger,
+		@InjectLogger('httpcontroller') private log: Logger,
 		private routesService: RoutesService,
 		configuration: ProjectConfiguration
 	) {
@@ -60,7 +60,7 @@ export class RoutesInitializer {
 			const controllerService = await Container.get<any>(serviceId, undefined, context);
 			const methods = RoutesUtils.getRegisteredMethods(controller.controller);
 
-			// 2: Attach al controller methods to fastify methods
+			// 2: Attach all controller methods to fastify methods
 			for (const method of methods) {
 
 				const controllerMethodHandler: TRequestHandler = controllerService[method.methodName].bind(controllerService);

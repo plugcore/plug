@@ -1,7 +1,7 @@
 import { Logger } from '@plugdata/core';
 import { Controller, Delete, Get, Head, Options, Patch, Post, Put } from '../../../src/routes/routes.decorators';
-import { Request, Response } from '../../../src/routes/routes.shared';
-import { ExampleHeaders, ExampleRequest, ExampleResponse, ExampleParams } from './route-validators.example';
+import { Request } from '../../../src/routes/routes.shared';
+import { ExampleHeaders, ExampleParams, ExampleRequest, ExampleResponse } from './route-validators.example';
 
 @Controller({ urlBase: '/test' })
 export class ControllerExample {
@@ -18,12 +18,12 @@ export class ControllerExample {
 	) { }
 
 	@Get()
-	public async getTest(req: Request, res: Response) {
+	public async getTest() {
 		return { method: 'getTest', test: 1 };
 	}
 
 	@Head()
-	public async headTest(req: Request, res: Response) {
+	public async headTest() {
 		return { method: 'headTest', test: 1 };
 	}
 
@@ -40,50 +40,53 @@ export class ControllerExample {
 		preHandler: ControllerExample.prototype.preHandler,
 		preSerialization: ControllerExample.prototype.preSerialization
 	})
-	public async postTest(req: Request, res: Response) {
+	public async postTest(req: Request) {
+		console.log(req);
+		req.log.debug('Test route debug from log');
+		req.log.info({ num: 12, str: 'Test route debug from log object' });
 		return <ExampleResponse>{ success: true };
 	}
 
 	@Put()
-	public async putTest(req: Request, res: Response) {
+	public async putTest() {
 		return { method: 'putTest', test: 1 };
 	}
 
 	@Delete()
-	public async deleteTest(req: Request, res: Response) {
+	public async deleteTest() {
 		return { method: 'deleteTest', test: 1 };
 	}
 
 	@Options()
-	public async optionsTest(req: Request, res: Response) {
+	public async optionsTest() {
 		return { method: 'optionsTest', test: 1 };
 	}
 
 	@Patch()
-	public async patchTest(req: Request, res: Response) {
+	public async patchTest() {
 		return { method: 'patchTest', test: 1 };
 	}
 
-	public async onRequest(req: Request, res: Response) {
+	public async onRequest() {
 		if (this.logger !== null) {
 			this.loggerNotNull = true;
 		}
 		this.onRequestCalled = true;
 	}
 
-	public async preParsing(req: Request, res: Response) {
+	public async preParsing() {
 		this.preParsingCalled = true;
 	}
 
-	public async preValidation(req: Request, res: Response) {
+	public async preValidation() {
 		this.preValidationCalled = true;
 	}
 
-	public async preHandler(req: Request, res: Response) {
+	public async preHandler() {
 		this.preHandlerCalled = true;
 	}
 
-	public async preSerialization(req: Request, res: Response, payload: any) {
+	public async preSerialization() {
 		this.preSerializationCalled = true;
 	}
 

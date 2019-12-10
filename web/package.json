@@ -16,6 +16,7 @@
 	"scripts": {
 		"build": "node ../node_modules/typescript/bin/tsc & cd .. & node _scripts/build-web.js",
 		"test": "node node_modules/@plugdata/core/src/test/test.cli.js test ./dist/test ./test/configuration | node ../node_modules/pino-pretty/bin.js -t -i pid,hostname,name",
+		"test:raw": "node node_modules/@plugdata/core/src/test/test.cli.js test ./dist/test ./test/configuration",
 		"test:info": "node node_modules/@plugdata/core/src/test/test.cli.js info ./dist/test",
 		"lint": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts",
 		"lint:fix": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts --fix"
