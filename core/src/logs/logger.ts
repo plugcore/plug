@@ -1,6 +1,7 @@
-import { ProjectConfiguration } from '../configuration/configuration.service';
-import { Service, Inject, InjectConnection } from '../dependecy-injection/di.decorators';
 import * as pino from 'pino';
+import { InjectConfiguration } from '../configuration/configuration.decorators';
+import { Configuration } from '../configuration/configuration.interfaces';
+import { Inject, InjectConnection, Service } from '../dependecy-injection/di.decorators';
 import { ObjectUtils } from '../utils/object.utils';
 
 /**
@@ -13,7 +14,7 @@ export class Logger {
 	public pinoOptions: pino.LoggerOptions;
 
 	constructor(
-		private projectConfiguration: ProjectConfiguration,
+		@InjectConfiguration() private projectConfiguration: Configuration,
 		@Inject({ variationVarName: 'name' }) private logName?: string,
 		@InjectConnection() private connection?: string
 	) {

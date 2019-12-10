@@ -1,6 +1,6 @@
 import {
 	ArrayUtils, ClassParameter, Container, Logger, ObjectUtils, ObjectValidatorUtils,
-	OnEvent, ProjectConfiguration, PublicEvents, Service, InjectLogger
+	OnEvent, PublicEvents, Service, InjectLogger, Configuration, InjectConfiguration
 } from '@plugdata/core';
 import { RouteSchema } from 'fastify';
 import * as oas from 'fastify-oas';
@@ -17,7 +17,7 @@ export class RoutesInitializer {
 	constructor(
 		@InjectLogger('httpcontroller') private log: Logger,
 		private routesService: RoutesService,
-		configuration: ProjectConfiguration
+		@InjectConfiguration() configuration: Configuration
 	) {
 
 		// OAS configuration

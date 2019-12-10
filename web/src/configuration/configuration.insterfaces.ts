@@ -21,11 +21,8 @@ export interface PlugWebConfiguration {
 	};
 }
 
-declare module '@plugdata/core' {
-	export interface IConfiguration<T> {
-		web?: PlugWebConfiguration;
-	}
-	export class ProjectConfiguration<T = undefined> implements IConfiguration<T> {
+declare module '@plugdata/core/types/src/configuration/configuration.interfaces' {
+	interface Configuration {
 		web?: PlugWebConfiguration;
 	}
 }

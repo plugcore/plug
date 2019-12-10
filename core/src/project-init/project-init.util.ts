@@ -1,11 +1,11 @@
 import { join } from 'path';
 import { ConfigurationLoader } from '../configuration/configuration.loader';
-import { ProjectConfiguration } from '../configuration/configuration.service';
 import { Container } from '../dependecy-injection/di.container';
 import { DiUtils } from '../dependecy-injection/di.utils';
 import { PublicEvents } from '../events/event.constants';
 import { EventDispatcher } from '../events/event.dispatcher';
 import { Logger } from '../logs/logger';
+import { ProjectConfigurationService } from '../configuration/configuration.service';
 
 export class PorjectInitialization {
 
@@ -57,10 +57,10 @@ export class PorjectInitialization {
 		const configuration = await ConfigurationLoader.loadProject(configurationFolder);
 
 		// Create configuration serice
-		const configurationService = new ProjectConfiguration(configuration);
+		const configurationService = new ProjectConfigurationService(configuration);
 
 		// Add the configuratio to di container
-		Container.set(ProjectConfiguration, configurationService);
+		Container.set(ProjectConfigurationService, configurationService);
 
 	}
 

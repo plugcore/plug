@@ -1,14 +1,9 @@
-import { IConfiguration } from './configuration.interfaces';
+import { Configuration } from './configuration.interfaces';
 
-export class PlugConfiguration {
-
-	public static readonly default: IConfiguration<undefined> = {
-		init: {
-			distFolder: 'dist'
-		},
-		log: {
-		},
-		custom: undefined
-	};
-
-}
+export const defaultProjectConfiguration: Configuration = {
+	init: {
+		distFolder: 'dist'
+	},
+	log: {
+	}
+};

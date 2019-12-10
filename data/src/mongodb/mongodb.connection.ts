@@ -1,4 +1,4 @@
-import { ClassParameter, OnInit, Logger, ObjectUtils, ProjectConfiguration, Service, TypeChecker } from '@plugdata/core';
+import { ClassParameter, Configuration, InjectConfiguration, Logger, ObjectUtils, OnInit, Service, TypeChecker } from '@plugdata/core';
 import { Collection, Db, MongoClient } from 'mongodb';
 import { IGetCollectionOptions } from './mongodb.interfaces';
 
@@ -11,7 +11,7 @@ export class MongoDbConnection implements OnInit {
 	private connectionName?: string;
 	constructor(
 		private log: Logger,
-		private configuration: ProjectConfiguration,
+		@InjectConfiguration() private configuration: Configuration,
 	) { }
 
 	public async onInit() {

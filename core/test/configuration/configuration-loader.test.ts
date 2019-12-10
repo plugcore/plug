@@ -2,20 +2,30 @@ import { Test, TestClass, BeforeTests } from '../../src/test/test.decorators';
 import { PlugTest } from '../../src/test/test.shared';
 import { ConfigurationLoader } from '../../src/configuration/configuration.loader';
 import { join } from 'path';
+import { CustomConfigurationService } from './customconfiguration.service';
+import { Container } from '../../src/dependecy-injection/di.container';
 
 @TestClass()
 export class ConfigurationLoaderTest extends PlugTest {
 
+	private customConfigurationService: CustomConfigurationService;
 	private readonly testFilesFolder = join(__dirname, '..', '..', '..', 'test', 'configuration', 'test-files');
 
 	@BeforeTests()
-	public beforeTests() {
+	public async beforeTests() {
 		process.env.NODE_LOG_LEVEL = 'debug';
 		process.env.NODE_ENV = 'env';
+		this.customConfigurationService = await Container.get(CustomConfigurationService);
 	}
 
 	@Test()
-	public async loadApp() {
+	public async injectConfiguration() {
+		this.assert.ok(this.customConfigurationService.getConfiguration().init);
+		this.assert.ok(this.customConfigurationService.getConfiguration().log);
+	}
+
+	@Test()
+	public async loadProjectConfiguration() {
 
 		const importedAppCfg = await ConfigurationLoader.loadProject(this.testFilesFolder);
 		const appCfg = {

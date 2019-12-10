@@ -3,8 +3,8 @@ import { FsUtils } from '../io/fs.utils';
 import { ObjectUtils } from '../utils/object.utils';
 import { TypeChecker } from '../utils/type.checker';
 import { DeepPartial } from '../utils/typescript.utils';
-import { IConfiguration } from './configuration.interfaces';
-import { PlugConfiguration } from './configuration.default';
+import { Configuration } from './configuration.interfaces';
+import { defaultProjectConfiguration } from './configuration.default';
 
 export class ConfigurationLoader {
 
@@ -19,18 +19,18 @@ export class ConfigurationLoader {
 	/**
 	 * Calls to `ConfigurationLoader.loadFile` to load the application configuration which will
 	 * usually be at `/configuration/condiguration.json`. It will use the defaults determined by
-	 * `PlugConfiguration.default` 
+	 * `defaultProjectConviguration`
 	 * @param folder
-	 * @param environment 
+	 * @param environment
 	 */
-	public static async loadProject<T>(
+	public static async loadProject(
 		folder: string, options?: { environment?: string; configurationFileName?: string }
-	): Promise<IConfiguration<T>> {
+	): Promise<Configuration> {
 
-		const finalConfiguration = await this.loadFile<IConfiguration<T>>(folder, options);
+		const finalConfiguration = await this.loadFile<Configuration>(folder, options);
 
-		return <IConfiguration<T>>ObjectUtils.deepAssign(PlugConfiguration.default, finalConfiguration);
-		
+		return <Configuration>ObjectUtils.deepAssign(defaultProjectConfiguration, finalConfiguration);
+
 	}
 
 	/**
@@ -45,7 +45,7 @@ export class ConfigurationLoader {
 	 *     - At any point you can have something like `{ "log": { "level" : "$[NODE_LOG_LEVEL]" } }`
 	 *  It can throw errors.
 	 * @param folder
-	 * @param environment 
+	 * @param environment
 	 */
 	public static async loadFile<T>(
 		folder: string, options?: { environment?: string; configurationFileName?: string }
@@ -57,7 +57,7 @@ export class ConfigurationLoader {
 
 		// Validators
 		await this.basicValidations(folder, finalOptions.configurationFileName);
-		
+
 		// Base configuration load
 		const configurationFile = join(folder, this.defaultConfigurationFileName);
 		const configurationPromises = [this.importConfigurationFile<T>(configurationFile)];
@@ -70,14 +70,14 @@ export class ConfigurationLoader {
 				this.defaultConfigurationFileName.substr(0, dotIndex) + `.${currEnv}` +
 				this.defaultConfigurationFileName.substr(dotIndex  )
 			);
-			const envFileExists = (await FsUtils.fileOrFolderExists(configurationEnvFile)); 
+			const envFileExists = (await FsUtils.fileOrFolderExists(configurationEnvFile));
 			if (envFileExists.exists) {
 				configurationPromises.push(
 					this.importConfigurationFile<T>(configurationEnvFile)
 				);
 			}
 		}
-		
+
 		// Configuration load
 		const configurations = await Promise.all(configurationPromises);
 
@@ -117,7 +117,7 @@ export class ConfigurationLoader {
 	 * returns it as a valid object
 	 */
 	private static async importConfigurationFile<T>(file: string): Promise<DeepPartial<T>> {
-		
+
 		const fileDirectory = dirname(file);
 		const fileContent = JSON.parse(await FsUtils.loadFile(file));
 
@@ -126,12 +126,12 @@ export class ConfigurationLoader {
 
 				const matchEnvironment = objEntry.value.match(this.environmentVariableRegex);
 				if (matchEnvironment && matchEnvironment.length === 1) {
-					
+
 					// Environment variable
 					const envVarName = matchEnvironment[0];
 					const enVarValue = process.env[envVarName.substring(0, envVarName.length - 1).substring(2)];
 					if (enVarValue) {
-						
+
 						objEntry.objRef[objEntry.key] = enVarValue;
 					} else {
 						throw new Error('Environment variable not found while loading configuration:' + envVarName);

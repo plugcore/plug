@@ -12,14 +12,11 @@ export interface IInitConfiguration {
 /**
  * Plug framework configuration file
  */
-export interface IConfiguration<T> {
+export interface Configuration {
 	init: IInitConfiguration;
 	// Supported pino log configuration
 	log: Pick<LoggerOptions,
 	'level' | 'useLevelLabels' | 'changeLevelName' | 'redact' |
 	'messageKey' | 'prettyPrint' | 'enabled' | 'base'
 	> & { timestamp?: boolean };
-	// In this property we can add any custom configuration to the main configuration file
-	// to exend it
-	custom: T;
 }

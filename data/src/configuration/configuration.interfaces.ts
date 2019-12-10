@@ -12,11 +12,9 @@ export interface PlugDataConfiguration {
 	connections?: MongodbConnection[];
 }
 
-declare module '@plugdata/core' {
-	export interface IConfiguration<T> {
-		data?: PlugDataConfiguration;
-	}
-	export class ProjectConfiguration<T = undefined> implements IConfiguration<T> {
+declare module '@plugdata/core/types/src/configuration/configuration.interfaces' {
+	interface Configuration {
 		data?: PlugDataConfiguration;
 	}
 }
+

@@ -1,4 +1,4 @@
-import { Logger, ProjectConfiguration, Service, InjectLogger } from '@plugdata/core';
+import { Logger, InjectConfiguration, Service, InjectLogger, Configuration } from '@plugdata/core';
 import * as fastify from 'fastify';
 import { FastifyInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
@@ -14,7 +14,7 @@ export class RoutesService {
 
 	constructor(
 		@InjectLogger('httpcontroller') private log: Logger,
-		configuration: ProjectConfiguration
+		@InjectConfiguration() configuration: Configuration
 	) {
 
 		// Port

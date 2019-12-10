@@ -1,4 +1,4 @@
-import { TestClass, PlugTest, BeforeTests, Container, ProjectConfiguration, Test, AfterTests } from '@plugdata/core';
+import { TestClass, PlugTest, BeforeTests, Container, Test, AfterTests, ProjectConfigurationService, Configuration } from '@plugdata/core';
 import { Collection } from '../../src/mongodb/mongodb.interfaces';
 import { DbCollectionExample } from './examples/dbcollection.example';
 import { MongoDbConnection } from '../../src/mongodb/mongodb.connection';
@@ -11,7 +11,7 @@ export class MongoDbConnectionTest extends PlugTest {
 
 	@BeforeTests()
 	public async before() {
-		const configuration = await Container.get<ProjectConfiguration>(ProjectConfiguration);
+		const configuration = await Container.get<Configuration>(<any>ProjectConfigurationService);
 		if (configuration.data) {
 			this.mongoDbConnection = await Container.get<MongoDbConnection>(MongoDbConnection);
 			this.collection = await this.mongoDbConnection.getCollection(DbCollectionExample);

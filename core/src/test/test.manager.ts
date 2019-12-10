@@ -6,11 +6,11 @@ import {
 	TestTypeDetector, TTestClassItFunc, TTestMethodItFunc
 } from './test.shared';
 import { isAbsolute, join } from 'path';
-import { ProjectConfiguration } from '../configuration/configuration.service';
-import { IConfiguration } from '../configuration/configuration.interfaces';
+import { Configuration } from '../configuration/configuration.interfaces';
 import { ConfigurationLoader } from '../configuration/configuration.loader';
-import { PlugConfiguration } from '../configuration/configuration.default';
 import { Container } from '../dependecy-injection/di.container';
+import { defaultProjectConfiguration } from '../configuration/configuration.default';
+import { ProjectConfigurationService } from '../configuration/configuration.service';
 
 export class TestManager {
 
@@ -37,15 +37,15 @@ export class TestManager {
 
 		// 2: Load project configuration
 		process.env.NODE_ENV = 'test';
-		let configuration: IConfiguration<any> | undefined;
+		let configuration: Configuration | undefined;
 		if (argConfigFolder) {
 			const configurationFolder = isAbsolute(argConfigFolder) ? argConfigFolder : join(process.cwd(), argConfigFolder);
 			configuration = await ConfigurationLoader.loadProject(configurationFolder);
 		} else {
-			configuration = PlugConfiguration.default;
+			configuration = defaultProjectConfiguration;
 		}
-		const configurationService = new ProjectConfiguration(configuration);
-		Container.set(ProjectConfiguration, configurationService);
+		const configurationService = new ProjectConfigurationService(configuration);
+		Container.set(ProjectConfigurationService, configurationService);
 
 		// 3: Load all the classes inside the test folder
 		await this.loadTests(testFolder);

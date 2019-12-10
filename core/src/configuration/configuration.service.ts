@@ -1,18 +1,14 @@
 import { Service } from '../dependecy-injection/di.decorators';
-import { IConfiguration } from './configuration.interfaces';
+import { Configuration } from './configuration.interfaces';
 import { ObjectUtils } from '../utils/object.utils';
 
 @Service()
-export class ProjectConfiguration<T = undefined> implements IConfiguration<T> {
+export class ProjectConfigurationService {
 
-	public init: IConfiguration<T>['init'];
-	public log: IConfiguration<T>['log'];
-	public custom: IConfiguration<T>['custom'];
-
-	private frozenConfiguration: IConfiguration<T>;
+	private frozenConfiguration: Configuration;
 
 	constructor(
-		originalConfiguration: IConfiguration<T>
+		originalConfiguration: Configuration
 	) {
 		this.frozenConfiguration = ObjectUtils.deepFreeze(
 			ObjectUtils.deepClone(originalConfiguration || {})
