@@ -1,25 +1,28 @@
 import { ProjectConfiguration } from '../configuration/configuration.service';
-import { Service } from '../dependecy-injection/di.decorators';
+import { Service, Inject, InjectConnection } from '../dependecy-injection/di.decorators';
 import * as pino from 'pino';
 import { ObjectUtils } from '../utils/object.utils';
 
 /**
- * Class designed to be injected if other beans to handle all the log levels
+ * Class designed to be injected if other services in order to handle all the log levels
  */
 @Service()
 export class Logger {
 
 	private pinoLogger: pino.Logger;
-	public  pinoOptions: pino.LoggerOptions;
+	public pinoOptions: pino.LoggerOptions;
 
 	constructor(
-		private projectConfiguration: ProjectConfiguration
+		private projectConfiguration: ProjectConfiguration,
+		@Inject({ variationVarName: 'name' }) private logName?: string,
+		@InjectConnection() private connection?: string
 	) {
 		this.pinoOptions = Object.assign(
 			ObjectUtils.deepClone(this.projectConfiguration.log),
 			<pino.LoggerOptions>{
-				// TODO: Modify with extensions name in the future
-				name: 'main'
+				name: this.logName ? this.logName :
+				this.connection ? `connection:${this.connection}` :
+				'main'
 			}
 		);
 		this.pinoLogger = pino(this.pinoOptions);

@@ -1,5 +1,5 @@
 import { FsUtils } from '../io/fs.utils';
-import { ConsoleColors } from '../logs/log.enums';
+import { ConsoleColors } from '../logs/log.colors';
 import { Asserter } from './test.asserter';
 import {
 	ITestClass, ITestClassArgs, ITestMethod, ITestMethodArgs, ITestStats,

@@ -1,12 +1,4 @@
 
-export enum LogLevels {
-	fatal = 'FATAL',
-	error = 'ERROR',
-	warn = 'warn',
-	info = 'INFO',
-	debug = 'DEBUG',
-}
-
 export enum ConsoleColors {
 	reset = '\x1b[0m',
 	bright = '\x1b[1m',

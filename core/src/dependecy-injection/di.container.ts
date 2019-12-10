@@ -1,7 +1,6 @@
 import { EventUtils } from '../events/event.utils';
 import { ObjectUtils } from '../utils/object.utils';
 import { ClassParameter } from '../utils/typescript.utils';
-import { DiConstants } from './di.constants';
 import { IDiConstructorHandler, IDiDepLeft, IDiEntry, IDiServiceMetadata, IServiceIdentifier, OnInit } from './di.interfaces';
 import { DiService } from './di.service';
 
@@ -11,11 +10,23 @@ import { DiService } from './di.service';
 export class Container {
 
 	// -------------------------------------------------------------------------
-	// Public constants
+	// Constants
 	// -------------------------------------------------------------------------
 
+	/**
+	 * You can use this constant in order to inject services
+	 * from the global context in context scoped services.
+	 * ej `@Inject({ ctx:  }) `
+	 */
 	public static readonly globalCtx = 'GLOBAL';
-	public static readonly serviceMetadata = 'diServiceMetadata';
+
+	/**
+	 * Defines the variation var name that interanlly wiil be used
+	 * to inject connection names
+	 */
+	public static readonly connection = 'connection';
+
+	private static readonly serviceMetadata = 'diServiceMetadata';
 
 	// -------------------------------------------------------------------------
 	// Public methods
@@ -102,6 +113,20 @@ export class Container {
 		} else {
 			return await this.waitForDep<T>(serviceName, ctx, variation);
 		}
+
+	}
+
+	/**
+	 * Shorcut for `Container.get()` when you want a dependency from
+	 * a specific context
+	 * @param serviceId
+	 * @param ctx
+	 */
+	public static async getFromContext<T>(
+		serviceId: string | ClassParameter<T>, ctx?: string
+	): Promise<T> {
+
+		return this.get(serviceId, undefined, ctx);
 
 	}
 
@@ -224,7 +249,7 @@ export class Container {
 
 			const contDeps: Promise<any>[] = [];
 			deps.forEach(dep => {
-				contDeps.push(Container.get(dep.serviceId, undefined ,dep.ctx));
+				contDeps.push(Container.get(dep.serviceId, undefined, dep.ctx));
 			});
 
 			await Promise.all(contDeps);
@@ -321,7 +346,7 @@ export class Container {
 
 		for (const [index, targetClass] of inp.params.entries()) {
 			const targetServiceName = DiService.genServiceId(targetClass);
-			// This will create a dep only if it's not been decorated iwth @inject() before
+			// This will create a dep only if it's not been decorated with @inject() before
 			inp.entry = this.updateConstructorHandler({
 				entry: inp.entry,
 				index,
@@ -374,6 +399,7 @@ export class Container {
 		inp.entry.depsClosed = true;
 		inp.entry.isOnlyTemplate = inp.entry.depsLeft && inp.entry.depsLeft.some(dl => dl.variationVarName !== undefined) || false;
 		DiService.updateEntry(inp.entry, inp.ctx);
+
 		this.checkIfReady(inp.entry, inp.ctx);
 
 	}
@@ -519,8 +545,7 @@ export class Container {
 				serviceName.indexOf(DiService.variationEnd) >= 0
 			) {
 
-				const originalServiceName = serviceName.substring(0, serviceName.indexOf(DiService.variationStart));
-				const service = DiService.getEntry(originalServiceName, ctx);
+				const service = DiService.getTemplateEntry(serviceName, ctx);
 
 				if (service) {
 					entry.serviceClass = service.serviceClass;
@@ -530,19 +555,21 @@ export class Container {
 					entry.depsLeft = service.depsLeft ?
 						service.depsLeft.map(a => ObjectUtils.deepClone(a)) : undefined;
 
-					const depLeft = (entry.depsLeft || [])
-						.filter(dl => dl.variationVarName !== undefined)
-						.find(depLeft => (depLeft.variationVarName && Object.keys(variation).includes));
-					if (depLeft) {
-						depLeft.depMet = true;
-						depLeft.variationVarValue = variation[depLeft.variationVarName || ''];
+					if (entry.depsLeft) {
+						for (const depLeft of entry.depsLeft) {
+							if (variation[depLeft.variationVarName || ''] !== undefined) {
+								depLeft.depMet = true;
+								depLeft.variationVarValue = variation[depLeft.variationVarName || ''];
+							}
+						}
 					}
 
-					const constructorHandler = (entry.constructorHandlers || [])
-						.filter(dl => dl.variationVarName !== undefined)
-						.find(depLeft => (depLeft.variationVarName && Object.keys(variation).includes));
-					if (constructorHandler) {
-						constructorHandler.variationVarValue = variation[constructorHandler.variationVarName || ''];
+					if (entry.constructorHandlers) {
+						for (const constructorHandler of entry.constructorHandlers) {
+							if (variation[constructorHandler.variationVarName || ''] !== undefined) {
+								constructorHandler.variationVarValue = variation[constructorHandler.variationVarName || ''];
+							}
+						}
 					}
 
 					isVariation = true;
@@ -585,7 +612,7 @@ export class Container {
 	}
 
 	private static checkIfReady(entry: IDiEntry, ctx?: string) {
-		if (!entry.isOnlyTemplate && this.hasAllDeps(entry)) {
+		if (this.hasAllDeps(entry)) {
 			this.setServiceAsReady(entry, ctx);
 		}
 	}
@@ -601,16 +628,16 @@ export class Container {
 		if (connection && deps) {
 			for (const dep of deps) {
 
-				const targetService = DiService.getEntry(dep.targetServiceId, dep.targetCtx);
+				const targetService = DiService.getTemplateEntry(dep.targetServiceId, dep.targetCtx);
 				if (
 					targetService && targetService.depsLeft &&
-					targetService.depsLeft.findIndex(d => d.variationVarName === DiConstants.connection) >= 0
+					targetService.depsLeft.findIndex(d => d.variationVarName === Container.connection) >= 0
 				) {
-					const variation = { [DiConstants.connection]: connection };
+					const variation = { [Container.connection]: connection };
 					const variationTargetId = DiService.genServiceId(dep.targetServiceId, variation);
 					dep.targetServiceId = variationTargetId;
 					if (this.isConstructorHandler(dep)) {
-						dep.variation = variation;
+						dep.variation = Object.assign(dep.variation ||{}, variation);
 					} else if (!dep.depMet) {
 						this.waitForDep(variationTargetId, dep.targetCtx, variation).then();
 					}
@@ -638,9 +665,9 @@ export class Container {
 
 					if (
 						targetService && targetService.depsLeft &&
-						targetService.depsLeft.findIndex(d => d.variationVarName === DiConstants.connection) >= 0
+						targetService.depsLeft.findIndex(d => d.variationVarName === Container.connection) >= 0
 					) {
-						const variation = Object.assign(propWaiting.variation || {}, { [DiConstants.connection]: connection });
+						const variation = Object.assign(propWaiting.variation || {}, { [Container.connection]: connection });
 						const newTargetId = DiService.genServiceId(propWaiting.id, variation);
 						Container.get(newTargetId, propWaiting.variation, propWaiting.ctx).then(propWaiting.cb);
 					} else {

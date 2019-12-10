@@ -13,8 +13,8 @@ export * from './src/io/http.shared';
 export * from './src/io/http.utils';
 export * from './src/io/https.client';
 
-export * from './src/logs/log.enums';
-export * from './src/logs/log.interefaces';
+export * from './src/logs/log.colors';
+export * from './src/logs/log.decorators';
 export * from './src/logs/logger';
 
 export * from './src/test/test.asserter';

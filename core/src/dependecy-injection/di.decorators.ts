@@ -2,12 +2,11 @@ import 'reflect-metadata';
 import { RmdConstats } from '../constants/reflect-metadata.constants';
 import { TypeChecker } from '../utils/type.checker';
 import { ClassParameter } from '../utils/typescript.utils';
-import { DiConstants } from './di.constants';
 import { Container } from './di.container';
 import { IInjectArgs, IServiceArgs, IServiceIdentifier } from './di.interfaces';
 
 /**
- * Service decortor made to easily registrer the class into the container
+ * Service decorator made to easily registrer the class into the container
  * @param sId
  */
 export function Service({ ctx, sId, connection }: IServiceArgs = {}): Function {
@@ -69,8 +68,8 @@ export function Inject(inp?: IServiceIdentifier<any> | IInjectArgs): Function {
 			if (TypeChecker.typeIsPrimitive(sId)) {
 				sId = propertyName;
 			}
-			if (variationVarName === DiConstants.connection) {
-				sId = DiConstants.connection;
+			if (variationVarName === Container.connection) {
+				sId = Container.connection;
 			}
 
 			if (target instanceof Function && index !== undefined) {
@@ -130,7 +129,7 @@ export function Inject(inp?: IServiceIdentifier<any> | IInjectArgs): Function {
  */
 export function InjectConnection(): Function {
 	return (target: Record<string, any> | Function, propertyName: string, index?: number) => {
-		Inject({ variationVarName: DiConstants.connection })(target, propertyName, index);
+		Inject({ variationVarName: Container.connection })(target, propertyName, index);
 	};
 }
 

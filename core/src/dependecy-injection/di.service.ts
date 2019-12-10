@@ -124,6 +124,22 @@ export class DiService {
 	}
 
 	/**
+	 * Same than `getEntry()` but only returns the entry if it's a template.
+	 * It also ignores any variation in the service id (ex: <[0]>)
+	 * @param serviceId
+	 * @param ctx
+	 */
+	public static getTemplateEntry(serviceId: string, ctx?: string): IDiEntry | undefined {
+
+		serviceId = serviceId.indexOf(this.variationStart) > 0 ?
+			serviceId.substring(0, serviceId.indexOf(this.variationStart)) : serviceId;
+
+		return this.getCtx(ctx || Container.globalCtx).find(entry => entry.serviceId === serviceId && entry.isOnlyTemplate);
+
+	}
+
+
+	/**
 	 * Gets or creates the entry with the given parameters.
 	 * If no context is provided, then the global context will be used.
 	 * @param serviceId

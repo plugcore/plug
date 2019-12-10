@@ -1,5 +1,5 @@
 import { deepStrictEqual, doesNotReject, doesNotThrow, notDeepStrictEqual, notStrictEqual, ok, rejects, strictEqual, throws } from 'assert';
-import { ConsoleColors } from '../logs/log.enums';
+import { ConsoleColors } from '../logs/log.colors';
 import { JsStackUtils } from '../utils/js-stack.utils';
 import { TestManager } from './test.manager';
 import { IAssertOptions, ITestClass } from './test.shared';
