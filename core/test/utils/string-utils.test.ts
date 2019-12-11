@@ -46,14 +46,4 @@ export class StringUtilsTest extends PlugTest {
 		this.assert.ok(id3.length === 10);
 	}
 
-	@Test()
-	public isBlank() {
-		this.assert.ok(StringUtils.isBlank(''));
-		this.assert.ok(StringUtils.isBlank(<any>null));
-		this.assert.ok(StringUtils.isBlank(undefined));
-		this.assert.ok(StringUtils.isBlank('      '));
-		this.assert.ok(!StringUtils.isBlank('      1'));
-		this.assert.ok(!StringUtils.isBlank('test    '));
-	}
-
 }

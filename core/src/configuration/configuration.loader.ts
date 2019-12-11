@@ -23,13 +23,13 @@ export class ConfigurationLoader {
 	 * @param folder
 	 * @param environment
 	 */
-	public static async loadProject(
+	public static async loadProject<T = Configuration >(
 		folder: string, options?: { environment?: string; configurationFileName?: string }
-	): Promise<Configuration> {
+	): Promise<T> {
 
-		const finalConfiguration = await this.loadFile<Configuration>(folder, options);
+		const finalConfiguration = await this.loadFile<T>(folder, options);
 
-		return <Configuration>ObjectUtils.deepAssign(defaultProjectConfiguration, finalConfiguration);
+		return <T>ObjectUtils.deepAssign(<any>defaultProjectConfiguration, finalConfiguration);
 
 	}
 

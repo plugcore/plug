@@ -37,7 +37,7 @@ export class TestManager {
 
 		// 2: Load project configuration
 		process.env.NODE_ENV = 'test';
-		let configuration: Configuration | undefined;
+		let configuration: Configuration;
 		if (argConfigFolder) {
 			const configurationFolder = isAbsolute(argConfigFolder) ? argConfigFolder : join(process.cwd(), argConfigFolder);
 			configuration = await ConfigurationLoader.loadProject(configurationFolder);

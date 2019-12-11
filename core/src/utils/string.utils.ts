@@ -51,14 +51,6 @@ export class StringUtils {
 	}
 
 	/**
-	 * Check if the string desn't exists or it has an empty value
-	 * @param inp
-	 */
-	public static isBlank(inp?: string) {
-		return inp === null || inp === undefined || inp.trim() === '';
-	}
-
-	/**
 	 * Uppercases the first letter
 	 * @param inp
 	 */
