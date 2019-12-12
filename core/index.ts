@@ -29,6 +29,7 @@ export * from './src/utils/promise.utils';
 export * from './src/utils/string.utils';
 export * from './src/utils/type.checker';
 export * from './src/utils/typescript.utils';
+export * from './src/utils/validator.utils';
 
 export * from './src/events/event.decorators';
 export * from './src/events/event.constants';

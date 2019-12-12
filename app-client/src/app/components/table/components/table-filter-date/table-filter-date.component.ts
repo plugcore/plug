@@ -13,7 +13,7 @@ export class TableFilterDateComponent implements OnInit, OnDestroy {
 	@Input() public currentValue: any;
 	@Input() public data: any;
 	@Input() parentSubject: Subject<any>;
-	@Output() public eventEmmiter = new EventEmitter<any>();
+	@Output() public eventEemiter = new EventEmitter<any>();
 	public formGroup: FormGroup;
 	public values: any;
 
@@ -40,7 +40,7 @@ export class TableFilterDateComponent implements OnInit, OnDestroy {
 		if (!this.isDateOrUndefined(value)) {
 			this.formGroup.controls[type].setErrors({ error: {} });
 			this.values[type] = '';
-			this.eventEmmiter.emit([this.data.filterId, this.composeDate(this.values)]);
+			this.eventEemiter.emit([this.data.filterId, this.composeDate(this.values)]);
 		} else {
 			this.formGroup.controls[type].setErrors(null);
 			if (value !== '' && value !== undefined) {
@@ -49,7 +49,7 @@ export class TableFilterDateComponent implements OnInit, OnDestroy {
 			} else {
 				this.values[type] = '';
 			}
-			this.eventEmmiter.emit([this.data.filterId, this.composeDate(this.values)]);
+			this.eventEemiter.emit([this.data.filterId, this.composeDate(this.values)]);
 		}
 	}
 
@@ -59,7 +59,7 @@ export class TableFilterDateComponent implements OnInit, OnDestroy {
 	 */
 	public fromFormGroup(type: string) {
 		this.values[type] = this.formGroup.controls[type].value;
-		this.eventEmmiter.emit([this.data.filterId, this.composeDate(this.values)]);
+		this.eventEemiter.emit([this.data.filterId, this.composeDate(this.values)]);
 	}
 
 	/**

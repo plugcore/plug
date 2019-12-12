@@ -1,4 +1,4 @@
-import { ClassParameter, Configuration, InjectConfiguration, Logger, ObjectUtils, OnInit, Service, TypeChecker } from '@plugdata/core';
+import { ClassParameter, Configuration, InjectConfiguration, Logger, ValidatorUtils, OnInit, Service, TypeChecker } from '@plugdata/core';
 import { Collection, Db, MongoClient } from 'mongodb';
 import { IGetCollectionOptions } from './mongodb.interfaces';
 
@@ -95,7 +95,7 @@ export class MongoDbConnection implements OnInit {
 			await Promise.all(options.ensureIndexes.map(async indexOpts => {
 				// This check is unnecessary since mongodb doesn't create the same index twice
 				// but it's included just to speed up collection connection
-				const prevIndex = indexes.find(indx => ObjectUtils.deepEqual(indx.key, indexOpts.key));
+				const prevIndex = indexes.find(indx => ValidatorUtils.deepEqual(indx.key, indexOpts.key));
 				if (!prevIndex) {
 					await collectionFromConnection.createIndex(indexOpts.key, indexOpts.options);
 				}

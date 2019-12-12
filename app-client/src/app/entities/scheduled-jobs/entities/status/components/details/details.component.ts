@@ -9,7 +9,7 @@ import { ScheduledJobsEventService } from '../../services/event.service';
 export class ScheduledJobsStatusDetailsComponent implements OnInit {
 
 	@Input() public data: number;
-	@Output() public eventEmmiter = new EventEmitter<any>();
+	@Output() public eventEemiter = new EventEmitter<any>();
 
 	public event: any;
 

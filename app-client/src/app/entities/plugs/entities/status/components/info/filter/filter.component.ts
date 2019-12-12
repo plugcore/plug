@@ -19,7 +19,7 @@ export class PlugsStatusFilterComponent implements OnInit {
 		endDate: Date;
 		apis: any[];
 	};
-	@Output() public eventEmmiter = new EventEmitter<any>();
+	@Output() public eventEemiter = new EventEmitter<any>();
 
 	public optionSelectedControl: FormControl;
 	public initDateControl: FormControl;
@@ -54,7 +54,7 @@ export class PlugsStatusFilterComponent implements OnInit {
 			startDate: this.initDateControl.value,
 			endDate: this.finalDateControl.value
 		};
-		this.eventEmmiter.emit(dataOutput);
+		this.eventEemiter.emit(dataOutput);
 	}
 
 	private initTable() {

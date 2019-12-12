@@ -9,7 +9,7 @@ import { ScheduledJobsLogService } from '../../services/log.service';
 export class ScheduledJobsLogDetailsComponent implements OnInit {
 
 	@Input() public data: string;
-	@Output() public eventEmmiter = new EventEmitter<any>();
+	@Output() public eventEemiter = new EventEmitter<any>();
 
 	public log: any;
 

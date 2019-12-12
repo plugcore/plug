@@ -35,7 +35,7 @@ export class PorjectInitialization {
 				log: deps[0],
 				eventDispatcher: deps[1]
 			})).then(deps => {
-				deps.eventDispatcher.emmit(PublicEvents.allServicesLoaded);
+				deps.eventDispatcher.emit(PublicEvents.allServicesLoaded);
 				deps.log.info('* Project started *');
 			});
 		}).catch(error => {

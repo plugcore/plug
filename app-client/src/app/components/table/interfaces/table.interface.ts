@@ -102,7 +102,7 @@ export interface ITablesExpansion {
 export interface ITablesComFilComponent {
 	currentValue: any;
 	filterValue: any;
-	eventEmmiter: EventEmitter<any>;
+	eventEemiter: EventEmitter<any>;
 	sendFilter(value: any): void;
 }
 

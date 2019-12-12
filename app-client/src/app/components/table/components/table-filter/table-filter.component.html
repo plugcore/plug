@@ -27,7 +27,7 @@
 								<mat-hint>{{filter.filterHint}}</mat-hint>
 							</mat-form-field>
 							<plug-table-filter-date [parentSubject]="parentSubject" [data]="filter" [currentValue]="this.data['formGroup'].controls[filter.filterId].value"
-							 (eventEmmiter)="reciveData($event)" *ngSwitchCase="4"></plug-table-filter-date>
+							 (eventEemiter)="reciveData($event)" *ngSwitchCase="4"></plug-table-filter-date>
 							<mat-form-field class="full-width" *ngSwitchDefault>
 								<input [formControlName]="filter.filterId" matInput [placeholder]="filter.filterName">
 								<mat-hint>{{filter.filterHint}}</mat-hint>

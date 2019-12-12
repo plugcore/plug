@@ -17,7 +17,7 @@ export class EventsTest extends PlugTest {
 		const waitForEventToExecute = new Promise((resolve) => {
 			eventsExample.readyFunc = resolve;
 		});
-		eventDispatcher.emmit(testEventName, examplePayload);
+		eventDispatcher.emit(testEventName, examplePayload);
 
 		await waitForEventToExecute;
 

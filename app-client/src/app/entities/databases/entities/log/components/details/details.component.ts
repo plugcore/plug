@@ -9,7 +9,7 @@ import { DatabasesLogService } from '../../services/log.service';
 export class DatabasesLogDetailsComponent implements OnInit {
 
 	@Input() public data: string;
-	@Output() public eventEmmiter = new EventEmitter<any>();
+	@Output() public eventEemiter = new EventEmitter<any>();
 
 	public log: any;
 

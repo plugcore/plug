@@ -8,7 +8,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class JsonNavigationJsonViewComponent implements OnInit {
 
 	@Input() public data: Object;
-	@Output() public eventEmmiter = new EventEmitter<any>();
+	@Output() public eventEemiter = new EventEmitter<any>();
 
 	prettyJSON;
 

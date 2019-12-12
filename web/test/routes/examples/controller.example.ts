@@ -41,7 +41,6 @@ export class ControllerExample {
 		preSerialization: ControllerExample.prototype.preSerialization
 	})
 	public async postTest(req: Request) {
-		console.log(req);
 		req.log.debug('Test route debug from log');
 		req.log.info({ num: 12, str: 'Test route debug from log object' });
 		return <ExampleResponse>{ success: true };

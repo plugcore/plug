@@ -12,7 +12,7 @@ export class TableFilterComponent implements OnInit, AfterViewInit {
 
 	locale: string;
 	public data: any;
-	@Output() public eventEmmiter = new EventEmitter<any>();
+	@Output() public eventEemiter = new EventEmitter<any>();
 	@ViewChildren('filters', { read: ViewContainerRef }) public templates: QueryList<ViewContainerRef>;
 	parentSubject: Subject<any> = new Subject();
 
@@ -93,7 +93,7 @@ export class TableFilterComponent implements OnInit, AfterViewInit {
 					if (filter.filterValue) {
 						componentRef.instance['filterValue'] = filter.filterValue;
 					}
-					componentRef.instance['eventEmmiter'].subscribe((value) => {
+					componentRef.instance['eventEemiter'].subscribe((value) => {
 						this.data['formGroup'].get(filter.filterId).setValue(value);
 						if (this.data['formGroup'].controls[filter.filterId].valid) {
 							this.data['formGroup'].controls[filter.filterId].setErrors(null);

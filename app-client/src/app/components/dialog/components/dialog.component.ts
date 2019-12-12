@@ -23,7 +23,7 @@ export class PlugDialogComponent implements OnInit {
 		const factory = this.resolver.resolveComponentFactory(this.input['component']);
 		const componentRef = this.template.createComponent(factory);
 		componentRef.instance['data'] = this.input['extraData'];
-		componentRef.instance['eventEmmiter'].subscribe((output) => {
+		componentRef.instance['eventEemiter'].subscribe((output) => {
 			this.closeDialog(output);
 		});
 	}
