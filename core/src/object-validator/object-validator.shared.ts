@@ -31,7 +31,7 @@ export interface IArraySchemaValidator {
 	additionalItems?: Record<string, any> | boolean;
 }
 
-export interface IValidationResult {
+export interface ValidationResult {
 	valid: boolean;
 	errors: Ajv.ErrorObject[];
 }
@@ -60,3 +60,7 @@ export enum EObjectValidatorPropertyTypes {
 //
 
 export type TObjectValidatorProeprtyOptions = INumberSchemaValidator | IStringSchemaValidator | IArraySchemaValidator | ClassParameter<any> | undefined;
+
+export type CompiledValidation = Ajv.ValidateFunction;
+
+export type ValidationFunction<T> = (objToValidate: T) => ValidationResult

@@ -15,7 +15,7 @@ export class HttpUtilsTest extends PlugTest {
 	public async httpTests() {
 		const prefix = 'http://';
 
-		const callsResp = await Promise.all([
+		const callsResp: any[] = await Promise.all([ // Typescript 1.7 bug with array types
 			HttpUtils.httpCall(prefix + this.getEx),
 			HttpUtils.httpCall(new URL(prefix + this.getEx), { params: { userId: 1 } }),
 			HttpUtils.httpCall<{ test: number }>(prefix + this.postEx, { method: 'POST' }, { test: 1 }),
@@ -47,7 +47,7 @@ export class HttpUtilsTest extends PlugTest {
 	public async httpsTests() {
 		const prefix = 'https://';
 
-		const callsResp = await Promise.all([
+		const callsResp: any[] = await Promise.all([ // Typescript 1.7 bug with array types
 			HttpUtils.httpsCall(prefix + this.getEx),
 			HttpUtils.httpsCall(new URL(prefix + this.getEx), { params: { userId: 1 } }),
 			HttpUtils.httpsCall<{ test: number }>(prefix + this.postEx, { method: 'POST' }, { test: 1 }),

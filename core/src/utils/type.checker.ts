@@ -58,15 +58,15 @@ export class TypeChecker {
 		return arg instanceof Promise;
 	}
 
-	public static typeIsString(arg: Function): boolean {
+	public static typeIsString(arg: any): arg is String  {
 		return (this.hasValue(arg) && arg === String);
 	}
 
-	public static typeIsNumber(arg: Function): boolean {
+	public static typeIsNumber(arg: any): arg is Number {
 		return (this.hasValue(arg) && arg === Number);
 	}
 
-	public static typeIsBoolean(arg: Function): boolean {
+	public static typeIsBoolean(arg: any): arg is Boolean {
 		return (this.hasValue(arg) && arg === Boolean);
 	}
 

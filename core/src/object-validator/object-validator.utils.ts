@@ -16,7 +16,7 @@ export class ObjectValidatorDecoratorUtils {
 
 	/**
 	 * Adds metadata to the target class about it's hoow to validate this field
-	 * @param inp 
+	 * @param inp
 	 */
 	public static addProperty(inp: {
 		target: any;
@@ -34,7 +34,7 @@ export class ObjectValidatorDecoratorUtils {
 
 	/**
 	 * Retrieves all the metadata added by the validator decorator to the target classes
-	 * @param clazz 
+	 * @param clazz
 	 */
 	public static getClassProperties<T>(clazz: ClassParameter<T>): IPropertyValidatorMetadata<TObjectValidatorProeprtyOptions>[] {
 		const keys = Reflect.getMetadataKeys(clazz.prototype);
@@ -48,7 +48,7 @@ export class ObjectValidatorDecoratorUtils {
 		requiredProperties: IPropertyValidatorMetadata<undefined>[];
 	} {
 
-		const classProperties = this.getClassProperties(clazz);		
+		const classProperties = this.getClassProperties(clazz);
 		const requiredProperties = classProperties.filter(PropertyValidatorTypeChecker.isRequired);
 		const objectProperties = classProperties
 			.filter(rp => !PropertyValidatorTypeChecker.isRequired(rp))
@@ -56,7 +56,7 @@ export class ObjectValidatorDecoratorUtils {
 				prev[curr.property] = (prev[curr.property] || []).concat(curr);
 				return prev;
 			}, <Record<string, IPropertyValidatorMetadata<TObjectValidatorProeprtyOptions>[]>>{});
-		
+
 		return { requiredProperties, objectProperties };
 	}
 
@@ -69,16 +69,16 @@ export class ObjectValidatorUtils {
 
 	/**
 	 * Generates a valid [Json schema](https://json-schema.org/) from a decorated class
-	 * with any of the validator decorators like `@IsString()`, `@IsNumber()`, 
+	 * with any of the validator decorators like `@IsString()`, `@IsNumber()`,
 	 * `@IsArray()`, `@IsObject()` or `@RequiredProperty()`
-	 * @param clazz 
+	 * @param clazz
 	 */
 	public static generateJsonSchema<T>(clazz: ClassParameter<T>, options?: {
 		asArray?: boolean;
 		ignoreSchemaVersion?: boolean;
 	}): Record<string, any> {
-
 		const sortedClassProperties = ObjectValidatorDecoratorUtils.sortClassProperties(clazz);
+
 		const asArray = options && options.asArray;
 		const schema: Record<string, any> = {
 			$schema: options && options.ignoreSchemaVersion ? undefined : this.schemaVersion,
@@ -100,7 +100,7 @@ export class ObjectValidatorUtils {
 			const properties: Record<string, any> = {};
 
 			for (const objKey of Object.keys(objectProperties)) {
-				
+
 				const validatorTypes = objectProperties[objKey];
 				const objectProperty = validatorTypes.find(vt => vt.type === EObjectValidatorPropertyTypes.object);
 
@@ -113,15 +113,17 @@ export class ObjectValidatorUtils {
 					// Property is primitive type or Array
 					const property: Record<string, any> = {
 						title: StringUtils.capitalize(objKey),
-						type: (validatorTypes.length === 1) ? 
+						type: (validatorTypes.length === 1) ?
 							validatorTypes[0].type : validatorTypes.map(vt => vt.type)
 					};
-	
+
+					this.changeArrayClassTypesToJsonSchema(validatorTypes);
 					const propertiesToAdd = validatorTypes
 						.filter(vt => vt.options !== undefined)
 						.map(vt => vt.options)
 						.reduce((prev, curr) => Object.assign(prev, curr), <object>{});
 					if (Object.keys(propertiesToAdd).length > 0) {
+
 						Object.assign(property, propertiesToAdd);
 					}
 
@@ -148,6 +150,65 @@ export class ObjectValidatorUtils {
 		}
 
 		return asArray ? schema : resultSchema;
+	}
+
+	//
+	// Private methods
+	//
+
+	/**
+	 * All array decorators that are using clases in the items property instead
+	 * of a JSON schema object, have to be changed, ex:
+	 * @IsArray({
+	 *	 items: [String, Number, Boolean],
+	 *   additionalItems: false
+	 * })
+	 * Has to be {
+	 *	 items: [{ type: 'string' }, { type: 'number' }, { type: 'boolean' }],
+	 *   additionalItems: false
+	 * }
+	 */
+	private static changeArrayClassTypesToJsonSchema(
+		validatorTypes?: IPropertyValidatorMetadata<TObjectValidatorProeprtyOptions>[]
+	) {
+		if (!validatorTypes) {
+			return;
+		}
+		for (const aType of validatorTypes.filter(PropertyValidatorTypeChecker.isArray)) {
+			if (aType.options && aType.options.items) {
+
+				const items: (Record<string, any> | ClassParameter<any>)[] =
+					TypeChecker.isArray(aType.options.items) ? aType.options.items : [aType.options.items];
+
+				const newItems: Record<string, any>[] = [];
+				for (const item of items) {
+
+					if (TypeChecker.typeIsBoolean(item)) {
+						newItems.push({
+							type: 'boolean'
+						});
+					} else if (TypeChecker.typeIsNumber(item)) {
+						newItems.push({
+							type: 'number'
+						});
+					} else if (TypeChecker.typeIsString(item)) {
+						newItems.push({
+							type: 'string'
+						});
+					} else if (TypeChecker.isClass(item)) {
+						newItems.push(this.generateJsonSchema(
+							item, { ignoreSchemaVersion: true} )
+						);
+					} else {
+						newItems.push(item);
+					}
+
+				}
+
+				aType.options.items = newItems;
+
+			}
+		}
 	}
 
 }

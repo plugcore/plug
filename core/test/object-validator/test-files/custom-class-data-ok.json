@@ -1,0 +1,19 @@
+{
+	"numberProp": 3,
+	"stringProp": "(123)456-7890",
+	"arrayProp": ["1", 2, false, "a"],
+	"objectsArrayProp": [
+		{
+			"boolSubProp": false
+		},
+		{
+			"stringSubProp": "3",
+			"boolSubProp": true
+		}
+	],
+	"subPropr": {
+		"numberSubProp": 3,
+		"stringSubProp": "",
+		"boolSubProp": false
+	}
+}

@@ -62,7 +62,7 @@ export class DiContainerTest extends PlugTest {
 		Container.set(Number, 123, 'numberExample');
 		Container.set(Boolean, true, 'booleanExample');
 
-		const values1 = await Promise.all([
+		const values1: any[] = await Promise.all([ // Typescript 1.7 bug with array types
 			Container.get(Di1Example),
 			Container.get(Di2Example),
 			Container.get(Di3Example),

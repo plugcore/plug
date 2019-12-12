@@ -1,0 +1,9 @@
+{
+	"numberProp": 3,
+	"stringProp": "no-numbers",
+	"arrayProp": ["1", 2, false, "a"],
+	"subPropr": {
+		"numberSubProp": 3,
+		"stringSubProp": ""
+	}
+}
