@@ -33,12 +33,12 @@ export class PromiseUtilsTest extends PlugTest {
 		await this.assert.rejects(
 			PromiseUtils.timeOut(new Promise(resolve => {
 				setTimeout(resolve, 150);
-			}), 0.1)
+			}), 100)
 		);
 		await this.assert.doesNotReject(
 			PromiseUtils.timeOut(new Promise(resolve => {
 				setTimeout(resolve, 50);
-			}), 0.1)
+			}), 100)
 		);
 	}
 

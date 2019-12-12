@@ -46,4 +46,9 @@ export class StringUtilsTest extends PlugTest {
 		this.assert.ok(id3.length === 10);
 	}
 
+	@Test()
+	public capitalize() {
+		this.assert.equal(StringUtils.capitalize('my little string'), 'My little string');
+	}
+
 }

@@ -1,7 +1,6 @@
 import { ArrayUtils } from './array.utils';
 import { TypeChecker } from './type.checker';
 import { IObjectEntry } from './utils.interfaces';
-import { deepStrictEqual } from 'assert';
 
 export class ObjectUtils {
 
@@ -234,24 +233,6 @@ export class ObjectUtils {
 	}
 
 	/**
-	 * Deletes all object properties wich are null or undefined
-	 * @param obj
-	 */
-	public static cleanObject<T>(obj: T) {
-		Object.keys(obj).forEach(key => {
-			const propVal = (<any>obj)[key];
-			if (propVal === null || propVal === undefined) {
-				delete (<any>obj)[key];
-			} else {
-				if (!Buffer.isBuffer(propVal) && typeof propVal === 'object') {
-					this.cleanObject(propVal);
-				}
-			}
-		});
-		return obj;
-	}
-
-	/**
 	 * Removes all attributes that are like `{ attr: {} }` and it does it recursivley,
 	 * it means that `{ attr: { sub: {} }  }` = `{}`
 	 * @param obj
@@ -352,18 +333,6 @@ export class ObjectUtils {
 
 		return Object.freeze(object);
 
-	}
-
-	/**
-	 * Wrapper of Nodejs Assert.deepEqualStrict
-	 */
-	public static deepEqual(obj1: object, obj2: object): boolean {
-		try {
-			deepStrictEqual(obj1, obj2);
-			return true;
-		} catch (error) {
-			return false;
-		}
 	}
 
 	private static isMergebleObject(item: any): boolean {

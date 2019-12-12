@@ -46,13 +46,13 @@ export class PromiseUtils {
 	 * Waits for a promise to resolve x seconds, if it doesn't respond or it
 	 * generates an error, the promise gets rejected
 	 * @param promiseToExec
-	 * @param secs
+	 * @param miliseconds
 	 */
-	public static timeOut<T>(promiseToExec: Promise<T>, secs: number): Promise<T> {
+	public static timeOut<T>(promiseToExec: Promise<T>, miliseconds: number): Promise<T> {
 		return new Promise<T>((resolve, reject) => {
 			const timeOut = setTimeout(() => {
-				reject(`Timeout after waiting ${secs} seconds`);
-			}, secs * 1000);
+				reject(`Timeout after waiting ${miliseconds} seconds`);
+			}, miliseconds);
 			promiseToExec.then(res => {
 				clearTimeout(timeOut);
 				resolve(res);

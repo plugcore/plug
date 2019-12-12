@@ -123,21 +123,6 @@ export class ObjectUtilsTest extends PlugTest {
 	}
 
 	@Test()
-	public cleanObject() {
-		const obj1 = {
-			a: 1,
-			b: 2,
-			c: false,
-			d: null,
-			f: {},
-			g: []
-		};
-		const result = { a: 1, b: 2, c: false, f: {}, g: [] };
-		// TODO Improve tests
-		this.assert.deepEqual(ObjectUtils.cleanObject(obj1), result);
-	}
-
-	@Test()
 	public cleanEmptyObjects() {
 		const obj = {
 			a: 1,
