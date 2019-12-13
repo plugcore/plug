@@ -2,7 +2,7 @@ import { Service } from '../dependecy-injection/di.decorators';
 import * as Ajv from 'ajv';
 import { FsUtils } from '../io/fs.utils';
 import { TypeChecker } from '../utils/type.checker';
-import { ValidationResult, CompiledValidation, ValidationFunction } from './object-validator.shared';
+import { ValidationResult, CompiledValidation, ObjectValidatorFunction } from './object-validator.shared';
 import { ClassParameter } from '../utils/typescript.utils';
 import { ObjectValidatorUtils } from './object-validator.utils';
 
@@ -96,7 +96,7 @@ export class ObjectValidator {
 	 * just with the value that you want to vaidate
 	 * @param jsonFile
 	 */
-	public async createValidatorFromFile<T>(jsonFile: string): Promise<ValidationFunction<T>> {
+	public async createValidatorFromFile<T>(jsonFile: string): Promise<ObjectValidatorFunction<T>> {
 		const compiledSchema = await this.compileFromFile(jsonFile);
 		return (objToValidate: T) => this.validate<T>(compiledSchema, objToValidate);
 	}
@@ -107,7 +107,7 @@ export class ObjectValidator {
 	 * just with the value that you want to vaidate
 	 * @param clazz
 	 */
-	public createValidatorFromClass<T>(clazz: ClassParameter<T>): ValidationFunction<T> {
+	public createValidatorFromClass<T>(clazz: ClassParameter<T>): ObjectValidatorFunction<T> {
 		const compiledSchema = this.compileFromClass(clazz);
 		return (objToValidate: T) => this.validate<T>(compiledSchema, objToValidate);
 	}
@@ -118,7 +118,7 @@ export class ObjectValidator {
 	 * just with the value that you want to vaidate
 	 * @param clazz
 	 */
-	public createValidatorFromClassAsArray<T>(clazz: ClassParameter<T>): ValidationFunction<T[]> {
+	public createValidatorFromClassAsArray<T>(clazz: ClassParameter<T>): ObjectValidatorFunction<T[]> {
 		const compiledSchema = this.compileFromClass(clazz, { asArray: true });
 		return (objToValidate: T[]) => this.validate<T[]>(compiledSchema, objToValidate);
 	}

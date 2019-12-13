@@ -4,7 +4,7 @@ import { FsUtils } from '../../src/io/fs.utils';
 import { ObjectValidator } from '../../src/object-validator/object-validator.factory';
 import { BeforeTests, Test, TestClass } from '../../src/test/test.decorators';
 import { PlugTest } from '../../src/test/test.shared';
-import { ObjectValidatorDecoratorsTestClass } from './object-validator.models';
+import { MyCustomModel } from './object-validator.models';
 
 @TestClass({ testThisOnly: true })
 export class ObjectValidatorDecorators extends PlugTest {
@@ -13,8 +13,8 @@ export class ObjectValidatorDecorators extends PlugTest {
 	private jsonFileSchema: Record<string, any>;
 	private jsonFileDataOk: Record<string, any>;
 	private jsonFileDataError: Record<string, any>;
-	private customClassDataOk: ObjectValidatorDecoratorsTestClass;
-	private customClassDataError: ObjectValidatorDecoratorsTestClass;
+	private customClassDataOk: MyCustomModel;
+	private customClassDataError: MyCustomModel;
 
 	private readonly basePath = join(__dirname, '..', '..', '..', 'test', 'object-validator', 'test-files');
 	private jsonFileSchemaPath = join(this.basePath, 'json-file-schema.json');
@@ -29,8 +29,8 @@ export class ObjectValidatorDecorators extends PlugTest {
 		this.jsonFileSchema = await FsUtils.loadJsonFile<Record<string, any>>(this.jsonFileSchemaPath);
 		this.jsonFileDataOk = await FsUtils.loadJsonFile<Record<string, any>>(this.jsonFileDataOkPath);
 		this.jsonFileDataError = await FsUtils.loadJsonFile<Record<string, any>>(this.jsonFileDataErrorPath);
-		this.customClassDataOk = await FsUtils.loadJsonFile<ObjectValidatorDecoratorsTestClass>(this.customClassDataOkPath);
-		this.customClassDataError = await FsUtils.loadJsonFile<ObjectValidatorDecoratorsTestClass>(this.customClassDataErrorPath);
+		this.customClassDataOk = await FsUtils.loadJsonFile<MyCustomModel>(this.customClassDataOkPath);
+		this.customClassDataError = await FsUtils.loadJsonFile<MyCustomModel>(this.customClassDataErrorPath);
 	}
 
 	@Test()
@@ -68,9 +68,9 @@ export class ObjectValidatorDecorators extends PlugTest {
 
 	@Test()
 	public async compileFromClass() {
-		const compiledFunction = this.objectValidator.compileFromClass(ObjectValidatorDecoratorsTestClass);
+		const compiledFunction = this.objectValidator.compileFromClass(MyCustomModel);
 		this.assert.equal(typeof compiledFunction, 'function');
-		const compiledFunctionAsArray = this.objectValidator.compileFromClass(ObjectValidatorDecoratorsTestClass, { asArray: true });
+		const compiledFunctionAsArray = this.objectValidator.compileFromClass(MyCustomModel, { asArray: true });
 		this.assert.equal(typeof compiledFunctionAsArray, 'function');
 	}
 
@@ -88,10 +88,11 @@ export class ObjectValidatorDecorators extends PlugTest {
 
 	@Test()
 	public async createValidatorFromClass() {
-		const validatecustomClass = this.objectValidator.createValidatorFromClass(ObjectValidatorDecoratorsTestClass);
+		const validatecustomClass = this.objectValidator.createValidatorFromClass(MyCustomModel);
 		this.assert.equal(typeof validatecustomClass, 'function');
 		const result = validatecustomClass(this.customClassDataOk);
 		const resultError = validatecustomClass(this.customClassDataError);
+		console.log(JSON.stringify(resultError.errors));
 		this.assert.ok(result.valid);
 		this.assert.deepEqual(result.errors, []);
 		this.assert.equal(resultError.valid, false);
@@ -100,7 +101,8 @@ export class ObjectValidatorDecorators extends PlugTest {
 
 	@Test()
 	public async createValidatorFromClassAssArray() {
-		const validatecustomClassArray = this.objectValidator.createValidatorFromClassAsArray(ObjectValidatorDecoratorsTestClass);
+
+		const validatecustomClassArray = this.objectValidator.createValidatorFromClassAsArray(MyCustomModel);
 		this.assert.equal(typeof validatecustomClassArray, 'function');
 		const resultOnlyObjectOk = validatecustomClassArray(<any>this.customClassDataOk);
 		const resultOnlyObjectError = validatecustomClassArray(<any>this.customClassDataError);

@@ -63,4 +63,4 @@ export type TObjectValidatorProeprtyOptions = INumberSchemaValidator | IStringSc
 
 export type CompiledValidation = Ajv.ValidateFunction;
 
-export type ValidationFunction<T> = (objToValidate: T) => ValidationResult
+export type ObjectValidatorFunction<T> = (objToValidate: T) => ValidationResult;

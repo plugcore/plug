@@ -1,6 +1,6 @@
 import { IsNumber, IsString, Required, IsBoolean, IsArray, IsObject } from '../../src/object-validator/object-validator.decorators';
 
-export class ObjectValidatorDecoratorsTestSubClass {
+export class MyCustomSubModel {
 
 	@IsNumber()
 	public numberSubProp: number;
@@ -14,7 +14,7 @@ export class ObjectValidatorDecoratorsTestSubClass {
 
 }
 
-export class ObjectValidatorDecoratorsTestClass {
+export class MyCustomModel {
 
 	@Required()
 	@IsNumber({
@@ -33,13 +33,13 @@ export class ObjectValidatorDecoratorsTestClass {
 	public arrayProp: (string | number | boolean)[];
 
 	@IsArray({
-		items: ObjectValidatorDecoratorsTestSubClass
+		items: MyCustomSubModel
 	})
 	@Required()
-	public objectsArrayProp: ObjectValidatorDecoratorsTestSubClass[];
+	public objectsArrayProp: MyCustomSubModel[];
 
 	@Required()
-	@IsObject(ObjectValidatorDecoratorsTestSubClass)
-	public subPropr: ObjectValidatorDecoratorsTestSubClass;
+	@IsObject(MyCustomSubModel)
+	public subPropr: MyCustomSubModel;
 
 }
