@@ -1,12 +1,11 @@
 import { join } from 'path';
 import { Container } from '../../src/dependecy-injection/di.container';
 import { FsUtils } from '../../src/io/fs.utils';
-import { ObjectValidator } from '../../src/object-validator/object-validator.factory';
-import { BeforeTests, Test, TestClass } from '../../src/test/test.decorators';
+import { ObjectValidator } from '../../src/object-validator/object-validator.service';
+import { BeforeTests, Test } from '../../src/test/test.decorators';
 import { PlugTest } from '../../src/test/test.shared';
 import { MyCustomModel } from './object-validator.models';
 
-@TestClass({ testThisOnly: true })
 export class ObjectValidatorDecorators extends PlugTest {
 
 	private objectValidator: ObjectValidator;

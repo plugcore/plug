@@ -40,6 +40,10 @@ export * from './src/configuration/configuration.service';
 export * from './src/configuration/configuration.decorators';
 
 export * from './src/object-validator/object-validator.decorators';
-export * from './src/object-validator/object-validator.factory';
+export * from './src/object-validator/object-validator.service';
 export * from './src/object-validator/object-validator.shared';
+
+export * from './src/object-mapper/object-mapper.interfaces';
+export * from './src/object-mapper/object-mapper.service';
+
 export { ObjectValidatorUtils } from './src/object-validator/object-validator.utils';
