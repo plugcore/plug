@@ -2,7 +2,7 @@
 /**
  * Defines how the object transformation has to be done
  */
-export type ObjectMappingDefinition<T> = Record<string, ObjectMappingValue<T> | ObjectMappingValue<T>[] | string | string[]>;
+export type ObjectMappingDefinition<T> = Record<string, ObjectMappingValue<T> | string | (ObjectMappingValue<T> | string)[]>;
 
 /**
  * Function that has already stored a mapping operation and transform objects from

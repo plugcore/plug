@@ -2,12 +2,12 @@ import { BeforeTests, Test, TestClass } from '../../src/test/test.decorators';
 import { PlugTest } from '../../src/test/test.shared';
 import { ObjectMapper } from '../../src/object-mapper/object-mapper.service';
 import { Container } from '../../src/dependecy-injection/di.container';
-import { ObjectMapping } from '../../src/object-mapper/object-mapper.interfaces';
+import { ObjectMapping, ObjectMappingDefinition } from '../../src/object-mapper/object-mapper.interfaces';
 
 /**
  * Tests from https://github.com/wankdanker/node-object-mapper
  */
-@TestClass()
+@TestClass({ testThisOnly: true })
 export class ObjectMapperTest extends PlugTest {
 
 	private objectMapper: ObjectMapper;
@@ -50,7 +50,7 @@ export class ObjectMapperTest extends PlugTest {
 
 	@Test()
 	public async createMapping() {
-		const sourceObject = {
+		const sourceObject: SourceObjectExample = {
 			sku: '12345',
 			upc: '99999912345X',
 			title: 'Test Item',
@@ -62,7 +62,7 @@ export class ObjectMapperTest extends PlugTest {
 				onHandQty: 12
 			}
 		};
-		const objectMapping1 = {
+		const objectMapping1: ObjectMappingDefinition<SourceObjectExample> = {
 			sku: 'Envelope.Request.Item.SKU',
 			upc: 'Envelope.Request.Item.UPC',
 			title: 'Envelope.Request.Item.ShortTitle',
@@ -95,6 +95,19 @@ export class ObjectMapperTest extends PlugTest {
 		};
 
 		this.assert.deepEqual(newObject, expectedObject);
+
 	}
 }
 
+interface SourceObjectExample {
+	sku: string;
+	upc: string;
+	title: string;
+	description: string;
+	length: number;
+	width: number;
+	height: number;
+	inventory: {
+		onHandQty: number;
+	};
+}
