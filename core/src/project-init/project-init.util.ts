@@ -6,6 +6,7 @@ import { PublicEvents } from '../events/event.constants';
 import { EventDispatcher } from '../events/event.dispatcher';
 import { Logger } from '../logs/logger';
 import { ProjectConfigurationService } from '../configuration/configuration.service';
+import { ObjectValidator } from '../object-validator/object-validator.service';
 
 export class PorjectInitialization {
 
@@ -55,9 +56,10 @@ export class PorjectInitialization {
 			process.env.NODE_ENV = 'dev';
 		}
 		const configuration = await ConfigurationLoader.loadProject(configurationFolder);
+		const objectValidator = await Container.get(ObjectValidator);
 
 		// Create configuration serice
-		const configurationService = new ProjectConfigurationService(configuration);
+		const configurationService = new ProjectConfigurationService(configuration, objectValidator);
 
 		// Add the configuratio to di container
 		Container.set(ProjectConfigurationService, configurationService);

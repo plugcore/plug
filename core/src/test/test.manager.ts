@@ -11,6 +11,7 @@ import { ConfigurationLoader } from '../configuration/configuration.loader';
 import { Container } from '../dependecy-injection/di.container';
 import { defaultProjectConfiguration } from '../configuration/configuration.default';
 import { ProjectConfigurationService } from '../configuration/configuration.service';
+import { ObjectValidator } from '../object-validator/object-validator.service';
 
 export class TestManager {
 
@@ -42,9 +43,10 @@ export class TestManager {
 			const configurationFolder = isAbsolute(argConfigFolder) ? argConfigFolder : join(process.cwd(), argConfigFolder);
 			configuration = await ConfigurationLoader.loadProject(configurationFolder);
 		} else {
-			configuration = defaultProjectConfiguration;
+			configuration = <any>defaultProjectConfiguration;
 		}
-		const configurationService = new ProjectConfigurationService(configuration);
+		const objectValidator = await Container.get(ObjectValidator);
+		const configurationService = new ProjectConfigurationService(configuration, objectValidator);
 		Container.set(ProjectConfigurationService, configurationService);
 
 		// 3: Load all the classes inside the test folder

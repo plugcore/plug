@@ -1,9 +1,7 @@
 import { Configuration } from './configuration.interfaces';
 
-export const defaultProjectConfiguration: Configuration = {
-	init: {
-		distFolder: 'dist'
-	},
-	log: {
-	}
+export const defaultProjectConfiguration: Omit<Configuration, 'getConnectionConfiguration'> = {
+	init: { distFolder: 'dist' },
+	log: { },
+	connections: {}
 };

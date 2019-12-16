@@ -465,7 +465,9 @@ export class Container {
 		DiService.updateEntry(entry, ctx);
 
 		// Process ready
-		this.processReadyService(entry, ctx).then(() => { /* */ });
+		this.processReadyService(entry, ctx)
+			.then(() => { /* */ })
+			.catch(error => { this.get('Logger').then((log: any) => log.error(error)); });
 
 	}
 
@@ -613,7 +615,11 @@ export class Container {
 
 	private static checkIfReady(entry: IDiEntry, ctx?: string) {
 		if (this.hasAllDeps(entry)) {
-			this.setServiceAsReady(entry, ctx);
+			try {
+				this.setServiceAsReady(entry, ctx);
+			} catch (error) {
+				this.get('Logger').then((log: any) => log.error(error));
+			}
 		}
 	}
 

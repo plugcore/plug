@@ -7,7 +7,7 @@ import { ObjectMapping, ObjectMappingDefinition } from '../../src/object-mapper/
 /**
  * Tests from https://github.com/wankdanker/node-object-mapper
  */
-@TestClass({ testThisOnly: true })
+@TestClass()
 export class ObjectMapperTest extends PlugTest {
 
 	private objectMapper: ObjectMapper;

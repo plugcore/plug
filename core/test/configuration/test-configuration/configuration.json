@@ -1,5 +1,12 @@
 {
 	"log": {
 		"level": "debug"
+	},
+	"connections": {
+		"testConnection": {
+			"type": "test-datasource",
+			"stringProp": "some string",
+			"numberProp": 123
+		}
 	}
 }

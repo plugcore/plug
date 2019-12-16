@@ -44,7 +44,8 @@ export class ConfigurationLoaderTest extends PlugTest {
 					'e': 'Only env'
 				}
 			},
-			'log': {}
+			'log': {},
+			'connections': {}
 		};
 		this.assert.deepEqual(importedAppCfg, appCfg);
 
