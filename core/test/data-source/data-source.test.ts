@@ -3,7 +3,7 @@ import { PlugTest } from '../../src/test/test.shared';
 import { DataSourceExample } from './data-source-example';
 import { Container } from '../../src/dependecy-injection/di.container';
 
-@TestClass()
+@TestClass({testThisOnly: true})
 export class DatasourceTest extends PlugTest {
 
 	private dataSourceExample: DataSourceExample;
@@ -28,6 +28,7 @@ export class DatasourceTest extends PlugTest {
 
 	@Test()
 	public async creationErrores() {
+		this.assert.throws(() => new DataSourceExample('test-datasource', <any>{}));
 		this.assert.throws(() => new DataSourceExample('', <any>{}));
 		this.assert.throws(() => new (<any>DataSourceExample)());
 	}

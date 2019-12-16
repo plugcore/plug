@@ -1,12 +1,15 @@
-import { Service, InjectConnection } from '../../src/dependecy-injection/di.decorators';
 import { InjectConfiguration } from '../../src/configuration/configuration.decorators';
 import { Configuration, ConnectionConfiguration } from '../../src/configuration/configuration.interfaces';
-import { IsString, Required, IsNumber } from '../../src/object-validator/object-validator.decorators';
+import { DataSource } from '../../src/data-source/data-source.decorators';
+import { InjectConnection } from '../../src/dependecy-injection/di.decorators';
+import { IsNumber, IsString, Required } from '../../src/object-validator/object-validator.decorators';
 
 export class DatasourceExampleConfiguration implements ConnectionConfiguration {
 
 	@Required()
-	@IsString()
+	@IsString({
+		pattern: 'test-datasource'
+	})
 	type: string;
 
 	@Required()
@@ -19,7 +22,9 @@ export class DatasourceExampleConfiguration implements ConnectionConfiguration {
 
 }
 
-@Service()
+@DataSource({
+	type: 'test-datasource'
+})
 export class DataSourceExample {
 
 	private connectionConfiguration: DatasourceExampleConfiguration;
