@@ -3,6 +3,7 @@ import { Configuration, ConnectionConfiguration } from './configuration.interfac
 import { ObjectUtils } from '../utils/object.utils';
 import { ClassParameter } from '../utils/typescript.utils';
 import { ObjectValidator } from '../object-validator/object-validator.service';
+import { TypeChecker } from '../utils/type.checker';
 
 @Service()
 export class ProjectConfigurationService implements Configuration {
@@ -37,7 +38,7 @@ export class ProjectConfigurationService implements Configuration {
 		if (!isValid.valid) {
 			throw new Error(
 				`Invalid configuration in ${connection} for this type of connection ` +
-				isValid.errors.join(', ')
+				isValid.errors.map(o => TypeChecker.isObject(o) ? JSON.stringify(o) : `${o}`).join(', ')
 			);
 		}
 

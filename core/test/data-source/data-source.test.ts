@@ -2,8 +2,9 @@ import { TestClass, Test, BeforeTests } from '../../src/test/test.decorators';
 import { PlugTest } from '../../src/test/test.shared';
 import { DataSourceExample } from './data-source-example';
 import { Container } from '../../src/dependecy-injection/di.container';
+import { DatasourceUtils } from '../../src/data-source/data-source.utils';
 
-@TestClass({testThisOnly: true})
+@TestClass()
 export class DatasourceTest extends PlugTest {
 
 	private dataSourceExample: DataSourceExample;
@@ -31,6 +32,14 @@ export class DatasourceTest extends PlugTest {
 		this.assert.throws(() => new DataSourceExample('test-datasource', <any>{}));
 		this.assert.throws(() => new DataSourceExample('', <any>{}));
 		this.assert.throws(() => new (<any>DataSourceExample)());
+	}
+
+	@Test()
+	public async datasourcesUtils() {
+		this.assert.ok(DatasourceUtils.getDatasources().length > 0);
+		const testDatasource = DatasourceUtils.getDatasources().find(d => d.type === 'test-datasource');
+		this.assert.ok(testDatasource);
+		this.assert.deepEqual(testDatasource, { type: 'test-datasource', serviceClass: DataSourceExample });
 	}
 
 }

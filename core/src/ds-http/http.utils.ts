@@ -1,5 +1,6 @@
 import { request as httpRequest, RequestOptions as HttpRequestOptions } from 'http';
 import { request as httpsRequest, RequestOptions as HttpsRequestOptions } from 'https';
+import { Transform } from 'stream';
 import { URL, URLSearchParams } from 'url';
 import { TypeChecker } from '../utils/type.checker';
 import { HttpCallOptions, HttpsCallOptions } from './http.shared';
@@ -11,15 +12,15 @@ export class HttpUtils {
 	//
 
 	public static async httpCall<T>(url: URL | string, options?: HttpCallOptions, body?: any): Promise<T> {
-		const opts = this.createOptions(url, options);
+		const opts = this.createOptions(url, options, body);
 		opts.protocol = 'http:';
-		return this.makeCall(opts, body);
+		return this.makeCall(opts, body, options ? options.responseEncoding : undefined);
 	}
 
 	public static async httpsCall<T>(url: URL | string, options?: HttpsCallOptions, body?: any): Promise<T> {
-		const opts = this.createOptions(url, options);
+		const opts = this.createOptions(url, options, body);
 		opts.protocol = 'https:';
-		return this.makeCall(opts, body);
+		return this.makeCall(opts, body, options ? options.responseEncoding : undefined);
 	}
 
 	//
@@ -27,37 +28,62 @@ export class HttpUtils {
 	//
 
 	private static createOptions<T extends HttpCallOptions | HttpsCallOptions>(
-		url: URL | string, options?: T
+		url: URL | string, options?: T, body?: any
 	): T extends HttpCallOptions ? HttpRequestOptions : HttpsRequestOptions {
+
 		const opts: T extends HttpCallOptions ? HttpRequestOptions : HttpsRequestOptions = <any>(options ? options.options || {} : {});
 		const callUrl = TypeChecker.isString(url) ? new URL(url) : url;
+
 		if (options && options.params && Object.keys(options.params).length > 0) {
 			const queryParams = new URLSearchParams(options.params);
 			callUrl.search = queryParams.toString();
 		}
+
 		opts.hostname = callUrl.hostname;
 		opts.port = callUrl.port;
 		opts.path = callUrl.pathname + (callUrl.search ? callUrl.search : '');
+
 		if (options) {
 			opts.headers = options.headers;
 			opts.method = options.method;
 		}
 
+		opts.headers = opts.headers || {};
+		if (options && options.contentType) {
+			opts.headers['Content-Type'] = options.contentType;
+		} else if (body !== undefined) {
+			opts.headers['Content-Type'] = 'application/json';
+		}
+
+		if (options && options.responseContentType) {
+			opts.headers['Accept'] = options.responseContentType;
+		} else {
+			opts.headers['Accept'] = 'application/json';
+		}
+
 		return opts;
 	}
 
-	private static makeCall<T>(opts: HttpRequestOptions | HttpsRequestOptions, body?: any): Promise<T> {
+	private static makeCall<T>(opts: HttpRequestOptions | HttpsRequestOptions, body?: any, responseEncoding?: string): Promise<T> {
+
 		return new Promise<T>((resolve, reject) => {
 			try {
 
-				let bodyObj: string | undefined;
-				if (opts.method !== 'GET' && body && Object.keys(body).length > 0) {
+				const headers = opts.headers || {};
+				let bodyObj: any | undefined;
+
+				if ((
+					opts.method !== 'GET' && body && TypeChecker.isObject(body)
+				) && (
+					headers['Content-Type'] === 'application/json'
+				)) {
 					bodyObj = JSON.stringify(body);
-					const headers = opts.headers || {};
-					headers['Content-Type'] = 'application/json';
 					headers['Content-Length'] = bodyObj.length;
-					opts.headers = headers;
+				} else {
+					bodyObj = body;
 				}
+
+				opts.headers = headers;
 				let protocol = httpsRequest;
 				if (opts.protocol === 'http:') {
 					protocol = httpRequest;
@@ -65,16 +91,22 @@ export class HttpUtils {
 
 				const req = protocol(opts, res => {
 
-					res.setEncoding('utf8');
+					res.setEncoding(responseEncoding || 'utf8');
 
-					let dataResponse = '';
+					const dataResponse = new Transform();
 					res.on('data', chunk => {
-						dataResponse += chunk;
+						dataResponse.push(chunk);
 					});
 
 					res.on('end', () => {
 						try {
-							resolve(JSON.parse(dataResponse));
+							if (
+								headers['Accept'] === 'application/json'
+							) {
+								resolve(JSON.parse(dataResponse.read()));
+							} else {
+								resolve(dataResponse.read());
+							}
 						} catch (error) {
 							reject(error);
 						}
@@ -91,7 +123,11 @@ export class HttpUtils {
 				});
 
 				if (bodyObj) {
-					req.write(bodyObj);
+					if (TypeChecker.isString(bodyObj) || TypeChecker.isBuffer(bodyObj)) {
+						req.write(bodyObj);
+					} else {
+						req.write(`${bodyObj}`);
+					}
 				}
 
 				req.end();

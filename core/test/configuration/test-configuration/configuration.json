@@ -7,6 +7,14 @@
 			"type": "test-datasource",
 			"stringProp": "some string",
 			"numberProp": 123
+		},
+		"typicodeHttp": {
+			"type": "http",
+			"url": "http://jsonplaceholder.typicode.com"
+		},
+		"typicodeHttps": {
+			"type": "http",
+			"url": "https://jsonplaceholder.typicode.com"
 		}
 	}
 }

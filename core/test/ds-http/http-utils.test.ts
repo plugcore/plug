@@ -1,6 +1,6 @@
-import { HttpUtils } from '../../src/io/http.utils';
 import { Test, TestClass } from '../../src/test/test.decorators';
 import { PlugTest } from '../../src/test/test.shared';
+import { HttpUtils } from '../../src/ds-http/http.utils';
 
 @TestClass()
 export class HttpUtilsTest extends PlugTest {

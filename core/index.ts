@@ -8,10 +8,6 @@ export * from './src/dependecy-injection/di.container';
 export * from './src/dependecy-injection/di.decorators';
 
 export * from './src/io/fs.utils';
-export * from './src/io/http.client';
-export * from './src/io/http.shared';
-export * from './src/io/http.utils';
-export * from './src/io/https.client';
 
 export * from './src/logs/log.colors';
 export * from './src/logs/log.decorators';
@@ -45,5 +41,10 @@ export * from './src/object-validator/object-validator.shared';
 
 export * from './src/object-mapper/object-mapper.interfaces';
 export * from './src/object-mapper/object-mapper.service';
+
+export * from './src/ds-http/http.configuration';
+export * from './src/ds-http/http.datasource';
+export * from './src/ds-http/http.shared';
+export * from './src/ds-http/http.utils';
 
 export { ObjectValidatorUtils } from './src/object-validator/object-validator.utils';

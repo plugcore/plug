@@ -1,4 +1,4 @@
-import { AfterTests, BeforeTests, Container, HttpClient, PlugTest, Test, TestClass } from '@plugdata/core';
+import { AfterTests, BeforeTests, Container, PlugTest, Test, TestClass, HttpDatasource } from '@plugdata/core';
 import { RoutesInitializer } from '../../src/routes/routes.initializer';
 import { RoutesService } from '../../src/routes/routes.service';
 import { ControllerExample } from './examples/controller.example';
@@ -8,7 +8,7 @@ import { ExampleRequest } from './examples/route-validators.example';
 @TestClass()
 export class RoutesInitializerTest extends PlugTest {
 
-	private httpClient: HttpClient;
+	private httpClient: HttpDatasource;
 	private readonly controller1Path = '/test';
 	private readonly controller2Path = '/test2';
 	private routesInitializer: RoutesInitializer;
@@ -17,7 +17,7 @@ export class RoutesInitializerTest extends PlugTest {
 
 	@BeforeTests()
 	public async before() {
-		
+
 		const deps = await Promise.all([
 			Container.get<ControllerExample>(ControllerExample),
 			Container.get(Controller2Example),
@@ -28,7 +28,7 @@ export class RoutesInitializerTest extends PlugTest {
 		this.routesService = deps.routesService;
 		this.controllerExample = deps.controllerExample;
 		await this.routesInitializer.initHttpServer();
-		this.httpClient = new HttpClient(this.routesService.addressListenning);
+		this.httpClient = await Container.get(HttpDatasource, { [Container.connection]: 'local' });
 	}
 
 	@AfterTests()
