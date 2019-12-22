@@ -3,7 +3,7 @@ export * from './src/constants/plugdata.constants';
 export * from './src/constants/reflect-metadata.constants';
 export * from './src/constants/string.constants';
 
-export * from './src/dependecy-injection/di.interfaces';
+export * from './src/dependecy-injection/di.shared';
 export * from './src/dependecy-injection/di.container';
 export * from './src/dependecy-injection/di.decorators';
 

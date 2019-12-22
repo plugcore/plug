@@ -1,9 +1,10 @@
 import * as EventEmitterType from 'eventemitter3';
 import { EventEmitter } from 'eventemitter3';
-import { IDiEntry } from '../dependecy-injection/di.interfaces';
+import { IDiEntry } from '../dependecy-injection/di.shared';
 import { TypeChecker } from '../utils/type.checker';
 import { ClassParameter } from '../utils/typescript.utils';
 import { IRegisteredEvent } from './event.shared';
+import { Container } from '../dependecy-injection/di.container';
 
 export const globalEventEmitter: EventEmitterType = new EventEmitter();
 
@@ -39,3 +40,7 @@ export class EventUtils {
 	}
 
 }
+
+// Bind 'onServiceReady' to the container so each time a new service is
+// set as ready, this function will be called
+Container.onServiceReady(EventUtils.onServiceReady.bind(EventUtils));

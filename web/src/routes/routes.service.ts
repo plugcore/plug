@@ -27,11 +27,7 @@ export class RoutesService {
 
 		// Fastify initialization
 		this.fastifyInstance = fastify({
-			logger: Object.assign(this.log.pinoOptions,{
-				/* serializers: {
-					req: (req: any) => ({ url: req.url })
-				} */
-			})
+			logger: this.log.pinoOptions
 		});
 
 	}

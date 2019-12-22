@@ -1,5 +1,5 @@
 import { Service } from '../../../src/dependecy-injection/di.decorators';
-import { OnInit } from '../../../src/dependecy-injection/di.interfaces';
+import { OnInit } from '../../../src/dependecy-injection/di.shared';
 
 @Service({ ctx: 'exampleCtx' })
 export class Di7Example implements OnInit {

@@ -1,7 +1,8 @@
 import { Container } from './di.container';
-import { IDiEntry, IServiceIdentifier } from './di.interfaces';
+import { IDiEntry, IServiceIdentifier } from './di.shared';
 import { ValidatorUtils } from '../utils/validator.utils';
 import { ClassParameter } from '../utils/typescript.utils';
+import { ArrayUtils } from '../utils/array.utils';
 
 export class DiService {
 
@@ -13,7 +14,7 @@ export class DiService {
 	// -------------------------------------------------------------------------
 
 	private static readonly tmpCtx = 'tmpCtx';
-	private static contexts: Record<string, Record<string, any>> = {}; // First level = Context, second level = ServiceId
+	private static contexts: Record<string, IDiEntry<any>[]> = {}; // First level = Context, second level = ServiceId
 	private static variationsMap: Record<string, any[]> = {};
 
 	// -------------------------------------------------------------------------
@@ -306,11 +307,20 @@ export class DiService {
 		return this.getMetadata(serviceId, this.tmpCtx);
 	}
 
+	/**
+	 * Returns a list of all the services set as ready
+	 */
+	public static getAllReadyEntries() {
+		return ArrayUtils.flat(
+			Object.keys(this.contexts).map(ctx => this.contexts[ctx])
+		).filter(entry => entry.isReady);
+	}
+
 	// -------------------------------------------------------------------------
 	// Private methods
 	// -------------------------------------------------------------------------
 
-	private static getCtx(ctx: string): IDiEntry[] {
+	private static getCtx(ctx: string) {
 
 		let result = this.contexts[ctx];
 		if (!result) { result = []; }

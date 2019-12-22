@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { PlugdataConstants } from '../../constants/plugdata.constants';
 import { Service } from '../../dependecy-injection/di.decorators';
-import { OnInit } from '../../dependecy-injection/di.interfaces';
+import { OnInit } from '../../dependecy-injection/di.shared';
 import { FsUtils } from '../../io/fs.utils';
 import { ObjectUtils } from '../../utils/object.utils';
 import { ExtConfiguration } from './ext-configuration.interface';

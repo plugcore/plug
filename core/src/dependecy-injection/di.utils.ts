@@ -1,6 +1,6 @@
 import { FsUtils } from '../io/fs.utils';
 import { Container } from './di.container';
-import { IDiServiceMetadata } from './di.interfaces';
+import { IDiServiceMetadata } from './di.shared';
 import { DiService } from './di.service';
 
 export class DiUtils {

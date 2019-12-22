@@ -1,6 +1,6 @@
 
 import { Service } from '../dependecy-injection/di.decorators';
-import { IServiceArgs, IServiceIdentifier } from '../dependecy-injection/di.interfaces';
+import { IServiceArgs, IServiceIdentifier } from '../dependecy-injection/di.shared';
 import { DiService } from '../dependecy-injection/di.service';
 import { ExtCtxGenerator } from '../extensions/ext-ctx.generator';
 import { JsStackUtils } from '../utils/js-stack.utils';

@@ -1,7 +1,6 @@
-import { EventUtils } from '../events/event.utils';
 import { ObjectUtils } from '../utils/object.utils';
 import { ClassParameter } from '../utils/typescript.utils';
-import { IDiConstructorHandler, IDiDepLeft, IDiEntry, IDiServiceMetadata, IServiceIdentifier, OnInit } from './di.interfaces';
+import { IDiConstructorHandler, IDiDepLeft, IDiEntry, IDiServiceMetadata, IServiceIdentifier, OnInit, OnServiceReadyCallback } from './di.shared';
 import { DiService } from './di.service';
 
 /**
@@ -27,6 +26,12 @@ export class Container {
 	public static readonly connection = 'connection';
 
 	private static readonly serviceMetadata = 'diServiceMetadata';
+
+	// -------------------------------------------------------------------------
+	// Private variables
+	// -------------------------------------------------------------------------
+
+	private static onServiceReadyCallbacks: OnServiceReadyCallback[] = [];
 
 	// -------------------------------------------------------------------------
 	// Public methods
@@ -276,6 +281,26 @@ export class Container {
 		return result;
 	}
 
+	/**
+	 * Registar a callback that is going to be called for every service
+	 * that has been set as ready or that has already been marked
+	 * @param callback
+	 */
+	public static onServiceReady(callback: OnServiceReadyCallback) {
+
+		// 1: Check if any entris has beed set as ready
+		// before registreing this callback
+		const readyEntries = DiService.getAllReadyEntries();
+		for (const entry of readyEntries) {
+			callback(entry);
+		}
+
+		// 2: Then store the callback inside an array
+		// for future services
+		this.onServiceReadyCallbacks.push(callback);
+
+	}
+
 	// -------------------------------------------------------------------------
 	// Private methods
 	// -------------------------------------------------------------------------
@@ -508,7 +533,14 @@ export class Container {
 		// eslint-disable-next-line require-atomic-updates
 		entry.isReady = true;
 		DiService.updateEntry(entry, ctx);
-		EventUtils.onServiceReady(entry);
+
+		for (const callback of this.onServiceReadyCallbacks) {
+			try {
+				callback(entry);
+			} catch (error) {
+				this.get('Logger').then((log: any) => log.error(error));
+			}
+		}
 
 		if (servicesToSetAsReady.length > 0) {
 			servicesToSetAsReady.forEach(element => {

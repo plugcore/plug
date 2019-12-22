@@ -2,6 +2,10 @@ import { ClassParameter, IsBoolean, IServiceArgs, IsNumber, IsString, Required }
 import { DefaultParams, DefaultQuery, FastifyReply, FastifyRequest, HTTPMethod, RequestHandler, RouteShorthandOptions } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'http';
 
+//
+// Interfaces
+//
+
 export interface IControllerOptions {
 	urlBase: string;
 	service?: IServiceArgs;
@@ -61,6 +65,10 @@ export interface Request<TBody = any, TUrlParams = DefaultParams, TParams = Defa
 	FastifyRequest<IncomingMessage, TParams, TUrlParams, THeaders, TBody> { }
 export interface Response extends FastifyReply<ServerResponse> { }
 
+//
+// Types
+//
+
 export type InRouteShorthandOptions = RouteShorthandOptions<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>;
 
 type OmitedShorthandOptions = 'url' | 'onRequest' | 'preParsing' | 'preValidation' | 'preHandler' | 'preSerialization';
@@ -74,6 +82,13 @@ export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOption
 };
 
 export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>;
+
+export type BaiscAuthLoginFn = (user: string, password: string) => Promise<boolean>;
+export type JwtLoginFn = (request: Request) => Promise<any>;
+
+//
+// Models
+//
 
 export class ErrorResponseModel {
 	@IsNumber()
@@ -92,7 +107,3 @@ export class DefaultResponseModel {
 	@Required()
 	success: boolean;
 }
-
-export const defaultResponse: DefaultResponseModel = {
-	success: true
-};

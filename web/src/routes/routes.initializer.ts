@@ -33,12 +33,17 @@ export class RoutesInitializer {
 		});
 
 		// Documentation route
+
 		this.routesService.fastifyInstance.route({
 			method: 'GET',
 			url: '/api-documentation.json',
 			handler: (request, reply) => { reply.send(this.routesService.fastifyInstance.oas()); },
 			schema: { hide: true }
 		});
+
+		// Auth system
+
+
 
 	}
 

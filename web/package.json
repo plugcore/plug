@@ -23,8 +23,10 @@
 	},
 	"dependencies": {
 		"@plugdata/core": "file:../core/publish",
-		"fastify": "^2.6.0",
-		"fastify-oas": "^2.3.1",
+		"fastify": "^2.11.0",
+		"fastify-auth": "^0.7.2",
+		"fastify-oas": "^2.5.0",
+		"jsonwebtoken": "^8.5.1",
 		"openapi3-ts": "^1.3.0"
 	},
 	"devDependencies": {

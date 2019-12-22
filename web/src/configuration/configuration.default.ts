@@ -11,7 +11,6 @@ export class WebConfiguration {
 				info: {},
 				consumes: ['application/json'],
 				produces: ['application/json'],
-
 			}
 		}
 	};

@@ -1,6 +1,6 @@
 
 import { Inject, Service } from '../../../src/dependecy-injection/di.decorators';
-import { OnInit } from '../../../src/dependecy-injection/di.interfaces';
+import { OnInit } from '../../../src/dependecy-injection/di.shared';
 import { Di2Example } from './di2.example';
 
 @Service()

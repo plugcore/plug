@@ -3,7 +3,7 @@ import { RmdConstats } from '../constants/reflect-metadata.constants';
 import { TypeChecker } from '../utils/type.checker';
 import { ClassParameter } from '../utils/typescript.utils';
 import { Container } from './di.container';
-import { IInjectArgs, IServiceArgs, IServiceIdentifier } from './di.interfaces';
+import { IInjectArgs, IServiceArgs, IServiceIdentifier } from './di.shared';
 
 /**
  * Service decorator made to easily registrer the class into the container

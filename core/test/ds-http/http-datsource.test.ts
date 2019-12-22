@@ -15,8 +15,8 @@ interface IMockPostAction {
 	id: number;
 }
 
-@TestClass({ testThisOnly: true })
-export class HttpClientTest extends PlugTest {
+@TestClass()
+export class HttpDatasourceTest extends PlugTest {
 
 	private readonly getEx = '/posts';
 	private readonly postEx = '/posts';
@@ -38,6 +38,12 @@ export class HttpClientTest extends PlugTest {
 	};
 	private readonly mokPost3: IMockPostAction = {
 		'id': 101
+	};
+	private readonly mokPost4: IMockPost = {
+		'userId': 1,
+		'id': 101,
+		'title': 'sunt aut facere repellat provident occaecati excepturi optio reprehenderit',
+		'body': 'quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto'
 	};
 
 	@BeforeTests()
@@ -62,10 +68,10 @@ export class HttpClientTest extends PlugTest {
 		this.assert.ok(resGet.length === 100);
 
 		const resPost = callsResp[1];
-		this.assert.deepEqual(resPost, this.mokPost3);
+		this.assert.deepEqual(resPost, this.mokPost4);
 
 		const resPut = callsResp[2];
-		this.assert.deepEqual(resPut, this.mokPost2);
+		this.assert.deepEqual(resPut, this.mokPost);
 
 		const resPatch = callsResp[3];
 		this.assert.deepEqual(resPatch, this.mokPost);
@@ -90,16 +96,21 @@ export class HttpClientTest extends PlugTest {
 		this.assert.ok(Array.isArray(resGet));
 
 		const resPost = callsResp[1];
-		this.assert.deepEqual(resPost, this.mokPost3);
+		this.assert.deepEqual(resPost, this.mokPost4);
 
 		const resPut = callsResp[2];
-		this.assert.deepEqual(resPut, this.mokPost2);
+		this.assert.deepEqual(resPut, this.mokPost);
 
 		const resPatch = callsResp[3];
 		this.assert.deepEqual(resPatch, this.mokPost);
 
 		const resDelete = callsResp[4];
 		this.assert.ok(resDelete);
+
+	}
+
+	@Test()
+	public otherFormats() {
 
 	}
 

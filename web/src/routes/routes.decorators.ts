@@ -2,6 +2,10 @@ import { ClassParameter, ObjectUtils, Service, TypeChecker } from '@plugdata/cor
 import { IControllerOptions, TMethodOptions } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 
+//
+// Route recorators
+//
+
 export function Controller(options: IControllerOptions) {
 	return function (constructor: ClassParameter<any>) {
 		// If arguments size is 1 it means its a class definition
@@ -86,5 +90,15 @@ export function Patch(path?: string | TMethodOptions, options?: TMethodOptions) 
 			const realOptions = TypeChecker.isString(path) ? options : path;
 			RoutesUtils.registerMethod({ httpMethod: 'PATCH', path: realPath, options: realOptions }, { controller, methodName });
 		}
+	};
+}
+
+//
+// Auth decorators
+//
+
+export function Inject(): Function {
+	return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+
 	};
 }

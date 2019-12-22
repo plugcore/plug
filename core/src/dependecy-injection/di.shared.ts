@@ -1,5 +1,24 @@
 import { ClassParameter } from '../utils/typescript.utils';
 
+//
+// Types
+//
+
+/**
+ * Service interface.
+ */
+export type IServiceIdentifier<T = any> = ClassParameter<T> | string;
+
+/**
+ * Function passed to `Container.onServiceReady` that will be executed
+ * every time a new service instace is set as ready
+ */
+export type OnServiceReadyCallback = (entry: IDiEntry) => void;
+
+//
+// Interfaces
+//
+
 /**
  * Use this interface when your class has an async
  * condition in order to be ready. All dependencies
@@ -10,13 +29,6 @@ export interface OnInit {
 	onInit(): Promise<void>;
 
 }
-
-/**
- * Service interface.
- */
-
-export type IServiceIdentifier<T = any> = ClassParameter<T> | string;
-
 export interface IServiceArgs<T = any> {
 	sId?: IServiceIdentifier<T>;
 	ctx?: string;
