@@ -24,9 +24,9 @@
 		"lint:data": "cd data & npm run lint",
 		"check-all": "npx run-s test lint",
 		"dev": "node ./node_modules/npm-run-all/bin/run-p/index.js dev:**",
-		"dev:core": "cd core & node ../node_modules/tsc-watch/index.js --noClear --onSuccess \"npm run build\"",
-		"dev:web": "cd web & node ../node_modules/tsc-watch/index.js --noClear --onSuccess \"npm run build\"",
-		"dev:data": "cd data & node ../node_modules/tsc-watch/index.js --noClear --onSuccess \"npm run build\"",
+		"dev:core": "cd core & npx tsc-watch --noClear --onSuccess \"npm run build\"",
+		"dev:web": "cd web & npx tsc-watch --noClear --onSuccess \"npm run build\"",
+		"dev:data": "cd data & npx tsc-watch --noClear --onSuccess \"npm run build\"",
 		"link-published": "npm i && node _scripts/set-packages-version.js force same && npx run-s link-published:**",
 		"link-published:core": "cd core/publish & npm link ",
 		"link-published:web": "cd web/publish & npm link ",
@@ -50,9 +50,9 @@
 		"@typescript-eslint/eslint-plugin": "^1.13.0",
 		"@typescript-eslint/parser": "^1.13.0",
 		"eslint": "^6.1.0",
-		"typescript": "^3.5.3",
 		"npm-run-all": "^4.1.5",
-		"tsc-watch": "^2.2.1"
+		"tsc-watch": "^2.2.1",
+		"typescript": "^3.7.3"
 	},
 	"dependencies": {
 		"pino-pretty": "^3.2.0"

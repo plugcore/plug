@@ -39,13 +39,17 @@ export class RoutesAuthTest extends PlugTest {
 		const log = await Container.get(Logger, { name: 'httpcontroller' });
 		const cfgServer1 = TestUtils.createConfiguration({
 			web: {
-				server: { port: 3001 }
+				server: { port: 3001 },
+				oas: { enableDocumentation: false }
 			}
 		});
 		const cfgServer2 = TestUtils.createConfiguration({
 			web: {
 				server: { port: 3002 },
-				auth: { eanbled: true }
+				auth: {
+					eanbled: true,
+					securityInOas: ['jwt', 'basic']
+				}
 			}
 		});
 		const cfgServer3 = TestUtils.createConfiguration({
@@ -57,7 +61,8 @@ export class RoutesAuthTest extends PlugTest {
 					jwtAlgorithm: 'HS512',
 					jwtPrivateKey: this.customPrvateKey,
 					securityInAllRoutes: ['jwt', 'basic']
-				}
+				},
+				oas: { enableDocumentation: false }
 			}
 		});
 		this.routesService1 = new RoutesService(log, cfgServer1);
@@ -79,9 +84,9 @@ export class RoutesAuthTest extends PlugTest {
 
 	@AfterTests()
 	public async after() {
-		this.routesService1.shutdownHttpServer();
+		/* this.routesService1.shutdownHttpServer();
 		this.routesService2.shutdownHttpServer();
-		this.routesService3.shutdownHttpServer();
+		this.routesService3.shutdownHttpServer(); */
 	}
 
 	@Test()

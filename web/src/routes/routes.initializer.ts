@@ -1,4 +1,4 @@
-import {IncomingMessage, Server, ServerResponse} from 'http';
+import { IncomingMessage, Server, ServerResponse } from 'http';
 import {
 	ArrayUtils, ClassParameter, Configuration, Container, InjectConfiguration,
 	InjectLogger, Logger, ObjectUtils, ObjectValidatorUtils, OnEvent,
@@ -7,12 +7,14 @@ import {
 import { FastifyMiddleware, RouteSchema, Plugin } from 'fastify';
 import * as fastifyAuth from 'fastify-auth';
 import * as oas from 'fastify-oas';
+import * as fstatic from 'fastify-static';
 import { decode, encode } from 'jwt-simple';
 import { WebConfiguration } from '../configuration/configuration.default';
 import { JwtAvailableAlgorithms } from '../configuration/configuration.insterfaces';
 import { RoutesService } from './routes.service';
 import { ErrorResponseModel, Request, Response, TMethodOptions, IRegisteredController } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
+import { join } from 'path';
 
 @Service()
 export class RoutesInitializer {
@@ -26,6 +28,7 @@ export class RoutesInitializer {
 		algorithm: <JwtAvailableAlgorithms>'HS256',
 		expiration: <number | undefined>undefined
 	};
+	private oasDocumentationPath: string;
 
 	constructor(
 		@InjectLogger('httpcontroller') private log: Logger,
@@ -34,41 +37,10 @@ export class RoutesInitializer {
 	) {
 
 		this.securityEnabled = configuration.web && configuration.web.auth && configuration.web.auth.eanbled || false;
+		this.oasDocumentationPath = (
+			configuration.web && configuration.web.oas && configuration.web.oas.documentationPath
+		) || WebConfiguration.default.web.oas.documentationPath;
 
-		// OAS configuration
-
-		const defaultServers = { servers: [{ url: `http://${this.routesService.host}:${this.routesService.httpPort}` }] };
-		const defaultConfiguration = ObjectUtils.deepMerge(WebConfiguration.default.web.oas, defaultServers);
-		const oasConfiguration = (configuration.web && configuration.web.oas) ?
-			ObjectUtils.deepMerge(defaultConfiguration, configuration.web.oas) : defaultConfiguration;
-		const oasSecurity = configuration.web && configuration.web.auth && configuration.web.auth.securityInOas;
-		const securityHamdlers: any[] = [];
-
-		if (this.securityEnabled && oasSecurity) {
-			if (oasSecurity.includes('jwt')) {
-				securityHamdlers.push(this.routesService.fastifyInstance.verifyJwt);
-			}
-			if (oasSecurity.includes('basic')) {
-				securityHamdlers.push(this.routesService.fastifyInstance.verifyUserAndPassword);
-			}
-		}
-
-		this.routesService.fastifyInstance.register(oas, {
-			routePrefix: oasConfiguration.documentationPath,
-			exposeRoute: oasConfiguration.enableDocumentation,
-			addModels: true,
-			swagger: oasConfiguration
-		});
-
-		// Documentation route
-
-		this.routesService.fastifyInstance.route({
-			method: 'GET',
-			url: oasConfiguration.oasPath,
-			handler: (request, reply) => { reply.send(this.routesService.fastifyInstance.oas()); },
-			schema: { hide: true },
-			preHandler: securityHamdlers.length > 0 ? securityHamdlers : undefined
-		});
 	}
 
 	@OnEvent(PublicEvents.allServicesLoaded)
@@ -94,9 +66,30 @@ export class RoutesInitializer {
 				.register(this.authPlugin);
 		}
 
-		this.routesService.fastifyInstance.register(this.methodsPlugin(restControllers));
+		this.routesService.fastifyInstance
+			.register(this.oasPlugin, {
+				prefix: this.oasDocumentationPath
+			})
+			.register(this.methodsPlugin(restControllers));
 
 		await this.routesService.startHttpServer();
+
+	}
+
+	private getMethodsServices() {
+
+		const controllers = RoutesUtils.getAllControllers();
+		return controllers.map(async controller => {
+
+			// 1: Get service from di container
+			const serviceId = (controller.options && controller.options.service && controller.options.service.sId) ?
+				controller.options.service.sId : controller.controller;
+			const context = (controller.options && controller.options.service && controller.options.service.ctx) ?
+				controller.options.service.ctx : undefined;
+			const controllerService = await Container.get<any>(serviceId, undefined, context);
+			return { controllerService, controller };
+
+		});
 
 	}
 
@@ -128,22 +121,80 @@ export class RoutesInitializer {
 
 	};
 
-	private getMethodsServices() {
+	private oasPlugin: Plugin<Server, IncomingMessage, ServerResponse, fastifyAuth.Options> = (plugin, _, done) => {
 
-		const controllers = RoutesUtils.getAllControllers();
-		return controllers.map(async controller => {
+		// OAS configuration
 
-			// 1: Get service from di container
-			const serviceId = (controller.options && controller.options.service && controller.options.service.sId) ?
-				controller.options.service.sId : controller.controller;
-			const context = (controller.options && controller.options.service && controller.options.service.ctx) ?
-				controller.options.service.ctx : undefined;
-			const controllerService = await Container.get<any>(serviceId, undefined, context);
-			return { controllerService, controller };
+		const defaultServers = { servers: [{ url: `http://${this.routesService.host}:${this.routesService.httpPort}` }] };
+		const defaultConfiguration = ObjectUtils.deepMerge(ObjectUtils.deepClone(WebConfiguration.default.web.oas), defaultServers);
+		const oasConfiguration = (this.configuration.web && this.configuration.web.oas) ?
+			ObjectUtils.deepMerge(defaultConfiguration, this.configuration.web.oas) : defaultConfiguration;
+		const oasSecurity = this.configuration.web && this.configuration.web.auth && this.configuration.web.auth.securityInOas;
+		const securityHamdlers: any[] = [];
 
+		console.log("REGSITERING enableDocumentation ", WebConfiguration.default.web.oas, defaultConfiguration);
+		if (!oasConfiguration.enableDocumentation) {
+			done();
+			return;
+		}
+
+		if (this.securityEnabled && oasSecurity) {
+			if (oasSecurity.includes('jwt')) {
+				securityHamdlers.push(plugin.verifyJwt);
+			}
+			if (oasSecurity.includes('basic')) {
+				securityHamdlers.push(plugin.verifyUserAndPassword);
+			}
+		}
+
+		plugin.register(oas, {
+			routePrefix: this.oasDocumentationPath,
+			exposeRoute: false,
+			addModels: true,
+			swagger: oasConfiguration
 		});
 
-	}
+		// Documentation route
+		console.log("REGSITERING ROUTES ", this.oasDocumentationPath);
+		plugin.route({
+			url: '/',
+			method: 'GET',
+			schema: { hide: true },
+			preHandler: securityHamdlers.length > 0 ? plugin.auth( securityHamdlers ) : undefined,
+			handler: (_, reply) => {
+				reply.redirect(this.oasDocumentationPath + '/index.html');
+			}
+		});
+
+		plugin.route({
+			url: '/json',
+			method: 'GET',
+			schema: { hide: true },
+			preHandler: securityHamdlers.length > 0 ? plugin.auth( securityHamdlers ) : undefined,
+			handler: (_, reply) => {
+				reply.send(plugin.oas());
+			},
+		});
+
+		plugin.route({
+			url: '/yaml',
+			method: 'GET',
+			schema: { hide: true },
+			preHandler: securityHamdlers.length > 0 ? plugin.auth( securityHamdlers ) : undefined,
+			handler: (_, reply) => {
+				reply.type('application/x-yaml').send((<any>plugin).oas({ yaml: true }));
+			},
+		});
+
+		// serve swagger-ui with the help of fs-static
+		const oasNodeModulePath = require.resolve('fastify-oas');
+		plugin.register(fstatic, {
+			root: join(oasNodeModulePath, '..', '..', 'static'),
+		});
+
+		done();
+
+	};
 
 	private methodsPlugin: (restControllers: {
 		controllerService: any;
@@ -199,7 +250,7 @@ export class RoutesInitializer {
 							const functName = possibleEventFunction.name;
 							if (restController.controller.controller.prototype[functName] === possibleEventFunction) {
 								(<Record<string, any>>controllerOptions)[eventName] =
-								restController.controllerService[functName].bind(restController.controllerService);
+									restController.controllerService[functName].bind(restController.controllerService);
 							}
 						}
 					}
@@ -240,7 +291,6 @@ export class RoutesInitializer {
 
 				// Check if we have to put some securty
 				if (!securityAlreadySet && controllerOptions.security) {
-					console.log({securityAlreadySet});
 					const currentPreHandlers = controllerOptions.preHandler ?
 						Array.isArray(controllerOptions.preHandler) ? controllerOptions.preHandler : [controllerOptions.preHandler] : [];
 					const securityTypes = Array.isArray(controllerOptions.security) ? controllerOptions.security : [controllerOptions.security];
@@ -291,13 +341,12 @@ export class RoutesInitializer {
 			payload['exp'] = ((new Date()).getTime() / 1000) + this.jwtConfiguration.expiration;
 		}
 		const token = encode(payload, this.jwtConfiguration.privateKey, this.jwtConfiguration.algorithm);
-		reply.send({token});
+		reply.send({ token });
 
 	}
 
 	private async verifyJwt(request: Request) {
 
-		console.log('verifyJwt');
 		const token = request.headers['authorization'] || request.headers['Authorization'];
 		if (ValidatorUtils.isBlank(token)) {
 			throw new Error('No JWT Token found in header "Authorization"');
@@ -310,12 +359,11 @@ export class RoutesInitializer {
 		const jwtPayload = decode(jwt, this.jwtConfiguration.privateKey, undefined, this.jwtConfiguration.algorithm);
 
 		request.jwtPayload = jwtPayload;
-		console.log('verifyJwt2222');
 
 	}
 
 	private async verifyUserAndPassword(request: Request, respose: Response) {
-		console.log('verifyUserAndPassword');
+
 		const token = request.headers['authorization'] || request.headers['Authorization'];
 		if (ValidatorUtils.isBlank(token)) {
 			respose.header('WWW-Authenticate', 'Basic realm="Access to the server", charset="UTF-8"');
@@ -333,7 +381,6 @@ export class RoutesInitializer {
 		}
 
 		RoutesUtils.basicAuthLoginFn(userAndPasswordSplited[0], userAndPasswordSplited[1]);
-		console.log('verifyUserAndPassword222');
 
 	}
 

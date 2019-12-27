@@ -11,7 +11,6 @@ export interface PlugWebConfiguration {
 	oas?: {
 		enableDocumentation?: boolean;
 		documentationPath?: string;
-		oasPath?: string;
 		info?: InfoObject;
 		externalDocs?: ExternalDocumentationObject;
 		host?: string;

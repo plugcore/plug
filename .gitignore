@@ -4,6 +4,7 @@ publish/
 
 # VS Extensions
 .history/
+.vscode/
 
 # Logs
 *.log
