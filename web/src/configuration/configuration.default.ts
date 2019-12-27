@@ -8,6 +8,9 @@ export class WebConfiguration {
 				host: 'localhost'
 			},
 			oas: {
+				enableDocumentation: true,
+				documentationPath: '/api-docs',
+				oasPath: '/api-docs.json',
 				info: {},
 				consumes: ['application/json'],
 				produces: ['application/json'],

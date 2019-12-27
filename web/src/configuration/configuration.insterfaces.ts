@@ -4,9 +4,14 @@ import {
 	SecurityRequirementObject, Server, TagObject
 } from 'openapi3-ts';
 
+export type JwtAvailableAlgorithms = 'HS256' | 'HS384' | 'HS512' | 'RS256';
+
 export interface PlugWebConfiguration {
 	server?: ListenOptions;
 	oas?: {
+		enableDocumentation?: boolean;
+		documentationPath?: string;
+		oasPath?: string;
 		info?: InfoObject;
 		externalDocs?: ExternalDocumentationObject;
 		host?: string;
@@ -20,11 +25,13 @@ export interface PlugWebConfiguration {
 		tags?: TagObject[];
 	};
 	auth?: {
-		eanbled: boolean;
-		type: 'basic' | 'jwt';
-		privateKey?: string;
-		publickKey?: string;
-		jwtAlgorithm?: 'HS256' | 'HS384' | 'HS512' | 'RS256' | 'RS384' | 'RS512';
+		eanbled?: boolean;
+		securityInAllRoutes?: 'basic' | 'jwt' | ('basic' | 'jwt')[];
+		securityInOas?: 'basic' | 'jwt' | ('basic' | 'jwt')[];
+		jwtPrivateKey?: string;
+		jwtAlgorithm?: JwtAvailableAlgorithms;
+		jwtLoginPath?: string;
+		jwtExpiration?: number;
 	};
 }
 

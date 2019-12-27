@@ -97,8 +97,24 @@ export function Patch(path?: string | TMethodOptions, options?: TMethodOptions) 
 // Auth decorators
 //
 
-export function Inject(): Function {
-	return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+/**
+ * Registers a basic auth login for a service
+ */
+export function BasicAuthLogin(): Function {
+	return function (target: any, propertyKey: string) {
+		if (TypeChecker.isClass(target.constructor)) {
+			RoutesUtils.registerBasicAuthLoginFn(target.constructor, propertyKey);
+		}
+	};
+}
 
+/**
+ * Registers a basic auth login for a service
+ */
+export function JwtLogin(): Function {
+	return function (target: any, propertyKey: string) {
+		if (TypeChecker.isClass(target.constructor)) {
+			RoutesUtils.registerJwtLoginFn(target.constructor, propertyKey);
+		}
 	};
 }

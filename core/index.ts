@@ -16,6 +16,7 @@ export * from './src/logs/logger';
 export * from './src/test/test.asserter';
 export * from './src/test/test.decorators';
 export * from './src/test/test.shared';
+export * from './src/test/test.utils';
 
 export * from './src/utils/array.utils';
 export * from './src/utils/js-stack.utils';

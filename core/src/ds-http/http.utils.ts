@@ -100,12 +100,19 @@ export class HttpUtils {
 
 					res.on('end', () => {
 						try {
+							let result: any;
 							if (
 								headers['Accept'] === 'application/json'
 							) {
-								resolve(JSON.parse(dataResponse.read()));
+								result = JSON.parse(dataResponse.read());
 							} else {
-								resolve(dataResponse.read());
+								result = dataResponse.read();
+							}
+
+							if (res.statusCode !== 200) {
+								reject(new Error(`Invalid response code: ${res.statusCode}, with response: ${JSON.stringify(result)}`));
+							} else {
+								resolve(result);
 							}
 						} catch (error) {
 							reject(error);

@@ -6,6 +6,18 @@
 		"local": {
 			"type": "http",
 			"url": "http://127.0.0.1:3000"
+		},
+		"local1": {
+			"type": "http",
+			"url": "http://127.0.0.1:3001"
+		},
+		"local2": {
+			"type": "http",
+			"url": "http://127.0.0.1:3002"
+		},
+		"local3": {
+			"type": "http",
+			"url": "http://127.0.0.1:3003"
 		}
 	}
 }

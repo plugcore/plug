@@ -1,4 +1,4 @@
-import { ClassParameter, TypeChecker, IDiEntry } from '@plugdata/core';
+import { ClassParameter, TypeChecker, IDiEntry, Container } from '@plugdata/core';
 import { HTTPMethod } from 'fastify';
 import {
 	IControllerOptions, IRegisteredController, IRegsiteredMethod, TMethodOptions, BaiscAuthLoginFn, JwtLoginFn, Request
@@ -85,11 +85,14 @@ export class RoutesUtils {
 		}
 	}
 
-	public static registerBasicAuthFn(clazz: ClassParameter<any>, methodName: string) {
-		Reflect.defineMetadata(this.basicAtuhMetadataPrefix, methodName, clazz);
+	public static registerBasicAuthLoginFn(clazz: ClassParameter<any>, methodName: string) {
+		Reflect.defineMetadata(this.basicAtuhMetadataPrefix, methodName, clazz.prototype);
 	}
 	public static registerJwtLoginFn(clazz: ClassParameter<any>, methodName: string) {
-		Reflect.defineMetadata(this.jwtMetadataPrefix, methodName, clazz);
+		Reflect.defineMetadata(this.jwtMetadataPrefix, methodName, clazz.prototype);
 	}
 
 }
+
+// We attach to the service ready event
+Container.onServiceReady(RoutesUtils.onServiceReady.bind(RoutesUtils));

@@ -1,5 +1,7 @@
 import { ClassParameter, IsBoolean, IServiceArgs, IsNumber, IsString, Required } from '@plugdata/core';
-import { DefaultParams, DefaultQuery, FastifyReply, FastifyRequest, HTTPMethod, RequestHandler, RouteShorthandOptions } from 'fastify';
+import {
+	DefaultParams, DefaultQuery, FastifyReply, FastifyRequest, HTTPMethod, RequestHandler, RouteShorthandOptions, DefaultHeaders
+} from 'fastify';
 import { IncomingMessage, ServerResponse } from 'http';
 
 //
@@ -61,15 +63,17 @@ export interface IRouteSchemas {
 	headers?: ClassParameter<any>;
 }
 
-export interface Request<TBody = any, TUrlParams = DefaultParams, TParams = DefaultQuery, THeaders = Headers> extends
-	FastifyRequest<IncomingMessage, TParams, TUrlParams, THeaders, TBody> { }
+export interface Request<TBody = any, TUrlParams = DefaultParams, TParams = DefaultQuery, THeaders = DefaultHeaders, JWTPayload = any> extends
+	FastifyRequest<IncomingMessage, TParams, TUrlParams, THeaders, TBody> {
+	jwtPayload?: JWTPayload;
+}
 export interface Response extends FastifyReply<ServerResponse> { }
 
 //
 // Types
 //
 
-export type InRouteShorthandOptions = RouteShorthandOptions<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>;
+export type InRouteShorthandOptions = RouteShorthandOptions<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, DefaultHeaders, Body>;
 
 type OmitedShorthandOptions = 'url' | 'onRequest' | 'preParsing' | 'preValidation' | 'preHandler' | 'preSerialization';
 export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOptions> & {
@@ -79,9 +83,10 @@ export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOption
 	preValidation?: InRouteShorthandOptions['preValidation'] | ((req: Request, res: Response) => Promise<any>);
 	preHandler?: InRouteShorthandOptions['preHandler'] | ((req: Request, res: Response) => Promise<any>);
 	preSerialization?: InRouteShorthandOptions['preSerialization'] | ((req: Request, res: Response, payload: any) => Promise<any>);
+	security?: 'jwt' | 'basic' | ('jwt' | 'basic')[];
 };
 
-export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, Headers, Body>;
+export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, DefaultHeaders, Body>;
 
 export type BaiscAuthLoginFn = (user: string, password: string) => Promise<boolean>;
 export type JwtLoginFn = (request: Request) => Promise<any>;
