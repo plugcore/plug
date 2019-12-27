@@ -312,45 +312,6 @@ export class RoutesInitializer {
 				const routeSchemas = controllerOptions.routeSchemas;
 				const schema: RouteSchema = controllerOptions.schema || {};
 
-				if (this.securityEnabled) {
-
-					// Checck if this controller has security, either becouse of global security
-					// and or specific security of this route
-					let allAffectedSecurityTypes = (
-						this.configuration.web && this.configuration.web.auth && this.configuration.web.auth.securityInAllRoutes ?
-							Array.isArray(this.configuration.web.auth.securityInAllRoutes) ? this.configuration.web.auth.securityInAllRoutes :
-							[this.configuration.web.auth.securityInAllRoutes] : []
-					) || [];
-					if (controllerOptions.security) {
-						allAffectedSecurityTypes = allAffectedSecurityTypes.concat(
-							Array.isArray(controllerOptions.security) ? controllerOptions.security : [controllerOptions.security]
-						);
-					}
-					const allSecurityTypes = ArrayUtils.removeDuplicates(allAffectedSecurityTypes);
-					const routeSecurity = [];
-					for (const securityType of allSecurityTypes) {
-						if (securityType === 'jwt') {
-							routeSecurity.push({ JWTBearerAuth: [] });
-						} else if (securityType === 'basic') {
-							routeSecurity.push({ BasicAuth: [] });
-						}
-					}
-
-					if (routeSecurity.length > 0) {
-						schema.security = routeSecurity;
-						console.log({ssssss: schema.security});
-					}
-
-					if (routeSchemas) {
-
-					} else {
-						routeSchemas
-					}
-
-					controllerOptions.schema = schema;
-
-				}
-
 				// Route validations
 				if (routeSchemas) {
 
@@ -382,6 +343,58 @@ export class RoutesInitializer {
 
 				}
 				controllerOptions.routeSchemas = undefined;
+
+				if (this.securityEnabled) {
+
+					// Checck if this controller has security, either becouse of global security
+					// and or specific security of this route
+					let allAffectedSecurityTypes = (
+						this.configuration.web && this.configuration.web.auth && this.configuration.web.auth.securityInAllRoutes ?
+							Array.isArray(this.configuration.web.auth.securityInAllRoutes) ? this.configuration.web.auth.securityInAllRoutes :
+							[this.configuration.web.auth.securityInAllRoutes] : []
+					) || [];
+					if (controllerOptions.security) {
+						allAffectedSecurityTypes = allAffectedSecurityTypes.concat(
+							Array.isArray(controllerOptions.security) ? controllerOptions.security : [controllerOptions.security]
+						);
+					}
+					const allSecurityTypes = ArrayUtils.removeDuplicates(allAffectedSecurityTypes);
+					const routeSecurity = [];
+					const regexAuth: string[] = [];
+					for (const securityType of allSecurityTypes) {
+						if (securityType === 'jwt') {
+							routeSecurity.push({ JWTBearerAuth: [] });
+							regexAuth.push('Bearer');
+						} else if (securityType === 'basic') {
+							routeSecurity.push({ BasicAuth: [] });
+							regexAuth.push('Basic');
+						}
+					}
+
+					if (routeSecurity.length > 0) {
+						schema.security = routeSecurity;
+						console.log({ssssss: schema.security});
+					}
+
+					if (regexAuth.length > 0) {
+						const headerSchema: Record<string, any> = schema.headers || {
+							"type": "object",
+							"properties": {}
+						};
+						const properties = headerSchema.properties || [];
+						if (properties) {
+							headerSchema.Authentication = {
+								properties: {
+
+								}
+							};
+						}
+						schema.headers = headerSchema;
+					}
+
+					controllerOptions.schema = schema;
+
+				}
 
 				// Check if we have to put some securty
 				if (!securityAlreadySet && controllerOptions.security) {
