@@ -6,32 +6,36 @@ import {
 
 export type JwtAvailableAlgorithms = 'HS256' | 'HS384' | 'HS512' | 'RS256';
 
+export interface WebOasConfiguration {
+	enableDocumentation?: boolean;
+	documentationPath?: string;
+	info?: InfoObject;
+	externalDocs?: ExternalDocumentationObject;
+	host?: string;
+	basePath?: string;
+	schemes?: SchemasObject | string[];
+	consumes?: string[];
+	produces?: string[];
+	security?: Record<string, any> | SecurityRequirementObject[];
+	servers?: Server[];
+	components?: ComponentsObject;
+	tags?: TagObject[];
+}
+
+export interface WebAuthConfiguration {
+	eanbled?: boolean;
+	securityInAllRoutes?: 'basic' | 'jwt' | ('basic' | 'jwt')[];
+	securityInOas?: 'basic' | 'jwt' | ('basic' | 'jwt')[];
+	jwtPrivateKey?: string;
+	jwtAlgorithm?: JwtAvailableAlgorithms;
+	jwtLoginPath?: string;
+	jwtExpiration?: number;
+}
+
 export interface PlugWebConfiguration {
 	server?: ListenOptions;
-	oas?: {
-		enableDocumentation?: boolean;
-		documentationPath?: string;
-		info?: InfoObject;
-		externalDocs?: ExternalDocumentationObject;
-		host?: string;
-		basePath?: string;
-		schemes?: SchemasObject | string[];
-		consumes?: string[];
-		produces?: string[];
-		security?: SecurityRequirementObject[] | { [securityDefinitionName: string]: string[] }[];
-		servers?: Server[];
-		components?: ComponentsObject;
-		tags?: TagObject[];
-	};
-	auth?: {
-		eanbled?: boolean;
-		securityInAllRoutes?: 'basic' | 'jwt' | ('basic' | 'jwt')[];
-		securityInOas?: 'basic' | 'jwt' | ('basic' | 'jwt')[];
-		jwtPrivateKey?: string;
-		jwtAlgorithm?: JwtAvailableAlgorithms;
-		jwtLoginPath?: string;
-		jwtExpiration?: number;
-	};
+	oas?: WebOasConfiguration;
+	auth?: WebAuthConfiguration;
 }
 
 declare module '@plugdata/core/types/src/configuration/configuration.interfaces' {

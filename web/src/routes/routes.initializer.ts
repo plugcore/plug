@@ -10,11 +10,12 @@ import * as oas from 'fastify-oas';
 import * as fstatic from 'fastify-static';
 import { decode, encode } from 'jwt-simple';
 import { WebConfiguration } from '../configuration/configuration.default';
-import { JwtAvailableAlgorithms } from '../configuration/configuration.insterfaces';
+import { JwtAvailableAlgorithms, WebOasConfiguration } from '../configuration/configuration.insterfaces';
 import { RoutesService } from './routes.service';
 import { ErrorResponseModel, Request, Response, TMethodOptions, IRegisteredController } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 import { join } from 'path';
+import { SecurityRequirementObject } from 'openapi3-ts';
 
 @Service()
 export class RoutesInitializer {
@@ -39,7 +40,7 @@ export class RoutesInitializer {
 		this.securityEnabled = configuration.web && configuration.web.auth && configuration.web.auth.eanbled || false;
 		this.oasDocumentationPath = (
 			configuration.web && configuration.web.oas && configuration.web.oas.documentationPath
-		) || WebConfiguration.default.web.oas.documentationPath;
+		) || WebConfiguration.default.web.oas.documentationPath || '/api/documentation';
 
 	}
 
@@ -67,9 +68,7 @@ export class RoutesInitializer {
 		}
 
 		this.routesService.fastifyInstance
-			.register(this.oasPlugin, {
-				prefix: this.oasDocumentationPath
-			})
+			.register(this.oasPlugin(restControllers), { prefix: this.oasDocumentationPath })
 			.register(this.methodsPlugin(restControllers));
 
 		await this.routesService.startHttpServer();
@@ -121,30 +120,85 @@ export class RoutesInitializer {
 
 	};
 
-	private oasPlugin: Plugin<Server, IncomingMessage, ServerResponse, fastifyAuth.Options> = (plugin, _, done) => {
+	private oasPlugin: (restControllers: {
+		controllerService: any;
+		controller: IRegisteredController;
+	}[]) => Plugin<Server, IncomingMessage, ServerResponse, fastifyAuth.Options> = (restControllers) => (plugin, _, done) => {
 
 		// OAS configuration
 
 		const defaultServers = { servers: [{ url: `http://${this.routesService.host}:${this.routesService.httpPort}` }] };
 		const defaultConfiguration = ObjectUtils.deepMerge(ObjectUtils.deepClone(WebConfiguration.default.web.oas), defaultServers);
-		const oasConfiguration = (this.configuration.web && this.configuration.web.oas) ?
+		const oasConfiguration: WebOasConfiguration = (this.configuration.web && this.configuration.web.oas) ?
 			ObjectUtils.deepMerge(defaultConfiguration, this.configuration.web.oas) : defaultConfiguration;
 		const oasSecurity = this.configuration.web && this.configuration.web.auth && this.configuration.web.auth.securityInOas;
 		const securityHamdlers: any[] = [];
 
-		console.log("REGSITERING enableDocumentation ", WebConfiguration.default.web.oas, defaultConfiguration);
 		if (!oasConfiguration.enableDocumentation) {
 			done();
 			return;
 		}
 
 		if (this.securityEnabled && oasSecurity) {
+
+			// Create security handlers
 			if (oasSecurity.includes('jwt')) {
 				securityHamdlers.push(plugin.verifyJwt);
 			}
 			if (oasSecurity.includes('basic')) {
 				securityHamdlers.push(plugin.verifyUserAndPassword);
 			}
+
+		}
+
+		if (this.securityEnabled) {
+
+			// Check all controllers and global configuration
+			// to know all the security types
+			const allControllerSecurity = restControllers.map(r =>
+				RoutesUtils.getRegisteredMethods(r.controller.controller).map(c =>
+					c.options ?
+						c.options.security ? Array.isArray(c.options.security) ? c.options.security : [c.options.security] :
+							[] : []
+				)
+			);
+			let controllerSecurityTypes = ArrayUtils.flat(allControllerSecurity);
+			if (this.configuration.web && this.configuration.web.auth && this.securityEnabled) {
+				controllerSecurityTypes.concat(
+					this.configuration.web.auth.securityInAllRoutes ?
+						Array.isArray(this.configuration.web.auth.securityInAllRoutes) ?
+							this.configuration.web.auth.securityInAllRoutes : [this.configuration.web.auth.securityInAllRoutes] :
+						[]
+				);
+			}
+			const possibleSecurityTypes = ArrayUtils.flatAndRemoveDuplicates(controllerSecurityTypes);
+			const oasSecuritySchema: Record<string, any>[] = [];
+
+			for (const securityType of possibleSecurityTypes) {
+
+				if (securityType === 'basic') {
+					oasSecuritySchema.push({
+						BasicAuth: { type: 'http', scheme: 'basic' }
+					});
+				}
+				if (securityType === 'jwt') {
+					oasSecuritySchema.push({
+						JWTBearerAuth: {
+							"type": "http",
+							"scheme": "bearer",
+							"bearerFormat": "JWT",
+						}
+					});
+				}
+
+			}
+
+			if (oasSecuritySchema.length > 0) {
+				const compoenets = oasConfiguration.components || {};
+				// TODO Remove any
+				compoenets.securitySchemes = <any>oasSecuritySchema;
+			}
+
 		}
 
 		plugin.register(oas, {
@@ -155,12 +209,11 @@ export class RoutesInitializer {
 		});
 
 		// Documentation route
-		console.log("REGSITERING ROUTES ", this.oasDocumentationPath);
 		plugin.route({
 			url: '/',
 			method: 'GET',
 			schema: { hide: true },
-			preHandler: securityHamdlers.length > 0 ? plugin.auth( securityHamdlers ) : undefined,
+			preHandler: securityHamdlers.length > 0 ? plugin.auth(securityHamdlers) : undefined,
 			handler: (_, reply) => {
 				reply.redirect(this.oasDocumentationPath + '/index.html');
 			}
@@ -170,7 +223,7 @@ export class RoutesInitializer {
 			url: '/json',
 			method: 'GET',
 			schema: { hide: true },
-			preHandler: securityHamdlers.length > 0 ? plugin.auth( securityHamdlers ) : undefined,
+			preHandler: securityHamdlers.length > 0 ? plugin.auth(securityHamdlers) : undefined,
 			handler: (_, reply) => {
 				reply.send(plugin.oas());
 			},
@@ -180,7 +233,7 @@ export class RoutesInitializer {
 			url: '/yaml',
 			method: 'GET',
 			schema: { hide: true },
-			preHandler: securityHamdlers.length > 0 ? plugin.auth( securityHamdlers ) : undefined,
+			preHandler: securityHamdlers.length > 0 ? plugin.auth(securityHamdlers) : undefined,
 			handler: (_, reply) => {
 				reply.type('application/x-yaml').send((<any>plugin).oas({ yaml: true }));
 			},
@@ -200,7 +253,6 @@ export class RoutesInitializer {
 		controllerService: any;
 		controller: IRegisteredController;
 	}[]) => Plugin<Server, IncomingMessage, ServerResponse, fastifyAuth.Options> = (restControllers) => (plugin, _, done) => {
-
 
 		// We have to ensure that only the routes defined in this plugin have global security
 		// this is why this is not defined in the 'authPlugin'
@@ -256,9 +308,50 @@ export class RoutesInitializer {
 					}
 				}
 
-				// Route validations
+				// Schema definition
 				const routeSchemas = controllerOptions.routeSchemas;
 				const schema: RouteSchema = controllerOptions.schema || {};
+
+				if (this.securityEnabled) {
+
+					// Checck if this controller has security, either becouse of global security
+					// and or specific security of this route
+					let allAffectedSecurityTypes = (
+						this.configuration.web && this.configuration.web.auth && this.configuration.web.auth.securityInAllRoutes ?
+							Array.isArray(this.configuration.web.auth.securityInAllRoutes) ? this.configuration.web.auth.securityInAllRoutes :
+							[this.configuration.web.auth.securityInAllRoutes] : []
+					) || [];
+					if (controllerOptions.security) {
+						allAffectedSecurityTypes = allAffectedSecurityTypes.concat(
+							Array.isArray(controllerOptions.security) ? controllerOptions.security : [controllerOptions.security]
+						);
+					}
+					const allSecurityTypes = ArrayUtils.removeDuplicates(allAffectedSecurityTypes);
+					const routeSecurity = [];
+					for (const securityType of allSecurityTypes) {
+						if (securityType === 'jwt') {
+							routeSecurity.push({ JWTBearerAuth: [] });
+						} else if (securityType === 'basic') {
+							routeSecurity.push({ BasicAuth: [] });
+						}
+					}
+
+					if (routeSecurity.length > 0) {
+						schema.security = routeSecurity;
+						console.log({ssssss: schema.security});
+					}
+
+					if (routeSchemas) {
+
+					} else {
+						routeSchemas
+					}
+
+					controllerOptions.schema = schema;
+
+				}
+
+				// Route validations
 				if (routeSchemas) {
 
 					if (method.httpMethod !== 'GET' && routeSchemas.request) {
@@ -284,6 +377,7 @@ export class RoutesInitializer {
 					if (routeSchemas.headers) {
 						schema.headers = ObjectValidatorUtils.generateJsonSchema(routeSchemas.headers);
 					}
+
 					controllerOptions.schema = schema;
 
 				}

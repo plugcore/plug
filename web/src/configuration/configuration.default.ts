@@ -1,3 +1,4 @@
+import { WebOasConfiguration } from './configuration.insterfaces';
 
 export class WebConfiguration {
 
@@ -7,10 +8,10 @@ export class WebConfiguration {
 				port: 3000,
 				host: 'localhost'
 			},
-			oas: {
+			oas: <WebOasConfiguration>{
 				enableDocumentation: true,
 				documentationPath: '/api-docs',
-				info: {},
+				info: <any>{},
 				consumes: ['application/json'],
 				produces: ['application/json'],
 			}
