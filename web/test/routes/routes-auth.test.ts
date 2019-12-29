@@ -23,6 +23,7 @@ export class RoutesAuthTest extends PlugTest {
 	private customPrvateKey = 'plugtestprivatekey';
 	private defaultPrvateKey = '8981F9391AF549443CC7D5141B24D';
 	private basicAuthToken = 'dGVzdFVzZXI6dGVzdFBhc3N3b3Jk'; // testUser:testPassword
+	private incorrectBasicAuthToken = 'dGVzdFVzZXI6dGVzdFBhc3N3b3JkMjM0'; // testUser:testPassword234
 	private resultPayload = { prop1: 'string1', prop2: 2 };
 
 	private httpClient1: HttpDatasource;
@@ -171,6 +172,12 @@ export class RoutesAuthTest extends PlugTest {
 		));
 		await this.assert.rejects(this.httpClient2.patch<IServicesResponse>(
 			this.pathWithSecurity, { headers: { Authorization: `Basic ${this.basicAuthToken}` } }
+		));
+		await this.assert.rejects(this.httpClient2.get<IServicesResponse>(
+			this.pathWithSecurity, { headers: { Authorization: `Basic ${this.incorrectBasicAuthToken}` } }
+		));
+		await this.assert.rejects(this.httpClient2.get<IServicesResponse>(
+			this.pathWithSecurity, { headers: { Authorization: `Bearer ${jwtToken.token}234` } }
 		));
 
 		this.assert.equal(resps[0].method, 'getTest');

@@ -15,7 +15,6 @@ import { RoutesService } from './routes.service';
 import { ErrorResponseModel, Request, Response, TMethodOptions, IRegisteredController } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 import { join } from 'path';
-import { SecurityRequirementObject } from 'openapi3-ts';
 
 @Service()
 export class RoutesInitializer {
@@ -159,10 +158,10 @@ export class RoutesInitializer {
 				RoutesUtils.getRegisteredMethods(r.controller.controller).map(c =>
 					c.options ?
 						c.options.security ? Array.isArray(c.options.security) ? c.options.security : [c.options.security] :
-							[] : []
+						[] : []
 				)
 			);
-			let controllerSecurityTypes = ArrayUtils.flat(allControllerSecurity);
+			const controllerSecurityTypes = ArrayUtils.flat(allControllerSecurity);
 			if (this.configuration.web && this.configuration.web.auth && this.securityEnabled) {
 				controllerSecurityTypes.concat(
 					this.configuration.web.auth.securityInAllRoutes ?
@@ -183,11 +182,7 @@ export class RoutesInitializer {
 				}
 				if (securityType === 'jwt') {
 					oasSecuritySchema.push({
-						JWTBearerAuth: {
-							"type": "http",
-							"scheme": "bearer",
-							"bearerFormat": "JWT",
-						}
+						JWTBearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
 					});
 				}
 
@@ -373,20 +368,18 @@ export class RoutesInitializer {
 
 					if (routeSecurity.length > 0) {
 						schema.security = routeSecurity;
-						console.log({ssssss: schema.security});
 					}
 
 					if (regexAuth.length > 0) {
 						const headerSchema: Record<string, any> = schema.headers || {
-							"type": "object",
-							"properties": {}
+							type: 'object',
+							properties: {}
 						};
-						const properties = headerSchema.properties || [];
-						if (properties) {
-							headerSchema.Authentication = {
-								properties: {
-
-								}
+						const properties = headerSchema.properties || <any>{};
+						if (!properties.Authorization) {
+							properties.Authentication = {
+								type: 'string',
+								pattern: `^(${regexAuth.join('|')}) .*$`
 							};
 						}
 						schema.headers = headerSchema;
@@ -444,6 +437,11 @@ export class RoutesInitializer {
 	private async handleJwtLogin(request: Request, reply: Response) {
 
 		const payload = await RoutesUtils.jwtLoginFn(request);
+
+		if (payload === null || payload === undefined) {
+			throw new Error('Invalid credentials');
+		}
+
 		if (this.jwtConfiguration.expiration !== undefined) {
 			payload['exp'] = ((new Date()).getTime() / 1000) + this.jwtConfiguration.expiration;
 		}
@@ -487,7 +485,11 @@ export class RoutesInitializer {
 			throw new Error('Invalid basic auth value, it should be: "xxx:yyy"');
 		}
 
-		RoutesUtils.basicAuthLoginFn(userAndPasswordSplited[0], userAndPasswordSplited[1]);
+		const result = await RoutesUtils.basicAuthLoginFn(userAndPasswordSplited[0], userAndPasswordSplited[1]);
+		console.log(result, token, splitedToken, userAndPassword);
+		if (!result) {
+			throw new Error('Invalid credentials');
+		}
 
 	}
 
