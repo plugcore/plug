@@ -58,4 +58,9 @@ export class ControllerAuthExample {
 		return { method: 'patchTest2', jwtPayload: req.jwtPayload };
 	}
 
+	@Get('/custom', { security: 'custom' })
+	public async getTestCustom(req: Request) {
+		return { method: 'getTestCustom', myHeader: req.customData.myHeader };
+	}
+
 }

@@ -98,7 +98,8 @@ export function Patch(path?: string | TMethodOptions, options?: TMethodOptions) 
 //
 
 /**
- * Registers a basic auth login for a service
+ * Registers a basic auth login function that is going to be called in all
+ * the routes that have basic security
  */
 export function BasicAuthLogin(): Function {
 	return function (target: any, propertyKey: string) {
@@ -109,12 +110,25 @@ export function BasicAuthLogin(): Function {
 }
 
 /**
- * Registers a basic auth login for a service
+ * Registers a basic auth login function in a secive that is going to be called
+ * when a jwt lolgin url arrives
  */
 export function JwtLogin(): Function {
 	return function (target: any, propertyKey: string) {
 		if (TypeChecker.isClass(target.constructor)) {
 			RoutesUtils.registerJwtLoginFn(target.constructor, propertyKey);
+		}
+	};
+}
+
+/**
+ * A custom auth function that is going to be executen in all routes that
+ * have custom auth security
+ */
+export function CustomAuth(): Function {
+	return function (target: any, propertyKey: string) {
+		if (TypeChecker.isClass(target.constructor)) {
+			RoutesUtils.registerCustomAuthFn(target.constructor, propertyKey);
 		}
 	};
 }

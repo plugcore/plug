@@ -4,10 +4,11 @@ import {
 	InjectLogger, Logger, ObjectUtils, ObjectValidatorUtils, OnEvent,
 	PublicEvents, Service, ValidatorUtils
 } from '@plugdata/core';
-import { FastifyMiddleware, RouteSchema, Plugin } from 'fastify';
+import { RouteSchema, Plugin } from 'fastify';
 import * as fastifyAuth from 'fastify-auth';
 import * as oas from 'fastify-oas';
 import * as fstatic from 'fastify-static';
+import * as cookies from 'fastify-cookie';
 import { decode, encode } from 'jwt-simple';
 import { WebConfiguration } from '../configuration/configuration.default';
 import { JwtAvailableAlgorithms, WebOasConfiguration } from '../configuration/configuration.insterfaces';
@@ -24,7 +25,7 @@ export class RoutesInitializer {
 	private securityEnabled = false;
 	private jwtConfiguration = {
 		// Default private key, should be changed
-		privateKey: '8981F9391AF549443CC7D5141B24D',
+		privateKey: '8981F9391AF549443CC7D5141B24DJ4C',
 		algorithm: <JwtAvailableAlgorithms>'HS256',
 		expiration: <number | undefined>undefined
 	};
@@ -58,16 +59,23 @@ export class RoutesInitializer {
 				// Decorate fastify with login pre hnadle implementations
 				.decorate('verifyJwt', this.verifyJwt.bind(this))
 				.decorate('verifyUserAndPassword', this.verifyUserAndPassword.bind(this))
+				.decorate('customAuth', this.customAuth.bind(this))
 				// With this we are telling fastify that we will have a new property of the request object
 				.decorateRequest('jwtPayload', undefined)
+				// Custom data object that anybody can use in the request to put their data
+				.decorateRequest('customData', {})
 				// Auth plugin registration
 				.register(fastifyAuth)
 				// Auth routes
-				.register(this.authPlugin);
+				.register(this.authPlugin.bind(this));
 		}
 
 		this.routesService.fastifyInstance
+			// OAS
 			.register(this.oasPlugin(restControllers), { prefix: this.oasDocumentationPath })
+			// Cookies support
+			.register(cookies)
+			// Custom routes
 			.register(this.methodsPlugin(restControllers));
 
 		await this.routesService.startHttpServer();
@@ -102,6 +110,8 @@ export class RoutesInitializer {
 			this.jwtConfiguration.privateKey = this.configuration.web.auth.jwtPrivateKey || this.jwtConfiguration.privateKey;
 			this.jwtConfiguration.expiration = this.configuration.web.auth.jwtExpiration || this.jwtConfiguration.expiration;
 
+			console.log('SETTT', this.jwtConfiguration);
+
 			// Other vars
 			const loginUrl = this.configuration.web.auth.jwtLoginPath || '/auth/login';
 
@@ -109,7 +119,7 @@ export class RoutesInitializer {
 			plugin.route({
 				method: 'POST',
 				url: loginUrl,
-				handler: this.handleJwtLogin.bind(this),
+				handler: <any>this.handleJwtLogin.bind(this),
 				schema: { hide: true }
 			});
 
@@ -249,32 +259,12 @@ export class RoutesInitializer {
 		controller: IRegisteredController;
 	}[]) => Plugin<Server, IncomingMessage, ServerResponse, fastifyAuth.Options> = (restControllers) => (plugin, _, done) => {
 
-		// We have to ensure that only the routes defined in this plugin have global security
-		// this is why this is not defined in the 'authPlugin'
-		let securityAlreadySet = false;
-		if (this.configuration && this.configuration.web && this.configuration.web.auth && this.securityEnabled) {
-			const securityInAllRoutes = this.configuration.web.auth.securityInAllRoutes;
-
-			// Check if we have to apply security on all request
-			if (securityInAllRoutes) {
-
-				const securityHandlers: any[] = [];
-				const securityTypes = Array.isArray(securityInAllRoutes) ?
-					securityInAllRoutes : [securityInAllRoutes];
-
-				if (securityTypes.includes('jwt')) {
-					securityHandlers.push(plugin.verifyJwt);
-				}
-				if (securityTypes.includes('basic')) {
-					securityHandlers.push(plugin.verifyUserAndPassword);
-				}
-
-				if (securityHandlers.length > 0) {
-					const handler: FastifyMiddleware = plugin.auth(securityHandlers, { relation: 'or' });
-					plugin.addHook('preHandler', handler);
-					securityAlreadySet = true;
-				}
-			}
+		let securityOnAllRoutes = this.configuration && this.configuration.web &&
+			this.configuration.web.auth && this.securityEnabled && this.configuration.web.auth.securityInAllRoutes;
+		if (securityOnAllRoutes) {
+			securityOnAllRoutes = Array.isArray(securityOnAllRoutes) ? securityOnAllRoutes : [securityOnAllRoutes];
+		} else {
+			securityOnAllRoutes = [];
 		}
 
 		for (const restController of restControllers) {
@@ -390,20 +380,30 @@ export class RoutesInitializer {
 				}
 
 				// Check if we have to put some securty
-				if (!securityAlreadySet && controllerOptions.security) {
+				if (securityOnAllRoutes.length > 0 || controllerOptions.security) {
 					const currentPreHandlers = controllerOptions.preHandler ?
 						Array.isArray(controllerOptions.preHandler) ? controllerOptions.preHandler : [controllerOptions.preHandler] : [];
 					const securityTypes = Array.isArray(controllerOptions.security) ? controllerOptions.security : [controllerOptions.security];
 					const securityHamdlers: any[] = [];
 
-					if (securityTypes.includes('jwt')) {
+					if (securityOnAllRoutes.includes('jwt') || securityTypes.includes('jwt')) {
 						securityHamdlers.push(plugin.verifyJwt);
 					}
-					if (securityTypes.includes('basic')) {
+					if (securityOnAllRoutes.includes('basic') || securityTypes.includes('basic')) {
 						securityHamdlers.push(plugin.verifyUserAndPassword);
 					}
+					if (securityOnAllRoutes.includes('custom') || securityTypes.includes('custom')) {
+						securityHamdlers.push(plugin.customAuth);
+					}
 
-					if (securityHamdlers.length > 0 && this.securityEnabled) {
+					if (url === '/secured-path2' && method.httpMethod === 'DELETE') {
+						console.log(url, method.httpMethod, securityHamdlers);
+					}
+
+					if (
+						!(securityTypes.length === 1 && securityTypes[0] === 'none') &&
+						securityHamdlers.length > 0 && this.securityEnabled
+					) {
 						// TODO, remove <any>
 						controllerOptions.preHandler = <any>currentPreHandlers.concat(plugin.auth(
 							securityHamdlers
@@ -452,23 +452,34 @@ export class RoutesInitializer {
 
 	private async verifyJwt(request: Request) {
 
-		const token = request.headers['authorization'] || request.headers['Authorization'];
-		if (ValidatorUtils.isBlank(token)) {
-			throw new Error('No JWT Token found in header "Authorization"');
-		}
-		const splitedToken = token.split(' ');
-		if (splitedToken.length < 2 || splitedToken.length > 2 || splitedToken[0] !== 'Bearer') {
-			throw new Error('Invalid value of header "Authorization", it should be: "Bearer xxxxx"');
-		}
-		const jwt = splitedToken[1];
-		const jwtPayload = decode(jwt, this.jwtConfiguration.privateKey, undefined, this.jwtConfiguration.algorithm);
+		console.log('verifyJwt', request.headers);
+		try {
+			const token = request.headers['authorization'] || request.headers['Authorization'];
+			if (ValidatorUtils.isBlank(token)) {
+				throw new Error('No JWT Token found in header "Authorization"');
+			}
+			const splitedToken = token.split(' ');
+			if (splitedToken.length < 2 || splitedToken.length > 2 || splitedToken[0] !== 'Bearer') {
+				throw new Error('Invalid value of header "Authorization", it should be: "Bearer xxxxx"');
+			}
+			const jwt = splitedToken[1];
+			const jwtPayload = decode(jwt, this.jwtConfiguration.privateKey, undefined, this.jwtConfiguration.algorithm);
 
-		request.jwtPayload = jwtPayload;
+			request.jwtPayload = jwtPayload;
+			console.log('END2222JWT', jwtPayload);
+
+
+		} catch (error) {
+
+			console.log('ENDJWT', this.jwtConfiguration, error);
+			throw error;
+		}
 
 	}
 
 	private async verifyUserAndPassword(request: Request, respose: Response) {
 
+		console.log('verifyUserAndPassword', request.headers);
 		const token = request.headers['authorization'] || request.headers['Authorization'];
 		if (ValidatorUtils.isBlank(token)) {
 			respose.header('WWW-Authenticate', 'Basic realm="Access to the server", charset="UTF-8"');
@@ -486,10 +497,16 @@ export class RoutesInitializer {
 		}
 
 		const result = await RoutesUtils.basicAuthLoginFn(userAndPasswordSplited[0], userAndPasswordSplited[1]);
-		console.log(result, token, splitedToken, userAndPassword);
 		if (!result) {
 			throw new Error('Invalid credentials');
 		}
+
+	}
+
+	private async customAuth(request: Request, respose: Response) {
+
+		// The custom auth takes care of throwing errors
+		await RoutesUtils.customAuthFn(request, respose);
 
 	}
 

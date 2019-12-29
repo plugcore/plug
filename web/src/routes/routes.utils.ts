@@ -1,7 +1,8 @@
 import { ClassParameter, TypeChecker, IDiEntry, Container } from '@plugdata/core';
 import { HTTPMethod } from 'fastify';
 import {
-	IControllerOptions, IRegisteredController, IRegsiteredMethod, TMethodOptions, BaiscAuthLoginFn, JwtLoginFn, Request
+	IControllerOptions, IRegisteredController, IRegsiteredMethod, TMethodOptions, BaiscAuthLoginFn,
+	JwtLoginFn, Request, Response, CustomAuthFn
 } from './routes.shared';
 
 export class RoutesUtils {
@@ -19,6 +20,10 @@ export class RoutesUtils {
 	public static jwtLoginFn: JwtLoginFn = async (request: Request) => {
 		throw new Error('Basic auth login not implemented');
 	};
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public static customAuthFn: CustomAuthFn = async (request: Request, response: Response) => {
+		throw new Error('Custom auth not implemented');
+	};
 
 	//
 	// Metadata keys
@@ -27,6 +32,7 @@ export class RoutesUtils {
 	public static readonly propertyMetadataPrefix = 'p-controller-method:';
 	public static readonly basicAtuhMetadataPrefix = 'p-basic-auth-login-fn';
 	public static readonly jwtMetadataPrefix = 'p-jwt-login-fn';
+	public static readonly customAuthMetadataPrefix = 'p-custom-auth-fn';
 
 	//
 	// Controller utils
@@ -73,6 +79,7 @@ export class RoutesUtils {
 			// 1: Check if the have marked some function as login fn metada
 			const basicAuthLoginFn = Reflect.getMetadata(this.basicAtuhMetadataPrefix, entry.serviceClass.prototype);
 			const jwtLoginFn = Reflect.getMetadata(this.jwtMetadataPrefix, entry.serviceClass.prototype);
+			const customAuthFn = Reflect.getMetadata(this.customAuthMetadataPrefix, entry.serviceClass.prototype);
 
 			// 2: if it's the case, then replace the default function
 			if (basicAuthLoginFn) {
@@ -80,6 +87,9 @@ export class RoutesUtils {
 			}
 			if (jwtLoginFn) {
 				this.jwtLoginFn = entry.object[jwtLoginFn].bind(entry.object);
+			}
+			if (customAuthFn) {
+				this.customAuthFn = entry.object[customAuthFn].bind(entry.object);
 			}
 
 		}
@@ -90,6 +100,9 @@ export class RoutesUtils {
 	}
 	public static registerJwtLoginFn(clazz: ClassParameter<any>, methodName: string) {
 		Reflect.defineMetadata(this.jwtMetadataPrefix, methodName, clazz.prototype);
+	}
+	public static registerCustomAuthFn(clazz: ClassParameter<any>, methodName: string) {
+		Reflect.defineMetadata(this.customAuthMetadataPrefix, methodName, clazz.prototype);
 	}
 
 }

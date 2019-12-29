@@ -25,6 +25,7 @@
 		"@plugdata/core": "file:../core/publish",
 		"fastify": "^2.11.0",
 		"fastify-auth": "^0.7.2",
+		"fastify-cookie": "^3.4.0",
 		"fastify-oas": "^2.5.0",
 		"fastify-static": "^2.5.1",
 		"jwt-simple": "^0.5.6",

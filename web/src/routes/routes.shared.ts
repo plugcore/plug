@@ -3,6 +3,7 @@ import {
 	DefaultParams, DefaultQuery, FastifyReply, FastifyRequest, HTTPMethod, RequestHandler, RouteShorthandOptions, DefaultHeaders
 } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'http';
+import { SupportedSecurityTypes } from '../configuration/configuration.insterfaces';
 
 //
 // Interfaces
@@ -63,9 +64,12 @@ export interface IRouteSchemas {
 	headers?: ClassParameter<any>;
 }
 
-export interface Request<TBody = any, TUrlParams = DefaultParams, TParams = DefaultQuery, THeaders = DefaultHeaders, JWTPayload = any> extends
-	FastifyRequest<IncomingMessage, TParams, TUrlParams, THeaders, TBody> {
-	jwtPayload?: JWTPayload;
+export interface Request<
+	TBody = any, TUrlParams = DefaultParams, TParams = DefaultQuery,
+	THeaders = DefaultHeaders, CustomData = any, JWTPayload = any | undefined
+> extends FastifyRequest<IncomingMessage, TParams, TUrlParams, THeaders, TBody> {
+	jwtPayload: JWTPayload;
+	customData: CustomData;
 }
 export interface Response extends FastifyReply<ServerResponse> { }
 
@@ -83,13 +87,14 @@ export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOption
 	preValidation?: InRouteShorthandOptions['preValidation'] | ((req: Request, res: Response) => Promise<any>);
 	preHandler?: InRouteShorthandOptions['preHandler'] | ((req: Request, res: Response) => Promise<any>);
 	preSerialization?: InRouteShorthandOptions['preSerialization'] | ((req: Request, res: Response, payload: any) => Promise<any>);
-	security?: 'jwt' | 'basic' | ('jwt' | 'basic')[];
+	security?: SupportedSecurityTypes | SupportedSecurityTypes[];
 };
 
 export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, DefaultHeaders, Body>;
 
 export type BaiscAuthLoginFn = (user: string, password: string) => Promise<boolean>;
 export type JwtLoginFn = (request: Request) => Promise<any>;
+export type CustomAuthFn = (request: Request, response: Response) => Promise<any>;
 
 //
 // Models

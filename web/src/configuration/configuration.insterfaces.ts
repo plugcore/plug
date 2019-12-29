@@ -5,6 +5,7 @@ import {
 } from 'openapi3-ts';
 
 export type JwtAvailableAlgorithms = 'HS256' | 'HS384' | 'HS512' | 'RS256';
+export type SupportedSecurityTypes = 'basic' | 'jwt' | 'custom' |'none';
 
 export interface WebOasConfiguration {
 	enableDocumentation?: boolean;
@@ -24,8 +25,8 @@ export interface WebOasConfiguration {
 
 export interface WebAuthConfiguration {
 	eanbled?: boolean;
-	securityInAllRoutes?: 'basic' | 'jwt' | ('basic' | 'jwt')[];
-	securityInOas?: 'basic' | 'jwt' | ('basic' | 'jwt')[];
+	securityInAllRoutes?: SupportedSecurityTypes | SupportedSecurityTypes[];
+	securityInOas?: SupportedSecurityTypes | SupportedSecurityTypes[];
 	jwtPrivateKey?: string;
 	jwtAlgorithm?: JwtAvailableAlgorithms;
 	jwtLoginPath?: string;

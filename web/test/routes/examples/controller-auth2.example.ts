@@ -58,4 +58,11 @@ export class ControllerAuth2Example {
 		return { method: 'patchTest2', jwtPayload: req.jwtPayload };
 	}
 
+	@Get('/forced-security-none', {
+		security: 'none'
+	})
+	public async securityNone() {
+		return { method: 'securityNone' };
+	}
+
 }

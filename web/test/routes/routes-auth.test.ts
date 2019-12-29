@@ -7,6 +7,10 @@ interface IServicesResponse {
 	method: string;
 	jwtPayload?: any;
 }
+interface IServicesResponse2 {
+	method: string;
+	myHeader?: any;
+}
 
 // We have to test 3 kind of servers
 // 1: Server with no auth whatsoever
@@ -20,8 +24,9 @@ export class RoutesAuthTest extends PlugTest {
 	private pathWithSecurity2 = '/secured-path2';
 	private pathWithNoSecurity = '/secured-path/no-security';
 	private pathWithNoSecurity2 = '/secured-path2/no-security';
-	private customPrvateKey = 'plugtestprivatekey';
-	private defaultPrvateKey = '8981F9391AF549443CC7D5141B24D';
+	private pathWithNoSecurity2Forced = '/secured-path2/forced-security-none';
+	private customPrvateKey = '8981F9391AF549443CC7D5141B24DJ4C';// TODO: try with different private keys
+	private defaultPrvateKey = '8981F9391AF549443CC7D5141B24DJ4C';
 	private basicAuthToken = 'dGVzdFVzZXI6dGVzdFBhc3N3b3Jk'; // testUser:testPassword
 	private incorrectBasicAuthToken = 'dGVzdFVzZXI6dGVzdFBhc3N3b3JkMjM0'; // testUser:testPassword234
 	private resultPayload = { prop1: 'string1', prop2: 2 };
@@ -59,8 +64,6 @@ export class RoutesAuthTest extends PlugTest {
 				auth: {
 					eanbled: true,
 					jwtLoginPath: '/auth/jwt',
-					jwtAlgorithm: 'HS512',
-					jwtPrivateKey: this.customPrvateKey,
 					securityInAllRoutes: ['jwt', 'basic']
 				},
 				oas: { enableDocumentation: false }
@@ -85,9 +88,9 @@ export class RoutesAuthTest extends PlugTest {
 
 	@AfterTests()
 	public async after() {
-		/* this.routesService1.shutdownHttpServer();
+		this.routesService1.shutdownHttpServer();
 		this.routesService2.shutdownHttpServer();
-		this.routesService3.shutdownHttpServer(); */
+		this.routesService3.shutdownHttpServer();
 	}
 
 	@Test()
@@ -147,6 +150,7 @@ export class RoutesAuthTest extends PlugTest {
 			this.httpClient2.patch<IServicesResponse>(this.pathWithSecurity, undefined, { headers: { Authorization: `Bearer ${jwtToken.token}` } }),
 			this.httpClient2.put<IServicesResponse>(this.pathWithSecurity, undefined, { headers: { Authorization: `Basic ${this.basicAuthToken}` } }),
 			this.httpClient2.delete<IServicesResponse>(this.pathWithSecurity, undefined, { headers: { Authorization: `Bearer ${jwtToken.token}` } }),
+			this.httpClient2.get<IServicesResponse2>(this.pathWithSecurity + '/custom', { headers: { myHeader: 'myHeader', Cookie: 'TESTC=123' } })
 		]);
 
 		const respsWithNoSecurity = await Promise.all([
@@ -157,6 +161,7 @@ export class RoutesAuthTest extends PlugTest {
 			this.httpClient2.delete<IServicesResponse>(this.pathWithNoSecurity),
 			this.httpClient2.get<IServicesResponse>(this.pathWithNoSecurity, { headers: { Authorization: `Bearer ${jwtToken.token}` } }),
 			this.httpClient2.get<IServicesResponse>(this.pathWithNoSecurity, { headers: { Authorization: `Basic ${this.basicAuthToken}` } }),
+			this.httpClient2.delete<IServicesResponse>(this.pathWithNoSecurity),
 		]);
 
 		await this.assert.rejects(this.httpClient2.get<IServicesResponse>(this.pathWithSecurity));
@@ -187,6 +192,7 @@ export class RoutesAuthTest extends PlugTest {
 		this.assert.equal(resps[4].method, 'patchTest');
 		this.assert.equal(resps[5].method, 'putTest');
 		this.assert.equal(resps[6].method, 'deleteTest');
+		this.assert.equal(resps[7].method, 'getTestCustom');
 
 		this.assert.deepEqual(resps[0].jwtPayload, this.resultPayload);
 		this.assert.deepEqual(resps[1].jwtPayload, undefined);
@@ -195,6 +201,7 @@ export class RoutesAuthTest extends PlugTest {
 		this.assert.deepEqual(resps[4].jwtPayload, this.resultPayload);
 		this.assert.equal(resps[5].jwtPayload, undefined);
 		this.assert.deepEqual(resps[6].jwtPayload, this.resultPayload);
+		this.assert.deepEqual(resps[7].myHeader, 'myHeader123');
 
 		this.assert.equal(respsWithNoSecurity[0].method, 'getTest2');
 		this.assert.equal(respsWithNoSecurity[1].method, 'postTest2');
@@ -218,7 +225,7 @@ export class RoutesAuthTest extends PlugTest {
 
 		const jwtToken = await this.httpClient3.post<{ token: string }>('/auth/jwt', { user: 'testUser' });
 
-		this.assert.ok(decode(jwtToken.token, this.customPrvateKey, undefined, 'HS512'));
+		this.assert.ok(decode(jwtToken.token, this.customPrvateKey, undefined, 'HS256'));
 
 		const resps = await Promise.all([
 			this.httpClient3.get<IServicesResponse>(this.pathWithSecurity2, { headers: { Authorization: `Bearer ${jwtToken.token}` } }),
@@ -256,6 +263,7 @@ export class RoutesAuthTest extends PlugTest {
 		await this.assert.rejects(this.httpClient3.patch<IServicesResponse>(this.pathWithNoSecurity2));
 		await this.assert.rejects(this.httpClient3.put<IServicesResponse>(this.pathWithNoSecurity2));
 		await this.assert.rejects(this.httpClient3.delete<IServicesResponse>(this.pathWithNoSecurity2));
+		await this.assert.doesNotReject(this.httpClient2.get(this.pathWithNoSecurity2Forced));
 
 		this.assert.equal(resps[0].method, 'getTest');
 		this.assert.equal(resps[1].method, 'getTest');
