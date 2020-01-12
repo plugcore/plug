@@ -1,28 +1,28 @@
 {
-	"name": "@plugdata/web",
+	"name": "@plugcore/web",
 	"version": "0.2.0",
-	"description": "Plugdata.io web utilities",
+	"description": "plugcore.com web utilities",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/plugdata/plugdata-framework.git"
+		"url": "git+https://github.com/plugcore/plugcore-framework.git"
 	},
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/plugdata/plugdata-framework/issues"
+		"url": "https://github.com/plugcore/plugcore-framework/issues"
 	},
-	"homepage": "https://github.com/plugdata/plugdata-framework/web/#readme",
+	"homepage": "https://github.com/plugcore/plugcore-framework/web/#readme",
 	"scripts": {
 		"build": "node ../node_modules/typescript/bin/tsc & cd .. & node _scripts/build-web.js",
-		"test": "node node_modules/@plugdata/core/src/test/test.cli.js test ./dist/test ./test/configuration | node ../node_modules/pino-pretty/bin.js -t -i pid,hostname,name",
-		"test:raw": "node node_modules/@plugdata/core/src/test/test.cli.js test ./dist/test ./test/configuration",
-		"test:info": "node node_modules/@plugdata/core/src/test/test.cli.js info ./dist/test",
+		"test": "node node_modules/@plugcore/core/src/test/test.cli.js test ./dist/test ./test/configuration | node ../node_modules/pino-pretty/bin.js -t -i pid,hostname,name",
+		"test:raw": "node node_modules/@plugcore/core/src/test/test.cli.js test ./dist/test ./test/configuration",
+		"test:info": "node node_modules/@plugcore/core/src/test/test.cli.js info ./dist/test",
 		"lint": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts",
 		"lint:fix": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts --fix"
 	},
 	"dependencies": {
-		"@plugdata/core": "file:../core/publish",
+		"@plugcore/core": "file:../core/publish",
 		"fastify": "^2.11.0",
 		"fastify-auth": "^0.7.2",
 		"fastify-cookie": "^3.4.0",

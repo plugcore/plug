@@ -1,4 +1,4 @@
-import { ClassParameter, TypeChecker, IDiEntry, Container } from '@plugdata/core';
+import { ClassParameter, TypeChecker, IDiEntry, Container } from '@plugcore/core';
 import { HTTPMethod } from 'fastify';
 import {
 	IControllerOptions, IRegisteredController, IRegsiteredMethod, TMethodOptions, BaiscAuthLoginFn,

@@ -1,5 +1,5 @@
 
-export * from './src/constants/plugdata.constants';
+export * from './src/constants/plugcore.constants';
 export * from './src/constants/reflect-metadata.constants';
 export * from './src/constants/string.constants';
 

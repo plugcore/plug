@@ -1,4 +1,4 @@
-import { ClassParameter, ObjectUtils, Service, TypeChecker } from '@plugdata/core';
+import { ClassParameter, ObjectUtils, Service, TypeChecker } from '@plugcore/core';
 import { IControllerOptions, TMethodOptions } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 

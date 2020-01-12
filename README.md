@@ -2,9 +2,9 @@
 
 # Pludata.io Framework
 
-![Plugdata.io](_docs/logo.png?raw=true "Plugdata.io")
+![plugcore.com](_docs/logo.png?raw=true "plugcore.com")
 
-This repository contains all the main node modules used in Plugdata.io products and is aimed to be help anybody who wants to easily create robust and performant web applications.
+This repository contains all the main node modules used in plugcore.com products and is aimed to be help anybody who wants to easily create robust and performant web applications.
 
 # Philosophy
 
@@ -23,7 +23,7 @@ This repository contains all the main node modules used in Plugdata.io products 
 
 Bellown is shown a list of all node modules with the real npm package, a little description and links to useful information.
 
-## @plugdata/core
+## @plugcore/core
 
 Contains the main functionality that any Node JS might need, some of it would be:
 
@@ -43,7 +43,7 @@ Contains the main functionality that any Node JS might need, some of it would be
 
 - __Tests__: It's a simple testing library that uses [Node JS assert library](https://nodejs.org/api/assert.html) for it's validation and is based on Typescript classes with an integration to our dependency injection system. It's not aimed to be a full featured testing library as the already existing ones, and we know it's a personal choice of every team, so we offer it just a possibility for simple tests, and we use it for all our internal testing, so it will also have integration with other packages such as `data` and `web`.
 
-## @plugdata/data
+## @plugcore/data
 
 This package will contain all the functionality relative to data storage and query system. The amount of supported databases will increase depending on demand, but at the beginning it will cover the most used ones.
 
@@ -51,7 +51,7 @@ This package will contain all the functionality relative to data storage and que
 
 - __Impration/exportation__: Uses TypeORMs utils to create JSONs for data import/export between different systems, being able to select which tables and with query support.
 
-## @plugdata/web
+## @plugcore/web
 
 In this package we can find everything that is related to web connectivity
 

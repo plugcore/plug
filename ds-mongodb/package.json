@@ -1,27 +1,27 @@
 {
-	"name": "@plugdata/mongodb",
+	"name": "@plugcore/mongodb",
 	"version": "0.2.0",
-	"description": "Plugdata.io Mongodb datasource",
+	"description": "plugcore.com Mongodb datasource",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/plugdata/plugdata-framework.git"
+		"url": "git+https://github.com/plugcore/plugcore-framework.git"
 	},
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/plugdata/plugdata-framework/issues"
+		"url": "https://github.com/plugcore/plugcore-framework/issues"
 	},
-	"homepage": "https://github.com/plugdata/plugdata-framework/data/#readme",
+	"homepage": "https://github.com/plugcore/plugcore-framework/data/#readme",
 	"scripts": {
 		"build": "node ../node_modules/typescript/bin/tsc & cd .. & node _scripts/build-ds-mongodb.js",
-		"test": "node node_modules/@plugdata/core/src/test/test.cli.js test ./dist/test ./test/configuration | node ../node_modules/pino-pretty/bin.js -t -i pid,hostname,name",
-		"test:info": "node node_modules/@plugdata/core/src/test/test.cli.js info ./dist/test",
+		"test": "node node_modules/@plugcore/core/src/test/test.cli.js test ./dist/test ./test/configuration | node ../node_modules/pino-pretty/bin.js -t -i pid,hostname,name",
+		"test:info": "node node_modules/@plugcore/core/src/test/test.cli.js info ./dist/test",
 		"lint": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts",
 		"lint:fix": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts --fix"
 	},
 	"dependencies": {
-		"@plugdata/core": "file:../core/publish",
+		"@plugcore/core": "file:../core/publish",
 		"mongodb": "^3.3.0-beta2"
 	},
 	"devDependencies": {

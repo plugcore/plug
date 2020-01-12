@@ -1,4 +1,4 @@
-import { AfterTests, BeforeTests, Container, AsserterService, Test, TestService, HttpDatasource } from '@plugdata/core';
+import { AfterTests, BeforeTests, Container, AsserterService, Test, TestService, HttpDatasource } from '@plugcore/core';
 import { RoutesInitializer } from '../../src/routes/routes.initializer';
 import { RoutesService } from '../../src/routes/routes.service';
 import { ControllerExample } from './examples/controller.example';

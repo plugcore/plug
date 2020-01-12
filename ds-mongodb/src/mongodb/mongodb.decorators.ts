@@ -1,4 +1,4 @@
-import { IServiceArgs } from '@plugdata/core';
+import { IServiceArgs } from '@plugcore/core';
 
 /**
  * Injects a `MongoDbConnection` instance with a connection configured inside

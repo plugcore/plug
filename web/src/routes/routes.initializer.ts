@@ -3,7 +3,7 @@ import {
 	ArrayUtils, ClassParameter, Configuration, Container, InjectConfiguration,
 	InjectLogger, Logger, ObjectUtils, ObjectValidatorUtils, OnEvent,
 	PublicEvents, Service, ValidatorUtils
-} from '@plugdata/core';
+} from '@plugcore/core';
 import { RouteSchema, Plugin } from 'fastify';
 import * as fastifyAuth from 'fastify-auth';
 import * as oas from 'fastify-oas';

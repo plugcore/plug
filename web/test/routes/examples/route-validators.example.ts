@@ -1,4 +1,4 @@
-import { IsString, Required, IsNumber, IsBoolean } from '@plugdata/core';
+import { IsString, Required, IsNumber, IsBoolean } from '@plugcore/core';
 
 export class ExampleParams {
 

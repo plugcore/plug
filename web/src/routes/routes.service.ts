@@ -1,4 +1,4 @@
-import { Configuration, InjectConfiguration, InjectLogger, Logger, Service } from '@plugdata/core';
+import { Configuration, InjectConfiguration, InjectLogger, Logger, Service } from '@plugcore/core';
 import * as fastify from 'fastify';
 import { FastifyInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';

@@ -1,4 +1,4 @@
-import { Logger } from '@plugdata/core';
+import { Logger } from '@plugcore/core';
 import { Controller, Delete, Get, Head, Options, Patch, Post, Put } from '../../../src/routes/routes.decorators';
 import { Request } from '../../../src/routes/routes.shared';
 import { ExampleHeaders, ExampleParams, ExampleRequest, ExampleResponse } from './route-validators.example';

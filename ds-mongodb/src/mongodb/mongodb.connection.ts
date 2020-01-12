@@ -1,4 +1,4 @@
-import { ClassParameter, Configuration, InjectConfiguration, Logger, ValidatorUtils, OnInit, Service, TypeChecker } from '@plugdata/core';
+import { ClassParameter, Configuration, InjectConfiguration, Logger, ValidatorUtils, OnInit, Service, TypeChecker } from '@plugcore/core';
 import { Collection, Db, MongoClient } from 'mongodb';
 import { IGetCollectionOptions } from './mongodb.interfaces';
 

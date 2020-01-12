@@ -1,8 +1,8 @@
-![Plugdata.io](../_docs/logo.png?raw=true "Plugdata.io")
+![plugcore.com](../_docs/logo.png?raw=true "plugcore.com")
 
-# @plugdata/core
+# @plugcore/core
 
-[![https://nodei.co/npm/@plugdata/core.png?downloads=false&downloadRank=false&stars=false](https://nodei.co/npm/@plugdata/core.png?downloads=false&downloadRank=false&stars=false)](https://www.npmjs.com/package/@plugdata/core)
+[![https://nodei.co/npm/@plugcore/core.png?downloads=false&downloadRank=false&stars=false](https://nodei.co/npm/@plugcore/core.png?downloads=false&downloadRank=false&stars=false)](https://www.npmjs.com/package/@plugcore/core)
 
 Contains the main functionality that any Node JS might need, some of it would be:
 
@@ -22,5 +22,5 @@ Contains the main functionality that any Node JS might need, some of it would be
 
 - __Tests__: It's a simple testing library that uses [Node JS assert library](https://nodejs.org/api/assert.html) for it's validation and is based on Typescript classes with an integration to our dependency injection system. It's not aimed to be a full featured testing library as the already existing ones, and we know it's a personal choice of every team, so we offer it just a possibility for simple tests, and we use it for all our internal testing, so it will also have integration with other packages such as `data` and `web`.
 
-# Other Plugdata packages
-See more at [this link](https://github.com/plugdata/plugdata-framework).
+# Other plugcore packages
+See more at [this link](https://github.com/plugcore/plugcore-framework).

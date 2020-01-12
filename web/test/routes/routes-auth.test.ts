@@ -1,4 +1,4 @@
-import { AfterTests, BeforeTests, Container, HttpDatasource, Logger, AsserterService, Test, TestService, TestUtils } from '@plugdata/core';
+import { AfterTests, BeforeTests, Container, HttpDatasource, Logger, AsserterService, Test, TestService, TestUtils } from '@plugcore/core';
 import { decode } from 'jwt-simple';
 import { RoutesInitializer } from '../../src/routes/routes.initializer';
 import { RoutesService } from '../../src/routes/routes.service';

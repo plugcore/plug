@@ -1,17 +1,17 @@
 {
-	"name": "@plugdata/core",
+	"name": "@plugcore/core",
 	"version": "0.2.0",
-	"description": "Plugdata.io core utilities",
+	"description": "plugcore.com core utilities",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/plugdata/plugdata-framework.git"
+		"url": "git+https://github.com/plugcore/plugcore-framework.git"
 	},
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/plugdata/plugdata-framework/issues"
+		"url": "https://github.com/plugcore/plugcore-framework/issues"
 	},
-	"homepage": "https://github.com/plugdata/plugdata-framework/tree/master/core#readme",
+	"homepage": "https://github.com/plugcore/plugcore-framework/tree/master/core#readme",
 	"keywords": [
 		"di",
 		"typescript-di",

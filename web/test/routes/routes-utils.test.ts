@@ -1,4 +1,4 @@
-import { TestService, AsserterService, Test } from '@plugdata/core';
+import { TestService, AsserterService, Test } from '@plugcore/core';
 import { RoutesUtils } from '../../src/routes/routes.utils';
 import { ControllerExample } from './examples/controller.example';
 

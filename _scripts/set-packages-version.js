@@ -41,8 +41,8 @@ async function setPackagesVersion() {
 		mainPackageJson.version = newVersion;
 
 		// Published versions must be without file:...
-		webPublishPackageJson.dependencies['@plugdata/core'] = newVersion;
-		dataPublishPackageJson.dependencies['@plugdata/core'] = newVersion;
+		webPublishPackageJson.dependencies['@plugcore/core'] = newVersion;
+		dataPublishPackageJson.dependencies['@plugcore/core'] = newVersion;
 
 
 		// JSON files updates

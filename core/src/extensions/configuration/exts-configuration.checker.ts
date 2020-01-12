@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { PlugdataConstants } from '../../constants/plugdata.constants';
+import { PlugConstants } from '../../constants/plugcore.constants';
 import { Service } from '../../dependecy-injection/di.decorators';
 import { OnInit } from '../../dependecy-injection/di.shared';
 import { FsUtils } from '../../io/fs.utils';
@@ -37,7 +37,7 @@ export class ExtsConfigurationChecker implements OnInit {
 
 
 		let extCfg: ExtConfiguration = new DefaultExtConfiguration();
-		const jsonPath = join(extBaseFolder, PlugdataConstants.pcmsCfgJson);
+		const jsonPath = join(extBaseFolder, PlugConstants.pcmsCfgJson);
 		const extJsonCfg = JSON.parse(await FsUtils.loadFile(jsonPath));
 
 		extCfg = ObjectUtils.deepMerge(extCfg, extJsonCfg);

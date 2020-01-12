@@ -7,14 +7,14 @@ export interface MongodbConnection {
 	options?: Omit<MongoClientOptions, 'logger' | 'loggerLevel'>;
 }
 
-export interface PlugDataConfiguration {
+export interface plugcoreConfiguration {
 	defaultConnection: MongodbConnection;
 	connections?: MongodbConnection[];
 }
 
-declare module '@plugdata/core/types/src/configuration/configuration.interfaces' {
+declare module '@plugcore/core/types/src/configuration/configuration.interfaces' {
 	interface Configuration {
-		data?: PlugDataConfiguration;
+		data?: plugcoreConfiguration;
 	}
 }
 

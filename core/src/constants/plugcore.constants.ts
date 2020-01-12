@@ -1,5 +1,5 @@
 
-export class PlugdataConstants {
+export class PlugConstants {
 
 	// DI Names
 

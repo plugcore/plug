@@ -1,8 +1,8 @@
 __We are still working in this library. COMING SOON__
 
-![Plugdata.io](../_docs/logo.png?raw=true "Plugdata.io")
+![plugcore.com](../_docs/logo.png?raw=true "plugcore.com")
 
-## @plugdata/web
+## @plugcore/web
 
 In this package we can find everything that is related to web connectivity
 

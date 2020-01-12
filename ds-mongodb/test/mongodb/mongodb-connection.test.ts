@@ -1,4 +1,4 @@
-import { TestService, AsserterService, BeforeTests, Container, Test, AfterTests, ProjectConfigurationService, Configuration } from '@plugdata/core';
+import { TestService, AsserterService, BeforeTests, Container, Test, AfterTests, ProjectConfigurationService, Configuration } from '@plugcore/core';
 import { Collection } from '../../src/mongodb/mongodb.interfaces';
 import { DbCollectionExample } from './examples/dbcollection.example';
 import { MongoDbConnection } from '../../src/mongodb/mongodb.connection';

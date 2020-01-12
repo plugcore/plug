@@ -1,7 +1,7 @@
 {
-	"name": "plugdata-framework",
+	"name": "plugcore-framework",
 	"version": "0.2.0",
-	"description": "![Plugdata.io](_docs/logo.png?raw=true \"Plugdata.io\")",
+	"description": "![plugcore.com](_docs/logo.png?raw=true \"plugcore.com\")",
 	"main": ".eslintrc.js",
 	"scripts": {
 		"postinstall": "cd core & npm i & npm run build & cd ../data & npm i & npm run build & cd ../web & npm i & npm run build",
@@ -37,15 +37,15 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/plugdata/plugdata-framework.git"
+		"url": "git+https://github.com/plugcore/plugcore-framework.git"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/plugdata/plugdata-framework/issues"
+		"url": "https://github.com/plugcore/plugcore-framework/issues"
 	},
-	"homepage": "https://github.com/plugdata/plugdata-framework#readme",
+	"homepage": "https://github.com/plugcore/plugcore-framework#readme",
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^1.13.0",
 		"@typescript-eslint/parser": "^1.13.0",

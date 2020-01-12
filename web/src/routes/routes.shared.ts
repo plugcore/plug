@@ -1,4 +1,4 @@
-import { ClassParameter, IsBoolean, IServiceArgs, IsNumber, IsString, Required } from '@plugdata/core';
+import { ClassParameter, IsBoolean, IServiceArgs, IsNumber, IsString, Required } from '@plugcore/core';
 import {
 	DefaultParams, DefaultQuery, FastifyReply, FastifyRequest, HTTPMethod, RequestHandler, RouteShorthandOptions, DefaultHeaders
 } from 'fastify';
@@ -28,7 +28,7 @@ export interface IRegsiteredMethod {
 
 /**
  * This object represents a list of validators for the route.
- * All properties are ment to be class decorated with _@plugdata/core_
+ * All properties are ment to be class decorated with _@plugcore/core_
  * validator decorators. These could be `@IsString()`, `@IsNumber()`,
  * `@IsBoolean()`, `@IsArray()`, `@IsObject()` or `@Required()`
  */

@@ -1,4 +1,4 @@
-import { InjectLogger, Logger, Service } from '@plugdata/core';
+import { InjectLogger, Logger, Service } from '@plugcore/core';
 import { BasicAuthLogin, CustomAuth, JwtLogin } from '../../../src/routes/routes.decorators';
 import { Request } from '../../../src/routes/routes.shared';
 
