@@ -1,21 +1,22 @@
-import { TestService, AsserterService, BeforeTests, Container, Test, AfterTests, ProjectConfigurationService, Configuration } from '@plugcore/core';
+import { AfterTests, AsserterService, BeforeTests, Test, TestService } from '@plugcore/core';
 import { Collection } from '../../src/mongodb/mongodb.interfaces';
 import { DbCollectionExample } from './examples/dbcollection.example';
-import { MongoDbConnection } from '../../src/mongodb/mongodb.connection';
+import { MongoDbDatasource } from '../../src/mongodb/mongodb.datasource';
 
-@TestService()
+@TestService({ connection: 'testdb' })
 export class MongoDbConnectionTest extends AsserterService {
 
 	private collection: Collection<DbCollectionExample>;
-	private mongoDbConnection: MongoDbConnection;
+
+	constructor(
+		private mongoDbConnection: MongoDbDatasource
+	) {
+		super();
+	}
 
 	@BeforeTests()
 	public async before() {
-		const configuration = await Container.get<Configuration>(<any>ProjectConfigurationService);
-		if (configuration.data) {
-			this.mongoDbConnection = await Container.get<MongoDbConnection>(MongoDbConnection);
-			this.collection = await this.mongoDbConnection.getCollection(DbCollectionExample);
-		}
+		this.collection = await this.mongoDbConnection.getCollection(DbCollectionExample);
 	}
 
 	@AfterTests()
@@ -26,24 +27,16 @@ export class MongoDbConnectionTest extends AsserterService {
 	@Test()
 	public async connectionTest() {
 
-		// If there is no collection it means there was no configuration
-		// In order to properly test this you have to create the file:
-		// data/test/configuration/configuration.test.json
-		// With a valid mongodb configuration defined in IDataConfiguration
-		if (this.collection) {
-			const testData: DbCollectionExample = {
-				testS: '1',
-				testN: 2
-			};
-			await this.collection.insertOne(testData);
-			const findOneResult = await this.collection.findOne(testData);
-			this.assert.ok(findOneResult);
-			await this.collection.deleteOne(testData);
-			const findOneResultAfterDelete = await this.collection.findOne(testData);
-			this.assert.ok(!findOneResultAfterDelete);
-		} else {
-			this.assert.ok(true);
-		}
+		const testData: DbCollectionExample = {
+			testS: '1',
+			testN: 2
+		};
+		await this.collection.insert(testData);
+		const findOneResult = await this.collection.findOne(testData);
+		this.assert.ok(findOneResult);
+		await this.collection.remove(testData);
+		const findOneResultAfterDelete = await this.collection.findOne(testData);
+		this.assert.ok(!findOneResultAfterDelete);
 
 	}
 

@@ -1,44 +1,40 @@
-import { ClassParameter, Configuration, InjectConfiguration, Logger, ValidatorUtils, OnInit, Service, TypeChecker } from '@plugcore/core';
+import {
+	ClassParameter, Configuration, DataSource, InjectConfiguration,
+	Logger, OnInit, TypeChecker, ValidatorUtils, InjectConnection
+} from '@plugcore/core';
 import { Collection, Db, MongoClient } from 'mongodb';
 import { IGetCollectionOptions } from './mongodb.interfaces';
+import { MongodbDsConfiguration } from './mongodb.configuration';
 
-@Service()
-export class MongoDbConnection implements OnInit {
+@DataSource({ type: 'mongodb' })
+export class MongoDbDatasource implements OnInit {
 
+	private inMemoryDb = 'nedb';
+	private mongodbConfiguration: MongodbDsConfiguration;
 	private dbConnection: Db;
-	private mongoClient: Omit<MongoClient, ''>;
+	private mongoClient: MongoClient;
 
-	private connectionName?: string;
 	constructor(
 		private log: Logger,
 		@InjectConfiguration() private configuration: Configuration,
-	) { }
+		@InjectConnection() private connection?: string
+	) {
+		if (this.connection) {
+			this.mongodbConfiguration = this.configuration.getConnectionConfiguration(
+				MongodbDsConfiguration, this.connection);
+		}
+	}
 
 	public async onInit() {
-		if (this.configuration.data) {
+		if (this.mongodbConfiguration && this.mongodbConfiguration.url !== this.inMemoryDb) {
 			try {
-				if (this.connectionName) {
-					const connection = (this.configuration.data.connections || []).find(c => c.name === this.connectionName);
-					if (connection) {
-						this.mongoClient = await MongoClient.connect(connection.url, Object.assign({
-							useNewUrlParser: true
-						}, connection.options));
-						this.dbConnection = this.mongoClient.db(connection.databaseName);
-					} else {
-						this.log.error('Mongodb connection not found in configuration: ' + this.connectionName);
-					}
-				} else {
-					this.mongoClient = await MongoClient.connect(
-						this.configuration.data.defaultConnection.url, Object.assign({
-							useNewUrlParser: true
-						}, this.configuration.data.defaultConnection.options));
-					this.dbConnection = this.mongoClient.db(this.configuration.data.defaultConnection.databaseName);
-				}
+				this.mongoClient = await MongoClient.connect(this.mongodbConfiguration.url, Object.assign({
+					useNewUrlParser: true
+				}, this.mongodbConfiguration.options));
+				this.dbConnection = this.mongoClient.db(this.mongodbConfiguration.databaseName);
 			} catch (error) {
 				this.log.error('Error while connecting to MongoDB', error);
 			}
-		} else {
-			this.log.error('No database configuration has been found');
 		}
 	}
 
@@ -51,7 +47,16 @@ export class MongoDbConnection implements OnInit {
 		collection: ClassParameter<T> | string, options?: IGetCollectionOptions<T>
 	): Promise<Collection<T>> {
 
+		if (!this.mongodbConfiguration) {
+			this.log.error('No database configuration has been found');
+		}
+		if (this.mongodbConfiguration.url === this.inMemoryDb) {
+			const inMemoryDbClass = require(this.inMemoryDb);
+			return new Proxy(new inMemoryDbClass(), new NedbProxy());
+		}
+
 		const collectionName = TypeChecker.isString(collection) ? collection : collection.name;
+
 		const collectionFromConnection: Collection<T> = await (new Promise((resolve, reject) => {
 			if (!this.dbConnection.collection) {
 				reject('No database connection has been found, check database configuration for more info');
@@ -111,7 +116,50 @@ export class MongoDbConnection implements OnInit {
 	}
 
 	public async closeConnection(force?: boolean) {
-		return this.mongoClient.close(force);
+		if (this.mongodbConfiguration && this.mongodbConfiguration.url !== this.inMemoryDb) {
+			return this.mongoClient.close(force);
+		}
 	}
 
+
+}
+
+//
+// Nedb Implementation
+//
+
+const nedbMethodTranslator: Record<string, string> = {
+	'insertOne': 'insert',
+	'deleteOne': 'remove',
+};
+
+/**
+ * Promisifies all the methods
+ */
+class NedbProxy implements ProxyHandler<any> {
+	get(target: any, p: PropertyKey) {
+
+		const propKey = nedbMethodTranslator[p.toString()] ?
+			nedbMethodTranslator[p.toString()] : p;
+
+		const origMethod = target[propKey];
+
+		if (propKey === 'then') {
+			return false;
+		}
+
+		return (...args: any[]) => {
+			return new Promise((resolve, reject) => {
+				const newArgs = args || [];
+				newArgs.push((err?: Error, result?: any) => {
+					if (err) {
+						reject(err);
+					} else {
+						resolve(result);
+					}
+				});
+				origMethod.apply(target, newArgs);
+			});
+		};
+	}
 }

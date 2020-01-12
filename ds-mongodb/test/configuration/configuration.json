@@ -1,5 +1,12 @@
 {
 	"log": {
 		"level": "debug"
+	},
+	"connections": {
+		"testdb": {
+			"type": "mongodb",
+			"url": "nedb",
+			"databaseName": "test"
+		}
 	}
 }
