@@ -4,7 +4,7 @@ const { join } = require('path');
 async function buildData() {
 
 	// Var declarations
-	const projectFolder = join(__dirname, '..', 'data');
+	const projectFolder = join(__dirname, '..', 'ds-mongodb');
 	await buildProject(projectFolder);
 
 }
