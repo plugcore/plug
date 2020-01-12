@@ -277,7 +277,7 @@ export class TestManager {
 			ConsoleColors.reset
 		);
 		console.log(
-			`Sucessful tests: ${errorTests === 0 ? ConsoleColors.fgGreen : ConsoleColors.fgYellow}${successTests}`,
+			`Successful tests: ${errorTests === 0 ? ConsoleColors.fgGreen : ConsoleColors.fgYellow}${successTests}`,
 			ConsoleColors.reset
 		);
 		console.log(
