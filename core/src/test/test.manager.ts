@@ -247,7 +247,7 @@ export class TestManager {
 			const successMethods = numOfTests - numOfTestsWithErrors;
 			console.log(
 				`${classPrefix}${classStat.className}: ` +
-				`( ${successMethods} sucessful tests ) and ( ${numOfTestsWithErrors} test with errors )`,
+				`( ${successMethods} successful tests ) and ( ${numOfTestsWithErrors} test with errors )`,
 				ConsoleColors.reset
 			);
 
@@ -261,7 +261,7 @@ export class TestManager {
 					ConsoleColors.fgRed;
 				console.log(
 					`${methodPrefix}- ${methodStat.methodName}: ` +
-					`( ${methodStat.successAsserts} sucessful assertions ) and ( ${methodStat.errorAsserts} assertions with errors )`,
+					`( ${methodStat.successAsserts} successful assertions ) and ( ${methodStat.errorAsserts} assertions with errors )`,
 					ConsoleColors.reset
 				);
 			}
