@@ -1,9 +1,9 @@
 import { join } from 'path';
-import { Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 
-@TestClass()
-export class InitTest extends PlugTest {
+@TestService()
+export class InitTest extends AsserterService {
 
 	private readonly initTestFolder = join(__dirname, '..', '..', '..', 'test', 'demo-project');
 

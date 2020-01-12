@@ -1,9 +1,9 @@
-import { TestClass, PlugTest, Test } from '@plugdata/core';
+import { TestService, AsserterService, Test } from '@plugdata/core';
 import { RoutesUtils } from '../../src/routes/routes.utils';
 import { ControllerExample } from './examples/controller.example';
 
-@TestClass()
-export class RoutesUtilsTest extends PlugTest {
+@TestService()
+export class RoutesUtilsTest extends AsserterService {
 
 	@Test()
 	public getAllControllers() {

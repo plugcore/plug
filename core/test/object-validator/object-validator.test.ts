@@ -3,10 +3,10 @@ import { Container } from '../../src/dependecy-injection/di.container';
 import { FsUtils } from '../../src/io/fs.utils';
 import { ObjectValidator } from '../../src/object-validator/object-validator.service';
 import { BeforeTests, Test } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { AsserterService } from '../../src/test/test.shared';
 import { MyCustomModel } from './object-validator.models';
 
-export class ObjectValidatorDecorators extends PlugTest {
+export class ObjectValidatorDecorators extends AsserterService {
 
 	private objectValidator: ObjectValidator;
 	private jsonFileSchema: Record<string, any>;

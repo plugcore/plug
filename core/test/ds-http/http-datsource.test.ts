@@ -1,6 +1,6 @@
 
-import { Test, TestClass, BeforeTests } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService, BeforeTests } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { HttpDatasource } from '../../src/ds-http/http.datasource';
 import { Container } from '../../src/dependecy-injection/di.container';
 
@@ -15,8 +15,8 @@ interface IMockPostAction {
 	id: number;
 }
 
-@TestClass()
-export class HttpDatasourceTest extends PlugTest {
+@TestService()
+export class HttpDatasourceTest extends AsserterService {
 
 	private readonly getEx = '/posts';
 	private readonly postEx = '/posts';

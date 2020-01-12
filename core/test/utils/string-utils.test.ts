@@ -1,9 +1,9 @@
-import { Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { StringUtils } from '../../src/utils/string.utils';
 
-@TestClass()
-export class StringUtilsTest extends PlugTest {
+@TestService()
+export class StringUtilsTest extends AsserterService {
 
 	@Test()
 	public objToStr() {

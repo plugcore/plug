@@ -31,7 +31,7 @@ export class ControllerExample {
 		routeSchemas: {
 			request: ExampleRequest,
 			response: ExampleResponse,
-			parameters: ExampleParams,
+			query: ExampleParams,
 			headers: ExampleHeaders
 		},
 		onRequest: ControllerExample.prototype.onRequest,

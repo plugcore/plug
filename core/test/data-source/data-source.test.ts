@@ -1,11 +1,11 @@
-import { TestClass, Test, BeforeTests } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { TestService, Test, BeforeTests } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { DataSourceExample } from './data-source-example';
 import { Container } from '../../src/dependecy-injection/di.container';
 import { DatasourceUtils } from '../../src/data-source/data-source.utils';
 
-@TestClass()
-export class DatasourceTest extends PlugTest {
+@TestService()
+export class DatasourceTest extends AsserterService {
 
 	private dataSourceExample: DataSourceExample;
 

@@ -13,7 +13,7 @@ export class RoutesUtils {
 
 	private static controllerList: IRegisteredController[] = [];
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	public static basicAuthLoginFn: BaiscAuthLoginFn = async (user: string, passwotd: string) => {
+	public static basicAuthLoginFn: BaiscAuthLoginFn = async (user: string, password: string, request: Request) => {
 		throw new Error('Basic auth login not implemented');
 	};
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

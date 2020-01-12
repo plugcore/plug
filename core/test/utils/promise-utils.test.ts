@@ -1,9 +1,9 @@
-import { Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { PromiseUtils } from '../../src/utils/promise.utils';
 
-@TestClass()
-export class PromiseUtilsTest extends PlugTest {
+@TestService()
+export class PromiseUtilsTest extends AsserterService {
 
 	@Test()
 	public async execInBatch() {

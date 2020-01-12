@@ -110,8 +110,6 @@ export class RoutesInitializer {
 			this.jwtConfiguration.privateKey = this.configuration.web.auth.jwtPrivateKey || this.jwtConfiguration.privateKey;
 			this.jwtConfiguration.expiration = this.configuration.web.auth.jwtExpiration || this.jwtConfiguration.expiration;
 
-			console.log('SETTT', this.jwtConfiguration);
-
 			// Other vars
 			const loginUrl = this.configuration.web.auth.jwtLoginPath || '/auth/login';
 
@@ -314,8 +312,8 @@ export class RoutesInitializer {
 							500: ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel)
 						};
 					}
-					if (routeSchemas.parameters) {
-						schema.querystring = ObjectValidatorUtils.generateJsonSchema(routeSchemas.parameters);
+					if (routeSchemas.query) {
+						schema.querystring = ObjectValidatorUtils.generateJsonSchema(routeSchemas.query);
 					}
 					if (routeSchemas.urlParameters) {
 						schema.params = ObjectValidatorUtils.generateJsonSchema(routeSchemas.urlParameters);
@@ -396,10 +394,6 @@ export class RoutesInitializer {
 						securityHamdlers.push(plugin.customAuth);
 					}
 
-					if (url === '/secured-path2' && method.httpMethod === 'DELETE') {
-						console.log(url, method.httpMethod, securityHamdlers);
-					}
-
 					if (
 						!(securityTypes.length === 1 && securityTypes[0] === 'none') &&
 						securityHamdlers.length > 0 && this.securityEnabled
@@ -452,34 +446,23 @@ export class RoutesInitializer {
 
 	private async verifyJwt(request: Request) {
 
-		console.log('verifyJwt', request.headers);
-		try {
-			const token = request.headers['authorization'] || request.headers['Authorization'];
-			if (ValidatorUtils.isBlank(token)) {
-				throw new Error('No JWT Token found in header "Authorization"');
-			}
-			const splitedToken = token.split(' ');
-			if (splitedToken.length < 2 || splitedToken.length > 2 || splitedToken[0] !== 'Bearer') {
-				throw new Error('Invalid value of header "Authorization", it should be: "Bearer xxxxx"');
-			}
-			const jwt = splitedToken[1];
-			const jwtPayload = decode(jwt, this.jwtConfiguration.privateKey, undefined, this.jwtConfiguration.algorithm);
-
-			request.jwtPayload = jwtPayload;
-			console.log('END2222JWT', jwtPayload);
-
-
-		} catch (error) {
-
-			console.log('ENDJWT', this.jwtConfiguration, error);
-			throw error;
+		const token = request.headers['authorization'] || request.headers['Authorization'];
+		if (ValidatorUtils.isBlank(token)) {
+			throw new Error('No JWT Token found in header "Authorization"');
 		}
+		const splitedToken = token.split(' ');
+		if (splitedToken.length < 2 || splitedToken.length > 2 || splitedToken[0] !== 'Bearer') {
+			throw new Error('Invalid value of header "Authorization", it should be: "Bearer xxxxx"');
+		}
+		const jwt = splitedToken[1];
+		const jwtPayload = decode(jwt, this.jwtConfiguration.privateKey, undefined, this.jwtConfiguration.algorithm);
+
+		request.jwtPayload = jwtPayload;
 
 	}
 
 	private async verifyUserAndPassword(request: Request, respose: Response) {
 
-		console.log('verifyUserAndPassword', request.headers);
 		const token = request.headers['authorization'] || request.headers['Authorization'];
 		if (ValidatorUtils.isBlank(token)) {
 			respose.header('WWW-Authenticate', 'Basic realm="Access to the server", charset="UTF-8"');
@@ -496,7 +479,7 @@ export class RoutesInitializer {
 			throw new Error('Invalid basic auth value, it should be: "xxx:yyy"');
 		}
 
-		const result = await RoutesUtils.basicAuthLoginFn(userAndPasswordSplited[0], userAndPasswordSplited[1]);
+		const result = await RoutesUtils.basicAuthLoginFn(userAndPasswordSplited[0], userAndPasswordSplited[1], request);
 		if (!result) {
 			throw new Error('Invalid credentials');
 		}

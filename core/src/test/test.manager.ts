@@ -2,8 +2,8 @@ import { FsUtils } from '../io/fs.utils';
 import { ConsoleColors } from '../logs/log.colors';
 import { Asserter } from './test.asserter';
 import {
-	ITestClass, ITestClassArgs, ITestMethod, ITestMethodArgs, ITestStats,
-	TestTypeDetector, TTestClassItFunc, TTestMethodItFunc
+	ITestService, ITestServiceArgs, ITestMethod, ITestMethodArgs, ITestStats,
+	TestTypeDetector, TTestServiceItFunc, TTestMethodItFunc
 } from './test.shared';
 import { isAbsolute, join } from 'path';
 import { Configuration } from '../configuration/configuration.interfaces';
@@ -12,11 +12,12 @@ import { Container } from '../dependecy-injection/di.container';
 import { defaultProjectConfiguration } from '../configuration/configuration.default';
 import { ProjectConfigurationService } from '../configuration/configuration.service';
 import { ObjectValidator } from '../object-validator/object-validator.service';
+import { ClassParameter } from '../utils/typescript.utils';
 
 export class TestManager {
 
-	// Contains all the registered test classes anotated with @TestClass
-	private static testClasses: ITestClass[] = [];
+	// Contains all the registered test classes anotated with @TestService
+	private static testClasses: ITestService[] = [];
 
 	// Contains a temporal version for the methods until the antation from class executes
 	private static tmpMethods: { [key: string /* Class name */]: ITestMethod[] } = {};
@@ -63,7 +64,7 @@ export class TestManager {
 
 		// 6: Execute all tests at the same time
 		await Promise.all(
-			this.testClasses.map(tc => this.executeTestClass(tc, testOnlyClasses))
+			this.testClasses.map(tc => this.executeTestService(tc, testOnlyClasses))
 		);
 
 		// 7: Print stats
@@ -84,7 +85,7 @@ export class TestManager {
 	// Public Decorator methods
 	//
 
-	public static registerTestClass(clazz: Function, decoratorArgs: ITestClassArgs) {
+	public static registerTestService(clazz: ClassParameter<any>, decoratorArgs: ITestServiceArgs) {
 		this.testClasses.push({
 			clazz,
 			name: clazz.name,
@@ -121,7 +122,7 @@ export class TestManager {
 
 	public static assertErrorOnTest(testClass: string, testMethod: string) {
 
-		const testClassStat = this.getTestClassStat(testClass);
+		const testClassStat = this.getTestServiceStat(testClass);
 		const testClassMethod = this.getTestMethodStat(testClassStat, testMethod);
 		testClassMethod.errorAsserts++;
 
@@ -129,7 +130,7 @@ export class TestManager {
 
 	public static assertSuccessOnTest(testClass: string, testMethod: string) {
 
-		const testClassStat = this.getTestClassStat(testClass);
+		const testClassStat = this.getTestServiceStat(testClass);
 		const testClassMethod = this.getTestMethodStat(testClassStat, testMethod);
 		testClassMethod.successAsserts++;
 
@@ -137,30 +138,30 @@ export class TestManager {
 
 	public static unexpectedAssertErrorOnTestMethod(testClass: string, testMethod: string) {
 
-		const testClassStat = this.getTestClassStat(testClass);
+		const testClassStat = this.getTestServiceStat(testClass);
 		const testClassMethod = this.getTestMethodStat(testClassStat, testMethod);
 		testClassMethod.unexpectedError = true;
 
 	}
 
-	public static unexpectedAssertErrorOnTestClass(testClass: string) {
+	public static unexpectedAssertErrorOnTestService(testClass: string) {
 
-		const testClassStat = this.getTestClassStat(testClass);
+		const testClassStat = this.getTestServiceStat(testClass);
 		testClassStat.unexpectedError = true;
 
 	}
 
 	public static finishedTestMethod(testClass: string, testMethod: string) {
 
-		const testClassStat = this.getTestClassStat(testClass);
+		const testClassStat = this.getTestServiceStat(testClass);
 		const testClassMethod = this.getTestMethodStat(testClassStat, testMethod);
 		testClassMethod.success = testClassMethod.errorAsserts === 0 && !testClassStat.unexpectedError;
 
 	}
 
-	public static finishedTestClass(testClass: string) {
+	public static finishedTestService(testClass: string) {
 
-		const testClassStat = this.getTestClassStat(testClass);
+		const testClassStat = this.getTestServiceStat(testClass);
 		const testMethodsWithErrors = testClassStat.methods.filter(tm => tm.errorAsserts > 0);
 		testClassStat.success = testMethodsWithErrors.length === 0 && !testClassStat.unexpectedError;
 
@@ -177,7 +178,7 @@ export class TestManager {
 		return FsUtils.loadJsFolder(testFolder, true);
 	}
 
-	private static async iterateOverTests(classFunc: TTestClassItFunc, methodFunc: TTestMethodItFunc, showAll: boolean) {
+	private static async iterateOverTests(classFunc: TTestServiceItFunc, methodFunc: TTestMethodItFunc, showAll: boolean) {
 		const anyHasFocus = this.testClasses.find(testClass => testClass.testThisOnly ||
 			testClass.testMethods.find(tm => tm.testThisOnly)) !== undefined;
 		for (const testClass of this.testClasses) {
@@ -198,7 +199,7 @@ export class TestManager {
 	// Private print methods
 	//
 
-	private static async logTestClass(clazz: ITestClass) {
+	private static async logTestService(clazz: ITestService) {
 		console.log(`${ConsoleColors.fgYellow}${clazz.name}${clazz.testThisOnly ? ' (Focused test)' : ''}`, ConsoleColors.reset);
 	}
 
@@ -212,7 +213,7 @@ export class TestManager {
 		console.log('-- Registered tests');
 		console.log('-------------------------------------------------\n');
 
-		await this.iterateOverTests(this.logTestClass, this.logTestMethod, showAll);
+		await this.iterateOverTests(this.logTestService, this.logTestMethod, showAll);
 
 		console.log('');
 
@@ -294,7 +295,7 @@ export class TestManager {
 	// Private test execution methods
 	//
 
-	private static async executeTestClass(testClass: ITestClass, testOnlyClasses: string[]) {
+	private static async executeTestService(testClass: ITestService, testOnlyClasses: string[]) {
 
 		// Test this class only if there is no focus in any other test o this class is being focused
 		if (testOnlyClasses.length === 0 || testOnlyClasses.includes(testClass.name)) {
@@ -302,7 +303,7 @@ export class TestManager {
 			const promises: Promise<boolean>[] = [];
 			// TODO check how to remove this any
 			const asserter = new Asserter(testClass);
-			const testObj = new (<any>testClass.clazz)();
+			const testObj = await Container.get(testClass.clazz);
 			testObj.assert = asserter;
 
 			// Check if there is a before tests func
@@ -331,7 +332,7 @@ export class TestManager {
 			await Promise.all(promises);
 
 			// Calc stadistics
-			this.finishedTestClass(testClass.name);
+			this.finishedTestService(testClass.name);
 
 			// Check if there is a after tests func
 			if (testClass.afterTestMethods) {
@@ -347,7 +348,7 @@ export class TestManager {
 
 	}
 
-	private static async executeTestMethod(method: ITestMethod, testObj: any, clazz: ITestClass): Promise<boolean> {
+	private static async executeTestMethod(method: ITestMethod, testObj: any, clazz: ITestService): Promise<boolean> {
 		try {
 			await (<Function>testObj[method.methodName])();
 			this.finishedTestMethod(clazz.name, method.methodName);
@@ -366,7 +367,7 @@ export class TestManager {
 	// Private assert methods
 	//
 
-	private static getTestClassStat(testClass: string) {
+	private static getTestServiceStat(testClass: string) {
 		let testClassStats = this.executionStats.find(tc => tc.className === testClass);
 		if (testClassStats) {
 			return testClassStats;

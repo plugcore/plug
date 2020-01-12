@@ -1,9 +1,9 @@
-import { Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { JsStackUtils } from '../../src/utils/js-stack.utils';
 
-@TestClass()
-export class JsStackUtilsTest extends PlugTest {
+@TestService()
+export class JsStackUtilsTest extends AsserterService {
 
 	@Test()
 	public getLastCallFromStack() {

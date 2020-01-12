@@ -1,10 +1,10 @@
-import { TestClass, PlugTest, BeforeTests, Container, Test, AfterTests, ProjectConfigurationService, Configuration } from '@plugdata/core';
+import { TestService, AsserterService, BeforeTests, Container, Test, AfterTests, ProjectConfigurationService, Configuration } from '@plugdata/core';
 import { Collection } from '../../src/mongodb/mongodb.interfaces';
 import { DbCollectionExample } from './examples/dbcollection.example';
 import { MongoDbConnection } from '../../src/mongodb/mongodb.connection';
 
-@TestClass()
-export class MongoDbConnectionTest extends PlugTest {
+@TestService()
+export class MongoDbConnectionTest extends AsserterService {
 
 	private collection: Collection<DbCollectionExample>;
 	private mongoDbConnection: MongoDbConnection;

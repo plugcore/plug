@@ -1,10 +1,11 @@
 import { Asserter } from './test.asserter';
+import { ClassParameter } from '../utils/typescript.utils';
 
 //
 // Public classes
 //
 
-export class PlugTest {
+export class AsserterService {
 	protected assert: Asserter;
 }
 
@@ -21,17 +22,16 @@ export interface IAssertOptions {
 // Interal implementation Interfaces
 //
 
-export interface ITestClassArgs {
+export interface ITestServiceArgs {
 	testThisOnly?: boolean;
-	dependsOn?: Function[];
 }
 
 export interface ITestMethodArgs {
 	testThisOnly?: boolean;
 }
 
-export interface ITestClass {
-	clazz: Function;
+export interface ITestService {
+	clazz: ClassParameter<any>;
 	name: string;
 	testMethods: ITestMethod[];
 	beforeTestMethods: ITestMethod[];
@@ -68,8 +68,8 @@ export interface ITestMethodErrorToIgnore {
 // Types
 //
 
-export type TTestClassItFunc = (clazz: ITestClass) => Promise<void>;
-export type TTestMethodItFunc = (method: ITestMethod, clazz: ITestClass) => Promise<void>;
+export type TTestServiceItFunc = (clazz: ITestService) => Promise<void>;
+export type TTestMethodItFunc = (method: ITestMethod, clazz: ITestService) => Promise<void>;
 
 //
 // Type checkers

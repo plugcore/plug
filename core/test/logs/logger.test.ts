@@ -1,19 +1,16 @@
-import { Container } from '../../src/dependecy-injection/di.container';
-import { BeforeTests, Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
-import { TestLogService } from './testlog.service';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { TestLogConnectionService } from './testlog.connection.service';
+import { TestLogService } from './testlog.service';
 
-@TestClass()
-export class LoggerTest extends PlugTest {
+@TestService()
+export class LoggerTest extends AsserterService {
 
-	public testLogService: TestLogService;
-	public testLogConnectionService: TestLogConnectionService;
-
-	@BeforeTests()
-	public async beforeTests() {
-		this.testLogService = await Container.get(TestLogService);
-		this.testLogConnectionService = await Container.get(TestLogConnectionService);
+	constructor(
+		private testLogService: TestLogService,
+		private testLogConnectionService: TestLogConnectionService
+	) {
+		super();
 	}
 
 	@Test()

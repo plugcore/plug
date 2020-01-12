@@ -1,8 +1,8 @@
-import { Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 
-@TestClass()
-export class FsUtilsTest extends PlugTest {
+@TestService()
+export class FsUtilsTest extends AsserterService {
 
 	@Test()
 	public getAllFilesFromFolder() {

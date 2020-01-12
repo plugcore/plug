@@ -1,9 +1,9 @@
-import { Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { LogUtils } from '../../src/utils/log.utils';
 
-@TestClass()
-export class LogUtilsTest extends PlugTest {
+@TestService()
+export class LogUtilsTest extends AsserterService {
 
 	@Test()
 	public selfAndTotalTimeFromStart() {

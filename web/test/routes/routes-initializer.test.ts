@@ -1,12 +1,12 @@
-import { AfterTests, BeforeTests, Container, PlugTest, Test, TestClass, HttpDatasource } from '@plugdata/core';
+import { AfterTests, BeforeTests, Container, AsserterService, Test, TestService, HttpDatasource } from '@plugdata/core';
 import { RoutesInitializer } from '../../src/routes/routes.initializer';
 import { RoutesService } from '../../src/routes/routes.service';
 import { ControllerExample } from './examples/controller.example';
 import { Controller2Example } from './examples/controller2.example';
 import { ExampleRequest } from './examples/route-validators.example';
 
-@TestClass()
-export class RoutesInitializerTest extends PlugTest {
+@TestService()
+export class RoutesInitializerTest extends AsserterService {
 
 	private httpClient: HttpDatasource;
 	private readonly controller1Path = '/test';
@@ -54,7 +54,7 @@ export class RoutesInitializerTest extends PlugTest {
 		const rPut2 = await this.httpClient.put<any>(this.controller2Path);
 		const rPatch2 = await this.httpClient.patch<any>(this.controller2Path);
 		const rDelete2 = await this.httpClient.delete<any>(this.controller2Path);
-
+		console.log({rPost1, rGet1});
 		this.assert.ok(rGet1.method === 'getTest' && rGet1.test === 1);
 		this.assert.ok(rPost1.success);
 		this.assert.ok(rPut1.method === 'putTest' && rPut1.test === 1);

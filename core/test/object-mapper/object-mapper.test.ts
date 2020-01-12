@@ -1,5 +1,5 @@
-import { BeforeTests, Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { BeforeTests, Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { ObjectMapper } from '../../src/object-mapper/object-mapper.service';
 import { Container } from '../../src/dependecy-injection/di.container';
 import { ObjectMapping, ObjectMappingDefinition } from '../../src/object-mapper/object-mapper.interfaces';
@@ -7,8 +7,8 @@ import { ObjectMapping, ObjectMappingDefinition } from '../../src/object-mapper/
 /**
  * Tests from https://github.com/wankdanker/node-object-mapper
  */
-@TestClass()
-export class ObjectMapperTest extends PlugTest {
+@TestService()
+export class ObjectMapperTest extends AsserterService {
 
 	private objectMapper: ObjectMapper;
 

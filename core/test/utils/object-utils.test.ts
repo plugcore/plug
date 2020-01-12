@@ -1,9 +1,9 @@
-import { Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { ObjectUtils } from '../../src/utils/object.utils';
 
-@TestClass()
-export class ObjectUtilsTest extends PlugTest {
+@TestService()
+export class ObjectUtilsTest extends AsserterService {
 
 	@Test()
 	public deepReduction() {

@@ -1,9 +1,9 @@
-import { Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { ArrayUtils } from '../../src/utils/array.utils';
 
-@TestClass()
-export class ArrayUtilsTest extends PlugTest {
+@TestService()
+export class ArrayUtilsTest extends AsserterService {
 
 	@Test()
 	public append() {

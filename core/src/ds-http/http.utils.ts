@@ -109,7 +109,7 @@ export class HttpUtils {
 								result = dataResponse.read();
 							}
 
-							if (res.statusCode !== 200) {
+							if (`${res.statusCode}`[0] !== '2') {
 								reject(new Error(`Invalid response code: ${res.statusCode}, with response: ${JSON.stringify(result)}`));
 							} else {
 								resolve(result);

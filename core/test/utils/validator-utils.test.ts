@@ -1,9 +1,9 @@
-import { Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { ValidatorUtils } from '../../src/utils/validator.utils';
 
-@TestClass()
-export class ValidatorUtilsTest extends PlugTest {
+@TestService()
+export class ValidatorUtilsTest extends AsserterService {
 
 
 	@Test()

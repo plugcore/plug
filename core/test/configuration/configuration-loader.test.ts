@@ -1,12 +1,12 @@
-import { Test, TestClass, BeforeTests } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService, BeforeTests } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { ConfigurationLoader } from '../../src/configuration/configuration.loader';
 import { join } from 'path';
 import { CustomConfigurationService } from './customconfiguration.service';
 import { Container } from '../../src/dependecy-injection/di.container';
 
-@TestClass()
-export class ConfigurationLoaderTest extends PlugTest {
+@TestService()
+export class ConfigurationLoaderTest extends AsserterService {
 
 	private customConfigurationService: CustomConfigurationService;
 	private readonly testFilesFolder = join(__dirname, '..', '..', '..', 'test', 'configuration', 'test-files');

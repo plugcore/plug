@@ -1,9 +1,9 @@
-import { Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { HttpUtils } from '../../src/ds-http/http.utils';
 
-@TestClass()
-export class HttpUtilsTest extends PlugTest {
+@TestService()
+export class HttpUtilsTest extends AsserterService {
 
 	private readonly getEx = 'jsonplaceholder.typicode.com/posts';
 	private readonly postEx = 'jsonplaceholder.typicode.com/posts';

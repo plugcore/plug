@@ -1,7 +1,7 @@
 import { Container } from '../../src/dependecy-injection/di.container';
 import { DiService } from '../../src/dependecy-injection/di.service';
-import { BeforeTests, Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { BeforeTests, Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { Di1Example } from './examples/di1.example';
 import { Di10Example } from './examples/di10.example';
 import { Di11Example } from './examples/di11.example';
@@ -25,8 +25,8 @@ import { Di20Example } from './examples/di20.example';
 import { Di21Example } from './examples/di21.example';
 import { Di22Example } from './examples/di22.example';
 
-@TestClass()
-export class DiContainerTest extends PlugTest {
+@TestService()
+export class DiContainerTest extends AsserterService {
 
 	private example1: Di1Example;
 	private example2: Di2Example;

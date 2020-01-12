@@ -1,11 +1,11 @@
 import { Container } from '../../src/dependecy-injection/di.container';
 import { EventDispatcher } from '../../src/events/event.dispatcher';
-import { Test, TestClass } from '../../src/test/test.decorators';
-import { PlugTest } from '../../src/test/test.shared';
+import { Test, TestService } from '../../src/test/test.decorators';
+import { AsserterService } from '../../src/test/test.shared';
 import { EventsExample, testEventName } from './examples/events.example';
 
-@TestClass()
-export class EventsTest extends PlugTest {
+@TestService()
+export class EventsTest extends AsserterService {
 
 	@Test()
 	public async executeEvent() {

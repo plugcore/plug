@@ -1,4 +1,4 @@
-import { AfterTests, BeforeTests, Container, HttpDatasource, Logger, PlugTest, Test, TestClass, TestUtils } from '@plugdata/core';
+import { AfterTests, BeforeTests, Container, HttpDatasource, Logger, AsserterService, Test, TestService, TestUtils } from '@plugdata/core';
 import { decode } from 'jwt-simple';
 import { RoutesInitializer } from '../../src/routes/routes.initializer';
 import { RoutesService } from '../../src/routes/routes.service';
@@ -17,8 +17,8 @@ interface IServicesResponse2 {
 // 2: Server with JWT and Basic auth working at the same time, but sometimes just one type. All the routes are specified manually
 // 3: Server with only JWT login bue at all routes
 
-@TestClass()
-export class RoutesAuthTest extends PlugTest {
+@TestService()
+export class RoutesAuthTest extends AsserterService {
 
 	private pathWithSecurity = '/secured-path';
 	private pathWithSecurity2 = '/secured-path2';

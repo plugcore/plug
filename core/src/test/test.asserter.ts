@@ -2,12 +2,12 @@ import { deepStrictEqual, doesNotReject, doesNotThrow, notDeepStrictEqual, notSt
 import { ConsoleColors } from '../logs/log.colors';
 import { JsStackUtils } from '../utils/js-stack.utils';
 import { TestManager } from './test.manager';
-import { IAssertOptions, ITestClass } from './test.shared';
+import { IAssertOptions, ITestService } from './test.shared';
 
 export class Asserter {
 
 	constructor(
-		private testClass: ITestClass
+		private testClass: ITestService
 	) { }
 
 	//
@@ -116,7 +116,7 @@ export class Asserter {
 				TestManager.assertErrorOnTest(methodAndClass.className, methodAndClass.methodName);
 				errorMsg = `Assert error on ${this.testClass.name}: ${methodAndClass.methodName}`;
 			} else {
-				TestManager.unexpectedAssertErrorOnTestClass(this.testClass.name);
+				TestManager.unexpectedAssertErrorOnTestService(this.testClass.name);
 				errorMsg = `Unexpected error on ${this.testClass.name}`;
 			}
 			console.log(`${ConsoleColors.fgMagenta}${errorMsg}`);
@@ -140,7 +140,7 @@ export class Asserter {
 				TestManager.assertErrorOnTest(methodAndClass.className, methodAndClass.methodName);
 				errorMsg = `Assert error on ${this.testClass.name}: ${methodAndClass.methodName}`;
 			} else {
-				TestManager.unexpectedAssertErrorOnTestClass(this.testClass.name);
+				TestManager.unexpectedAssertErrorOnTestService(this.testClass.name);
 				errorMsg = `Unexpected error on ${this.testClass.name}`;
 			}
 			console.log(`${ConsoleColors.fgMagenta}${errorMsg}`);

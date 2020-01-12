@@ -50,7 +50,7 @@ export interface IRouteSchemas {
 	 * The parameters from the request are converted to an object.
 	 * You can validate this parameters as it was a normal request object
 	 */
-	parameters?: ClassParameter<any>;
+	query?: ClassParameter<any>;
 	/**
 	 * The parameters defiend in the url, ex: `/:id`, are converted to an object.
 	 * You can validate this parameters as it was a normal request object
@@ -92,7 +92,7 @@ export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOption
 
 export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, DefaultHeaders, Body>;
 
-export type BaiscAuthLoginFn = (user: string, password: string) => Promise<boolean>;
+export type BaiscAuthLoginFn = (user: string, password: string, request: Request) => Promise<boolean>;
 export type JwtLoginFn = (request: Request) => Promise<any>;
 export type CustomAuthFn = (request: Request, response: Response) => Promise<any>;
 
