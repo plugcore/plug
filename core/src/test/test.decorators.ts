@@ -13,7 +13,7 @@ export function TestService(decoratorArgs: ITestServiceArgs = {}): Function {
 
 		// Check if decorator has been used in a class
 		if (TypeChecker.isClass(target)) {
-			Service()(target);
+			Service({ connection: decoratorArgs.connection })(target);
 			TestManager.registerTestService(target, decoratorArgs);
 		}
 

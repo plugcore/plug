@@ -24,6 +24,11 @@ export interface IAssertOptions {
 
 export interface ITestServiceArgs {
 	testThisOnly?: boolean;
+	/**
+	 * If you want to import datasources the same way you do with
+	 * services you can use a connection
+	 */
+	connection?: string;
 }
 
 export interface ITestMethodArgs {

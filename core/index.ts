@@ -48,4 +48,7 @@ export * from './src/ds-http/http.datasource';
 export * from './src/ds-http/http.shared';
 export * from './src/ds-http/http.utils';
 
+export * from './src/data-source/data-source.interfaces';
+export * from './src/data-source/data-source.decorators';
+
 export { ObjectValidatorUtils } from './src/object-validator/object-validator.utils';
