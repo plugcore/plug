@@ -4,7 +4,7 @@
 	"description": "![plugcore.com](_docs/logo.png?raw=true \"plugcore.com\")",
 	"main": ".eslintrc.js",
 	"scripts": {
-		"postinstall": "cd core & npm i & npm run build & cd ../data & npm i & npm run build & cd ../web & npm i & npm run build",
+		"postinstall": "cd core & npm i & npm run build & cd ../ds-mongodb & npm i & npm run build & cd ../web & npm i & npm run build",
 		"build": "npx run-s build:**",
 		"build:core": "cd core & npm run build",
 		"build:web": "cd web & npm run build",
