@@ -58,14 +58,17 @@ export class TypeChecker {
 		return arg instanceof Promise;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	public static typeIsString(arg: any): arg is String  {
 		return (this.hasValue(arg) && arg === String);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	public static typeIsNumber(arg: any): arg is Number {
 		return (this.hasValue(arg) && arg === Number);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	public static typeIsBoolean(arg: any): arg is Boolean {
 		return (this.hasValue(arg) && arg === Boolean);
 	}

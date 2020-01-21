@@ -23,4 +23,4 @@ Contains the main functionality that any Node JS might need, some of it would be
 - __Tests__: It's a simple testing library that uses [Node JS assert library](https://nodejs.org/api/assert.html) for it's validation and is based on Typescript classes with an integration to our dependency injection system. It's not aimed to be a full featured testing library as the already existing ones, and we know it's a personal choice of every team, so we offer it just a possibility for simple tests, and we use it for all our internal testing, so it will also have integration with other packages such as `data` and `web`.
 
 # Other plugcore packages
-See more at [this link](https://github.com/plugcore/plugcore-framework).
+See more at [this link](https://github.com/plugcore/plug).

@@ -1,18 +1,18 @@
 {
-	"name": "@plugcore/mongodb",
-	"version": "0.2.0",
+	"name": "@plugcore/ds-mongodb",
+	"version": "1.0.0-rc1",
 	"description": "plugcore.com Mongodb datasource",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/plugcore/plugcore-framework.git"
+		"url": "git+https://github.com/plugcore/plug.git"
 	},
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/plugcore/plugcore-framework/issues"
+		"url": "https://github.com/plugcore/plug/issues"
 	},
-	"homepage": "https://github.com/plugcore/plugcore-framework/data/#readme",
+	"homepage": "https://github.com/plugcore/plug/ds-mongodb/#readme",
 	"scripts": {
 		"build": "node ../node_modules/typescript/bin/tsc & cd .. & node _scripts/build-ds-mongodb.js",
 		"test": "node node_modules/@plugcore/core/src/test/test.cli.js test ./dist/test ./test/configuration | node ../node_modules/pino-pretty/bin.js -t -i pid,hostname,name",

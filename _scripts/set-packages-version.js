@@ -11,8 +11,8 @@ async function setPackagesVersion() {
 	const corePublishPackageJsonPath = join(__dirname, '..', 'core', 'publish', 'package.json');
 	const webPackageJsonPath = join(__dirname, '..', 'web', 'package.json');
 	const webPublishPackageJsonPath = join(__dirname, '..', 'web', 'publish', 'package.json');
-	const dataPackageJsonPath = join(__dirname, '..', 'data', 'package.json');
-	const dataPublishPackageJsonPath = join(__dirname, '..', 'data', 'publish', 'package.json');
+	const dataPackageJsonPath = join(__dirname, '..', 'ds-mongodb', 'package.json');
+	const dataPublishPackageJsonPath = join(__dirname, '..', 'ds-mongodb', 'publish', 'package.json');
 	const mainPackageJsonPath = join(__dirname, '..', 'package.json');
 
 	const corePackageJson = await loadJsonFile(corePackageJsonPath);

@@ -1,17 +1,17 @@
 {
 	"name": "@plugcore/core",
-	"version": "0.2.0",
+	"version": "1.0.0-rc1",
 	"description": "plugcore.com core utilities",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/plugcore/plugcore-framework.git"
+		"url": "git+https://github.com/plugcore/plug.git"
 	},
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/plugcore/plugcore-framework/issues"
+		"url": "https://github.com/plugcore/plug/issues"
 	},
-	"homepage": "https://github.com/plugcore/plugcore-framework/tree/master/core#readme",
+	"homepage": "https://github.com/plugcore/plug/tree/master/core#readme",
 	"keywords": [
 		"di",
 		"typescript-di",
