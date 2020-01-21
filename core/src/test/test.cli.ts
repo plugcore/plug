@@ -20,7 +20,7 @@ if (commandArguments && commandArguments.length > 3) {
 	const args = commandArguments.slice(2);
 	// Test folder
 	const argFolder = args[1];
-	const argConfigFolder = args[2];
+	const argConfigFolder = args[2] || 'configuration';
 	const testsFolder = isAbsolute(argFolder) ? argFolder : join(process.cwd(), argFolder);
 
 	switch (args[0]) {

@@ -41,7 +41,6 @@ export class DiUtils {
 				} else if (!entry.isReady) {
 					const depsLeft = entry.depsLeft || <{ targetServiceId: string; depMet: boolean }[]> [];
 					const missingDeps = depsLeft.filter(dep => !dep.depMet).map(dl => dl.targetServiceId);
-					console.log(missingDeps, entry);
 					console.error(
 						`The following dependencies couldn't be found for service: ${serviceId} ` +
 						`in context: ${service.ctx} => ${missingDeps.join(',')}`);

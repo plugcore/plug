@@ -1,6 +1,6 @@
 {
 	"name": "@plugcore/core",
-	"version": "1.0.0-rc1",
+	"version": "1.0.0-rc2",
 	"description": "plugcore.com core utilities",
 	"main": "index.js",
 	"repository": {
@@ -33,8 +33,7 @@
 		"lint:fix": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts --fix"
 	},
 	"bin": {
-		"plug-test": "./src/test/test.cli.js",
-		"plug-start": "./src/project-init/project-init.cli.js"
+		"plug": "./src/cli/plug.cli.js"
 	},
 	"dependencies": {
 		"ajv": "^6.10.1",

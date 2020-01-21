@@ -1,0 +1,14 @@
+{
+	"name": "extension",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "node ./node_modules/plugcms/main/server.js"
+		},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+
+	}
+}

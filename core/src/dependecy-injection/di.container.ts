@@ -445,6 +445,7 @@ export class Container {
 
 	private static setServiceAsReady(entry: IDiEntry, ctx?: string) {
 
+
 		if (entry.isReady) { return; }
 
 		// If there are construction hadlers it means we need to create the object
@@ -452,21 +453,24 @@ export class Container {
 		if (entry.constructorHandlers) {
 
 			const params: any[] = [];
-
-			entry.constructorHandlers.forEach(handler => {
-				if (handler.variationVarValue) {
-					params[handler.index] = handler.variationVarValue;
-				} else {
-					const tEntry = DiService.getEntry(handler.targetServiceId, handler.targetCtx);
-					if (tEntry) {
-						params[handler.index] = tEntry.object;
+			try {
+				entry.constructorHandlers.forEach(handler => {
+					if (handler.variationVarValue) {
+						params[handler.index] = handler.variationVarValue;
+					} else {
+						const tEntry = DiService.getEntry(handler.targetServiceId, handler.targetCtx);
+						if (tEntry) {
+							params[handler.index] = tEntry.object;
+						}
 					}
-				}
-			});
+				});
 
-			if (entry.serviceClass) {
-				const clazz = entry.serviceClass;
-				entry.object = new (<any>clazz)(...params);
+				if (entry.serviceClass) {
+					const clazz = entry.serviceClass;
+					entry.object = new (<any>clazz)(...params);
+				}
+			} catch (error) {
+				this.get('Logger').then((log: any) => log.error(error));
 			}
 
 		}
@@ -493,6 +497,7 @@ export class Container {
 		this.processReadyService(entry, ctx)
 			.then(() => { /* */ })
 			.catch(error => { this.get('Logger').then((log: any) => log.error(error)); });
+
 
 	}
 

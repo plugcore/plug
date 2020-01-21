@@ -311,9 +311,16 @@ export class DiService {
 	 * Returns a list of all the services set as ready
 	 */
 	public static getAllReadyEntries() {
+		return this.getAllEntries().filter(entry => entry.isReady);
+	}
+
+	/**
+	 * Returns a list of all the services set as ready
+	 */
+	public static getAllEntries() {
 		return ArrayUtils.flat(
 			Object.keys(this.contexts).map(ctx => this.contexts[ctx])
-		).filter(entry => entry.isReady);
+		);
 	}
 
 	// -------------------------------------------------------------------------
