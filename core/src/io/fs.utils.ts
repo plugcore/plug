@@ -1,6 +1,6 @@
 import { F_OK } from 'constants';
-import { access, lstat, readdir, readFile, rmdir, stat, Stats, unlink, write } from 'fs';
-import { join } from 'path';
+import { access, lstat, readdir, readFile, rmdir, stat, Stats, unlink, write, writeFile } from 'fs';
+import { join, basename } from 'path';
 import { StringConstants } from '../constants/string.constants';
 import { TypeChecker } from '../utils/type.checker';
 
@@ -117,9 +117,9 @@ export class FsUtils {
 	 * @param message
 	 * @param offset
 	 */
-	public static async writeToFile(fileDescriptor: number, message: string, offset: number): Promise<string> {
+	public static async writeToFile(fileDescriptor: number, message: string, offset: number) {
 
-		return new Promise<string>((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
 			write(fileDescriptor, message, offset, (err) => {
 				if (err) {
@@ -130,6 +130,25 @@ export class FsUtils {
 		});
 	}
 
+	/**
+	 * Create of updates the file with the string content
+	 * @param fileDescriptor
+	 * @param message
+	 * @param offset
+	 */
+	public static async saveFile(filePath: string, fileContent: string) {
+
+		return new Promise((resolve, reject) => {
+
+			writeFile(filePath, fileContent, (err) => {
+				if (err) {
+					reject('Error saving file');
+				}
+				resolve();
+			});
+
+		});
+	}
 	/**
 	 * Copy a folder with its content
 	 * @param source
@@ -173,6 +192,39 @@ export class FsUtils {
 			}
 		}
 		fs.writeFileSync(targetFile, fs.readFileSync(source));
+	}
+
+	/**
+	 * Copy a file async
+	 * @param source
+	 * @param target
+	 */
+	public static async copyFile(source: string, target: string) {
+		const existsSource = await this.fileOrFolderExists(source);
+		if (!existsSource.exists) {
+			throw new Error('Source doesn\'t exists ' + source);
+		}
+		const targetStats = await this.getStats(target);
+		if (targetStats.isDirectory()) {
+			throw new Error('Target is not a directory ' + source);
+		}
+		const targetFile = join(target, basename(source));
+		return new Promise((resolve, reject) => {
+			readFile(source, (err, file) => {
+				if (err) {
+					reject(err);
+				} else {
+					console.log({targetFile, file});
+					writeFile(targetFile, file, err2 => {
+						if (err) {
+							reject(err2);
+						} else {
+							resolve();
+						}
+					});
+				}
+			});
+		});
 	}
 
 	/**
@@ -273,7 +325,7 @@ export class FsUtils {
 	 * Tries to load the file path contents as JSON, can throw exceptions
 	 * @param filePath
 	 */
-	public static async loadJsonFile<T>(filePath: string, options?: { encoding?: null; flag?: string }) {
+	public static async loadJsonFile<T>(filePath: string, options?: { encoding?: string; flag?: string }) {
 
 		return new Promise<T>((resolve, reject) => {
 
