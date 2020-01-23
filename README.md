@@ -9,10 +9,10 @@ Internally uses a custom dependency injection system to help with with the proje
  
 The API implementation is based on [Fastify](https://www.fastify.io/) in order to create a lightweight server, and at the moment it only has a [MongoDB](https://www.mongodb.com) connector as a database implementation, but support for other databases is on the way.
  
-You can (read all the documentation at our Github Wiki)[https://github.com/plugcore/plug/wiki].
+You can [read all the documentation at our Github Wiki](https://github.com/plugcore/plug/wiki).
  
-You are currently in the __English :gb:__ version of this document, it's also available in the following languages: 
-- [Español :es:](https://github.com/plugcore/plug/blob/master/README.es.md) 
+You are currently in the __English__ version of this document, it's also available in the following languages: 
+- [Español](https://github.com/plugcore/plug/blob/master/README.es.md) 
  
 ## Modules
  
