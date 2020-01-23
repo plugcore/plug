@@ -39,7 +39,13 @@ export class UtilsTestClass extends AsserterService {
 
 		const exampleTestFromDb = await this.examlpleServie.findById(this.testId);
 
-		this.assert.deepEqual(exampleTest, exampleTestFromDb);
+		if (exampleTestFromDb) {
+				this.assert.equal(exampleTest.id, exampleTestFromDb.id);
+				this.assert.equal(exampleTest.title, exampleTestFromDb.title);
+				this.assert.equal(exampleTest.quantity, exampleTestFromDb.quantity);
+		} else {
+				throw new Error('Example from db not found');
+		}
 
 	}
 

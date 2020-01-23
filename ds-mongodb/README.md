@@ -1,11 +1,8 @@
-__We are still working in this library. COMING SOON__
 
 ![plugcore.com](../_docs/logo.png?raw=true "plugcore.com")
 
-## @plugcore/data
+## @plugcore/ds-mongodb
 
-This package will contain all the functionality relative to data storage and query system. The amount of supported databases will increase depending on demand, but at the beginning it will cover the most used ones.
+[![https://nodei.co/npm/@plugcore/ds-mongodb.png?downloads=false&downloadRank=false&stars=false](https://nodei.co/npm/@plugcore/ds-mongodb.png?downloads=false&downloadRank=false&stars=false)](https://www.npmjs.com/package/@plugcore/ds-mongodb)
 
-- __ORM__: For our database manage we have a wrapper of [TypeORM](https://typeorm.io/) which is a fully featured ORM for the most used SQL databases and MongoDB, we plan to add further support as MongoDB transactions and new NoSQL databases. This is fully integrated with our configuration and dependency injection systems.
-
-- __Impration/exportation__: Uses TypeORMs utils to create JSONs for data import/export between different systems, being able to select which tables and with query support.
+Documentation can be found at [the wiki](https://github.com/plugcore/plug/wiki/MongoDB-connection).
