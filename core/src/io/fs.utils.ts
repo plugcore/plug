@@ -1,6 +1,6 @@
 import { F_OK } from 'constants';
-import { access, lstat, readdir, readFile, rmdir, stat, Stats, unlink, write, writeFile } from 'fs';
-import { join, basename } from 'path';
+import { access, lstat, readdir, readFile, rmdir, stat, Stats, unlink, write, writeFile, mkdir } from 'fs';
+import { join, basename, resolve } from 'path';
 import { StringConstants } from '../constants/string.constants';
 import { TypeChecker } from '../utils/type.checker';
 
@@ -149,6 +149,34 @@ export class FsUtils {
 
 		});
 	}
+
+	/**
+	 * Recursively creates a folder structure, as many levels
+	 * as needed
+	 * @param folderPath
+	 */
+	public static async createFolder(folderPath: string) {
+
+		const folderExists = await this.fileOrFolderExists(folderPath);
+		if (folderExists.exists) {
+			return;
+		}
+
+		const parent = resolve(folderPath, '..');
+		await this.createFolder(parent);
+
+		return new Promise((resolve, reject) => {
+			mkdir(folderPath, error => {
+				if (error) {
+					reject(error);
+				} else {
+					resolve();
+				}
+			});
+		});
+
+	}
+
 	/**
 	 * Copy a folder with its content
 	 * @param source

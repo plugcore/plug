@@ -131,7 +131,12 @@ export class MongoDbDatasource implements OnInit {
 const nedbMethodTranslator: Record<string, string> = {
 	'insertOne': 'insert',
 	'deleteOne': 'remove',
+	'toArray': 'exec'
 };
+const nedbMethodsDontNeedPromisify: string[] = [
+	'find', 'skip', 'limit', 'sort'
+];
+
 
 /**
  * Promisifies all the methods
@@ -149,6 +154,10 @@ class NedbProxy implements ProxyHandler<any> {
 		}
 
 		return (...args: any[]) => {
+			if (nedbMethodsDontNeedPromisify.includes(propKey.toString())) {
+				const result = origMethod.apply(target, args);
+				return new Proxy(result, new NedbProxy());
+			}
 			return new Promise((resolve, reject) => {
 				const newArgs = args || [];
 				newArgs.push((err?: Error, result?: any) => {

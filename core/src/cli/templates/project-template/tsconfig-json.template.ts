@@ -1,4 +1,4 @@
-export const tsconfigjson = `{
+export const tsconfigjsonTemplate = `{
 	"compilerOptions": {
 		/* Basic Options */
 		// "incremental": true,                   /* Enable incremental compilation */
