@@ -5,14 +5,14 @@
 	"main": "index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/plugcore/plug.git"
+		"url": "git+https://github.com/plugcore/plugcore.git"
 	},
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/plugcore/plug/issues"
+		"url": "https://github.com/plugcore/plugcore/issues"
 	},
-	"homepage": "https://github.com/plugcore/plug/web/#readme",
+	"homepage": "https://github.com/plugcore/plugcore/web/#readme",
 	"scripts": {
 		"build": "node ../node_modules/typescript/bin/tsc & cd .. & node _scripts/build-web.js",
 		"test": "node node_modules/@plugcore/core/src/test/test.cli.js test ./dist/test ./test/configuration | node ../node_modules/pino-pretty/bin.js -t -i pid,hostname,name",

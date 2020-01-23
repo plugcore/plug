@@ -5,13 +5,13 @@
 	"main": "index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/plugcore/plug.git"
+		"url": "git+https://github.com/plugcore/plugcore.git"
 	},
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/plugcore/plug/issues"
+		"url": "https://github.com/plugcore/plugcore/issues"
 	},
-	"homepage": "https://github.com/plugcore/plug/tree/master/core#readme",
+	"homepage": "https://github.com/plugcore/plugcore/tree/master/core#readme",
 	"keywords": [
 		"di",
 		"typescript-di",

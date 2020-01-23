@@ -9,10 +9,10 @@ Internamente usa un inyector de dependencias personalizado para ayudar con la ar
  
 La implementación interna del sistema de API está basada en [Fastify](https://www.fastify.io/) para crear servidores ligeros, y de momento sólo tiene soporte para conexiones a [MongoDB](https://www.mongodb.com), pero otros conectores están de camino.
  
-Puedes [leer toda la documentación en nuestra Github Wiki](https://github.com/plugcore/plug/wiki/%C3%8Dndice).
+Puedes [leer toda la documentación en nuestra Github Wiki](https://github.com/plugcore/plugcore/wiki/%C3%8Dndice).
  
 Actualmente estás en la versión en __Español__ de este documento, también está disponible en los siguientes idiomas: 
-- [English](https://github.com/plugcore/plug/)
+- [English](https://github.com/plugcore/plugcore/)
  
 ## Módulos
  

@@ -5,11 +5,11 @@
 
 [![https://nodei.co/npm/@plugcore/ds-mongodb.png?downloads=false&downloadRank=false&stars=false](https://nodei.co/npm/@plugcore/ds-mongodb.png?downloads=false&downloadRank=false&stars=false)](https://www.npmjs.com/package/@plugcore/ds-mongodb)
 
-Documentation can be found at [the wiki](https://github.com/plugcore/plug/wiki/MongoDB-connection).
+Documentation can be found at [the wiki](https://github.com/plugcore/plugcore/wiki/MongoDB-connection).
  
 ## Datasource: MongoDB
  
-This utility will help us connect to a Mongodb server using the [datsources system](https://github.com/plugcore/plug/wiki/Datasources-configuration),
+This utility will help us connect to a Mongodb server using the [datsources system](https://github.com/plugcore/plugcore/wiki/Datasources-configuration),
 where very instance of the client will target a specific database.
  
 Internally it uses the [MongoDB connector](https://www.npmjs.com/package/mongodb) without any layers on top of it, this means with no other framework,

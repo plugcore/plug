@@ -5,11 +5,11 @@
 
 [![https://nodei.co/npm/@plugcore/web.png?downloads=false&downloadRank=false&stars=false](https://nodei.co/npm/@plugcore/web.png?downloads=false&downloadRank=false&stars=false)](https://www.npmjs.com/package/@plugcore/web)
 
-Documentation can be found at [the wiki](https://github.com/plugcore/plug/wiki/Rest-API).
+Documentation can be found at [the wiki](https://github.com/plugcore/plugcore/wiki/Rest-API).
  
 ## API Rest
  
-This module will help use creating an API REST using the [dependency injection system](https://github.com/plugcore/plug/wiki/Dependency-injection), but
+This module will help use creating an API REST using the [dependency injection system](https://github.com/plugcore/plugcore/wiki/Dependency-injection), but
 instead of decorating our classes with `@Service` we will have to use `@Controller`, and then we can decorate any method with 
 `@Get`, `@Post`, etc to publish our api methods.
  
@@ -19,7 +19,7 @@ API documentation, login, etc.
 ## API structure
  
 Before exposing the API we should create some classes that are going to define the input and output structure of our services, for that we are going
-to use the [Object validator](https://github.com/plugcore/plug/wiki/Object-validator). We can define any structure with this, not only
+to use the [Object validator](https://github.com/plugcore/plugcore/wiki/Object-validator). We can define any structure with this, not only
 the body and the response, but also the headers, parameters, etc.
  
 We are going to use these structures as an example an we will see how can que use them later:
@@ -206,7 +206,7 @@ export class ControllerExample {
  
 ## OAS 3 (Swagger)
  
-Since we are using the [Object validator](https://github.com/plugcore/plug/wiki/Object-validator) to define the validation
+Since we are using the [Object validator](https://github.com/plugcore/plugcore/wiki/Object-validator) to define the validation
 of the input objects, we can take it one step further and also define the output of our services and use it to generate
 the API documentation using [OAS 3](https://github.com/OAI/OpenAPI-Specification), which is an standar for this type
 of documentation definition. In order to visualize the documentation we will use the [Swagger UI](https://petstore.swagger.io/).
@@ -298,7 +298,7 @@ export interface IRouteSchemas {
 }
 ```
  
-We can configure some aspects of the documentation generation using the [project configuration](https://github.com/plugcore/plug/wiki/Project-configuration):
+We can configure some aspects of the documentation generation using the [project configuration](https://github.com/plugcore/plugcore/wiki/Project-configuration):
  
 ```
 {
@@ -457,7 +457,7 @@ export class PostsController {
 }
 ```
  
-We can configure any aspects of the security using [the projct configuration](https://github.com/plugcore/plug/wiki/Project-configuration):
+We can configure any aspects of the security using [the projct configuration](https://github.com/plugcore/plugcore/wiki/Project-configuration):
  
 ```
 {
@@ -477,7 +477,7 @@ We can configure any aspects of the security using [the projct configuration](ht
  
 ## Configuration
  
-We can configure some options of the [listen](https://github.com/fastify/fastify/blob/master/docs/Server.md#listen) Fastify method using [the projct configuration](https://github.com/plugcore/plug/wiki/Project-configuration): 
+We can configure some options of the [listen](https://github.com/fastify/fastify/blob/master/docs/Server.md#listen) Fastify method using [the projct configuration](https://github.com/plugcore/plugcore/wiki/Project-configuration): 
  
 ```typescript
 /**
