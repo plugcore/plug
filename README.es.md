@@ -1,7 +1,7 @@
  
 # Plugcore Framework
  
-![plugcore.com](_docs/logo.png?raw=true "plugcore.com")
+![plugcore.com](https://raw.githubusercontent.com/plugcore/plug/master/_docs/logo.png "plugcore.com")
  
 El objeto de este framework es ayudar con todas las necesidades de una API REST, y también conseguir que tenga el mejor rendimiento y seguridad.
  

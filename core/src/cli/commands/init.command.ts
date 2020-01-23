@@ -110,11 +110,11 @@ export default function init(args: string[], base: string) {
 		const packageJson = await FsUtils.loadJsonFile<any>(jsonPath, { encoding: 'utf8' });
 		packageJson.scripts = {
 			'start': 'npx tsc --incremental true && npx plug start',
-			'test': 'npx tsc --incremental true && npm run test:clean',
-			'test:dev': 'node node_modules/tsc-watch/lib/tsc-watch.js --noClear --onSuccess "npm run test:clean"',
-			'test:clean': 'npx plug test | npx pino-pretty -t -i pid,hostname,name',
+			'test': 'npx tsc --incremental true && npm run start:test',
+			'test:dev': 'node node_modules/tsc-watch/lib/tsc-watch.js --noClear --onSuccess "npm run start:test"',
+			'start:test': 'npx plug test | npx pino-pretty -t -i pid,hostname,name',
 			'dev': 'node node_modules/tsc-watch/lib/tsc-watch.js --noClear --onSuccess "npm run start:dev"',
-			'start:dev': 'npm run start | npx pino-pretty -t -i pid,hostname,name'
+			'start:dev': 'npx plug start | npx pino-pretty -t -i pid,hostname,name'
 		};
 
 		await Promise.all([
