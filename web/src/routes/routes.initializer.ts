@@ -38,6 +38,7 @@ export class RoutesInitializer {
 	) {
 
 		this.securityEnabled = configuration.web && configuration.web.auth && configuration.web.auth.eanbled || false;
+
 		this.oasDocumentationPath = (
 			configuration.web && configuration.web.oas && configuration.web.oas.documentationPath
 		) || WebConfiguration.default.web.oas.documentationPath || '/api/documentation';
@@ -166,7 +167,7 @@ export class RoutesInitializer {
 				RoutesUtils.getRegisteredMethods(r.controller.controller).map(c =>
 					c.options ?
 						c.options.security ? Array.isArray(c.options.security) ? c.options.security : [c.options.security] :
-						[] : []
+							[] : []
 				)
 			);
 			const controllerSecurityTypes = ArrayUtils.flat(allControllerSecurity);
@@ -336,7 +337,7 @@ export class RoutesInitializer {
 					let allAffectedSecurityTypes = (
 						this.configuration.web && this.configuration.web.auth && this.configuration.web.auth.securityInAllRoutes ?
 							Array.isArray(this.configuration.web.auth.securityInAllRoutes) ? this.configuration.web.auth.securityInAllRoutes :
-							[this.configuration.web.auth.securityInAllRoutes] : []
+								[this.configuration.web.auth.securityInAllRoutes] : []
 					) || [];
 					if (controllerOptions.security) {
 						allAffectedSecurityTypes = allAffectedSecurityTypes.concat(

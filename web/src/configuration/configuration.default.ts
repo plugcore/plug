@@ -10,7 +10,7 @@ export class WebConfiguration {
 			},
 			oas: <WebOasConfiguration>{
 				enableDocumentation: true,
-				documentationPath: '/api-docs',
+				documentationPath: '/api/documentation',
 				info: <any>{},
 				consumes: ['application/json'],
 				produces: ['application/json'],
