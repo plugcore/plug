@@ -1,13 +1,13 @@
 {
 	"name": "@plugcore/ds-mongodb",
-	"version": "1.0.0",
+	"version": "1.0.3",
 	"description": "plugcore.com Mongodb datasource",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/plugcore/plugcore.git"
 	},
-	"author": "",
+	"author": "Plugcore.com",
 	"license": "ISC",
 	"bugs": {
 		"url": "https://github.com/plugcore/plugcore/issues"
@@ -28,5 +28,6 @@
 		"@types/mongodb": "^3.3.14",
 		"@types/node": "^12.0.3",
 		"nedb": "^1.8.0"
-	}
+	},
+	"types": "./ds-mongodb.d.ts"
 }

@@ -5,7 +5,7 @@ async function buildWeb() {
 
 	// Var declarations
 	const projectFolder = join(__dirname, '..', 'web');
-	await buildProject(projectFolder);
+	await buildProject(projectFolder, 'web');
 
 }
 

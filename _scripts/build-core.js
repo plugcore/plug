@@ -5,7 +5,7 @@ async function buildCore() {
 
 	// Var declarations
 	const projectFolder = join(__dirname, '..', 'core');
-	await buildProject(projectFolder);
+	await buildProject(projectFolder, 'core');
 
 }
 

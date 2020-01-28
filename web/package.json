@@ -1,13 +1,13 @@
 {
 	"name": "@plugcore/web",
-	"version": "1.0.0",
+	"version": "1.0.3",
 	"description": "plugcore.com web utilities",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/plugcore/plugcore.git"
 	},
-	"author": "",
+	"author": "Plugcore.com",
 	"license": "ISC",
 	"bugs": {
 		"url": "https://github.com/plugcore/plugcore/issues"
@@ -34,5 +34,6 @@
 	"devDependencies": {
 		"@types/node": "^12.0.3",
 		"@types/swagger-schema-official": "^2.0.18"
-	}
+	},
+	"types": "./web.d.ts"
 }

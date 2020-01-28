@@ -5,7 +5,7 @@ async function buildData() {
 
 	// Var declarations
 	const projectFolder = join(__dirname, '..', 'ds-mongodb');
-	await buildProject(projectFolder);
+	await buildProject(projectFolder, 'ds-mongodb');
 
 }
 

@@ -211,6 +211,8 @@ export class RoutesInitializer {
 			swagger: oasConfiguration
 		});
 
+		this.log.info('Registering API documentation at: ' + this.oasDocumentationPath);
+
 		// Documentation route
 		plugin.route({
 			url: '/',

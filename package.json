@@ -1,6 +1,6 @@
 {
 	"name": "plugcore-framework",
-	"version": "1.0.0",
+	"version": "1.0.3",
 	"description": "![plugcore.com](_docs/logo.png?raw=true \"plugcore.com\")",
 	"main": ".eslintrc.js",
 	"scripts": {
@@ -40,7 +40,7 @@
 		"url": "git+https://github.com/plugcore/plugcore.git"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "Plugcore.com",
 	"license": "ISC",
 	"bugs": {
 		"url": "https://github.com/plugcore/plugcore/issues"

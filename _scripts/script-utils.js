@@ -5,7 +5,7 @@ const readline = require('readline');
 
 const packageJsonFileSuffix = 'file:';
 
-async function buildProject(projectFolder) {
+async function buildProject(projectFolder, projectName) {
 
 	// Var declarations
 	const packageJsonFile = 'package.json';
@@ -22,9 +22,9 @@ async function buildProject(projectFolder) {
 	const distTypesFolder = join(distFolder, 'types');
 	const publishTypesFolder = join(publishFolder, 'types');
 	const publishTestTypesFolder = join(publishFolder, 'types', 'test');
-	const srcTypesDtsFile = join(projectFolder, 'index.ts');
-	const publishTypesDtsFile = join(publishFolder, 'types', 'index.d.ts');
-	const publishIndexDtsFolder = join(publishFolder, 'index.d.ts');
+	const srcTypesDtsFile = join(projectFolder, projectName + '.ts');
+	const publishTypesDtsFile = join(publishFolder, 'types', projectName + '.d.ts');
+	const publishIndexDtsFolder = join(publishFolder, projectName + '.d.ts');
 	const srcIndexJsFile = join(distFolder, 'index.js');
 	const publishIndexJsFile = join(publishFolder, 'index.js');
 	const srcReadmeFile = join(projectFolder, 'README.md');

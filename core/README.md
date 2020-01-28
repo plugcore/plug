@@ -26,8 +26,8 @@ npx @plugcore/core init
 Some questions will be prompted to determine the needs of the project, if this is your first time we recommend you to create a little demo with an in memory database mocking a MongoDB server, this will let us immediately start the server and start checking the basic functionalities of the framework.
  
 ```
-Do you want to create a basic demo with API REST and a MongodDB client? (y/yes): yes
-Do you want to use an in memory database mocked as MongoDB for development or tests purposes? (y/yes): yes
+Do you want to create a basic demo with the "web" and "ds-mongodb" modules? (Y/n): yes
+Do you want to use an in memory database mocked as MongoDB for development or tests purposes? (Y/n): yes
 ```
  
 After the installation has finished, we will have a folder structure that looks like this:

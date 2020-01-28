@@ -21,6 +21,8 @@ export default function init(args: string[], base: string) {
 
 	// Package.json dependecies
 
+	const accetableResponses = ['y', 'yes', 'Y', 'Yes', 'YES'];
+
 	const dependecies = [
 		'@plugcore/core',
 	];
@@ -60,24 +62,24 @@ export default function init(args: string[], base: string) {
 		let installMongodb = false;
 		let installDemo = false;
 		let installNedb = false;
-		const createDemo = await CliUtils.promt('Do you want to create a basic demo with API REST and a MongodDB client? (y/yes): ');
-		if (createDemo === 'y' || createDemo === 'yes') {
+		const createDemo = await CliUtils.promt('Do you want to create a basic demo with the "web" and "ds-mongodb" modules? (Y/n): ');
+		if (accetableResponses.includes(createDemo)) {
 			installWeb = true;
 			installMongodb = true;
 			installDemo = true;
 			const installInMem = await CliUtils.promt(
-				'Do you want to use an in memory database mocked as MongoDB for development or tests purposes? (y/yes): '
+				'Do you want to use an in memory database mocked as MongoDB for development or tests purposes? (Y/n): '
 			);
-			if (installInMem === 'y' || installInMem === 'yes') {
+			if (accetableResponses.includes(installInMem)) {
 				installNedb = true;
 			}
 		} else {
-			const pInstallWeb = await CliUtils.promt('Do you want to install the API REST module? (y/yes): ');
-			if (pInstallWeb === 'y' || pInstallWeb === 'yes') {
+			const pInstallWeb = await CliUtils.promt('Do you want to install the "web" module? (Y/n): ');
+			if (accetableResponses.includes(pInstallWeb)) {
 				installWeb = true;
 			}
-			const pInstallMongodb = await CliUtils.promt('Do you want to install the MongodDB client? (y/yes): ');
-			if (pInstallMongodb === 'y' || pInstallMongodb === 'yes') {
+			const pInstallMongodb = await CliUtils.promt('Do you want to install the "ds-mongodb" module? (Y/n): ');
+			if (accetableResponses.includes(pInstallMongodb)) {
 				installMongodb = true;
 			}
 		}

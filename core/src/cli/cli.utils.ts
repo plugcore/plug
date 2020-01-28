@@ -38,7 +38,7 @@ export class CliUtils {
 		});
 	}
 
-	public static async promt(question: string) {
+	public static async promt(question: string): Promise<string> {
 
 		const rl = createInterface({
 			input: process.stdin,

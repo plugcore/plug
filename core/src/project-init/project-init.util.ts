@@ -21,10 +21,10 @@ export class PorjectInitialization {
 	 * in the correct order. It takes as a parameter a folder from which it will lookup
 	 * for a configuration folder to load it, and fire the required events.
 	 */
-	public static start(projectFolder: string, configurationFolder?: string) {
+	public static start(projectFolder: string, configurationFolder: string) {
 		(async () => {
 			// 1: Project configuration
-			await this.setConfiguration(join(projectFolder, '..', '..', configurationFolder || this.defaultConfigurationFolder));
+			await this.setConfiguration(configurationFolder);
 			await DiUtils.waitForFolder(projectFolder, true);
 
 		})().then(() => {
