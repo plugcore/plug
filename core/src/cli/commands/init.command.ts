@@ -119,10 +119,12 @@ export default function init(args: string[], base: string) {
 			'start:dev': 'npx plug start | npx pino-pretty -t -i pid,hostname,name'
 		};
 
+		const tsConfigWithDeps = tsconfigjsonTemplate.replace('<<<>>>', `"${depsToInstall.join('", "')}"`);
+
 		await Promise.all([
 			FsUtils.saveFile(jsonPath, JSON.stringify(packageJson, null, '\t')),
 			// 4: Create tsconfig and gitignore
-			FsUtils.saveFile(join(base, 'tsconfig.json'), tsconfigjsonTemplate),
+			FsUtils.saveFile(join(base, 'tsconfig.json'), tsConfigWithDeps),
 			FsUtils.saveFile(join(base, '.gitignore'), gitIgnoreTemaplte),
 			FsUtils.saveFile(join(base, '.editorconfig'), editorConfigTemplate),
 			// 5: create basic project structure

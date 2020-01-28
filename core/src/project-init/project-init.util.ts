@@ -1,11 +1,10 @@
-import { join } from 'path';
 import { ConfigurationLoader } from '../configuration/configuration.loader';
+import { ProjectConfigurationService } from '../configuration/configuration.service';
 import { Container } from '../dependecy-injection/di.container';
 import { DiUtils } from '../dependecy-injection/di.utils';
 import { PublicEvents } from '../events/event.constants';
 import { EventDispatcher } from '../events/event.dispatcher';
 import { Logger } from '../logs/logger';
-import { ProjectConfigurationService } from '../configuration/configuration.service';
 import { ObjectValidator } from '../object-validator/object-validator.service';
 
 export class PorjectInitialization {

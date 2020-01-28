@@ -1,6 +1,6 @@
 {
 	"name": "plugcore-framework",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "![plugcore.com](_docs/logo.png?raw=true \"plugcore.com\")",
 	"main": ".eslintrc.js",
 	"scripts": {
@@ -55,6 +55,7 @@
 		"typescript": "^3.7.3"
 	},
 	"dependencies": {
+		"dts-bundle": "^0.7.3",
 		"pino-pretty": "^3.2.0"
 	}
 }
