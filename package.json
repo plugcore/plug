@@ -4,8 +4,8 @@
 	"description": "![plugcore.com](_docs/logo.png?raw=true \"plugcore.com\")",
 	"main": ".eslintrc.js",
 	"scripts": {
-		"postinstall": "npx run-s postinstall:install build",
-		"postinstall:install": "npx yarn --cwd core install & npx yarn --cwd web install & npx yarn --cwd ds-mongodb install",
+		"configure": "npm run install-projects && npm run build",
+		"install-projects": "npx yarn --cwd core install & npx yarn --cwd web install & npx yarn --cwd ds-mongodb install",
 		"build": "npx run-s build:**",
 		"build:core": "npm run --prefix core build",
 		"build:web": "npm run --prefix web build",
