@@ -4,36 +4,34 @@
 	"description": "![plugcore.com](_docs/logo.png?raw=true \"plugcore.com\")",
 	"main": ".eslintrc.js",
 	"scripts": {
-		"postinstall": "cd core & npm i & npm run build & cd ../ds-mongodb & npm i & npm run build & cd ../web & npm i & npm run build",
+		"postinstall": "npx run-s postinstall:install build",
+		"postinstall:install": "npx yarn --cwd core install & npx yarn --cwd web install & npx yarn --cwd ds-mongodb install",
 		"build": "npx run-s build:**",
-		"build:core": "cd core & npm run build",
-		"build:web": "cd web & npm run build",
-		"build:ds-mongodb": "cd ds-mongodb & npm run build",
+		"build:core": "npm run --prefix core build",
+		"build:web": "npm run --prefix web build",
+		"build:ds-mongodb": "npm run --prefix ds-mongodb build",
 		"prepare-to-publish": "npm run check-all & node ./_scripts/set-packages-version.js",
 		"publish-all": "npx run-s publish:**",
 		"publish:core": "cd core/publish & npm publish --access public",
 		"publish:web": "cd web/publish & npm publish --access public",
 		"publish:ds-mongodb": "cd ds-mongodb/publish & npm publish --access public",
 		"test": "npm run build && npx run-s test:**",
-		"test:core": "cd core & npm test",
-		"test:web": "cd web & npm test",
-		"test:ds-mongodb": "cd ds-mongodb & npm test",
+		"test:core": "npm run --prefix core test",
+		"test:web": "npm run --prefix web test",
+		"test:ds-mongodb": "npm run --prefix ds-mongodb test",
 		"lint": "npx run-s lint:**",
-		"lint:core": "cd core & npm run lint",
-		"lint:web": "cd web & npm run lint",
-		"lint:ds-mongodb": "cd ds-mongodb & npm run lint",
+		"lint:core": "npm run --prefix core lint",
+		"lint:web": "npm run --prefix web lint",
+		"lint:ds-mongodb": "npm run --prefix ds-mongodb lint",
 		"check-all": "npx run-s test lint",
 		"dev": "node ./node_modules/npm-run-all/bin/run-p/index.js dev:**",
-		"dev:core": "cd core & npx tsc-watch --noClear --onSuccess \"npm run build\"",
-		"dev:web": "cd web & npx tsc-watch --noClear --onSuccess \"npm run build\"",
-		"dev:ds-mongodb": "cd ds-mongodb & npx tsc-watch --noClear --onSuccess \"npm run build\"",
+		"dev:core": "npx tsc-watch --noClear --onSuccess \"npm run build\" -p core",
+		"dev:web": "npx tsc-watch --noClear --onSuccess \"npm run build\" -p web",
+		"dev:ds-mongodb": "npx tsc-watch --noClear --onSuccess \"npm run build\" -p ds-mongodb",
 		"link-published": "npm i && node _scripts/set-packages-version.js force same && npx run-s link-published:**",
 		"link-published:core": "cd core/publish & npm link ",
 		"link-published:web": "cd web/publish & npm link ",
-		"link-published:ds-mongodb": "cd ds-mongodb/publish & npm link ",
-		"app-start": "npm run build && npx run-p app-start:** && ",
-		"app-start:back": "cd app-server & tsc & ",
-		"app-start:front": "cd app-client & ng serve"
+		"link-published:ds-mongodb": "cd ds-mongodb/publish & npm link "
 	},
 	"repository": {
 		"type": "git",
@@ -52,10 +50,11 @@
 		"eslint": "^6.1.0",
 		"npm-run-all": "^4.1.5",
 		"tsc-watch": "^2.2.1",
-		"typescript": "^3.7.3"
+		"typescript": "^3.8.3"
 	},
 	"dependencies": {
 		"dts-bundle": "^0.7.3",
-		"pino-pretty": "^3.2.0"
+		"pino-pretty": "^3.2.0",
+		"yarn": "^1.22.1"
 	}
 }

@@ -12,14 +12,15 @@ export class CliUtils {
 		return new Promise((resolve, reject) => {
 			let hasError = false;
 			try {
-				const child = spawn(commandName, opts, { stdio: [process.stdin, process.stdout, process.stderr] });
-				if (child.stdout) {
-					child.stdout.on('data', (data) => {
+				const child = spawn(
+					commandName, opts, { stdio: [process.stdin, process.stdout, process.stderr] });
+				if (child.stdout !== null) {
+					child.stdout.on('data', (data: any) => {
 						console.log(data);
 					});
 				}
 				if (child.stderr) {
-					child.stderr.on('data', (data) => {
+					child.stderr.on('data', (data: any) => {
 						hasError = true;
 						console.error(data);
 					});
