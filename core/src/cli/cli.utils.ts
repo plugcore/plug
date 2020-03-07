@@ -12,7 +12,8 @@ export class CliUtils {
 		return new Promise((resolve, reject) => {
 			let hasError = false;
 			try {
-				const child = spawn(
+				// TODO: Remove any
+				const child: any = spawn(
 					commandName, opts, { stdio: [process.stdin, process.stdout, process.stderr] });
 				if (child.stdout !== null) {
 					child.stdout.on('data', (data: any) => {

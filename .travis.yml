@@ -2,4 +2,5 @@ language: node_js
 node_js:
   - 12
 install:
-  - npx yarn & npm run configure
+  - npx yarn
+  - npm run configure
