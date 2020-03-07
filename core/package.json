@@ -25,7 +25,9 @@
 		"test"
 	],
 	"scripts": {
-		"build": "node ../node_modules/typescript/bin/tsc & node ../_scripts/build-core.js",
+		"build": "node ../node_modules/npm-run-all/bin/run-s/index.js build:compile build:publish",
+		"build:compile": "node ../node_modules/typescript/bin/tsc",
+		"build:publish": "node ../_scripts/build-core.js",
 		"test": "node dist/src/test/test.cli.js test ./dist/test ./test/configuration/test-configuration | node ../node_modules/pino-pretty/bin.js -t -i pid,hostname,name",
 		"test:raw": "node dist/src/test/test.cli.js test ./dist/test ./test/configuration/test-configuration",
 		"test:info": "node dist/src/test/test.cli.js info ./dist/test",
