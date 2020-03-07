@@ -1,4 +1,4 @@
- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+ [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/plugcore/plugcore.svg?branch=master)](https://travis-ci.org/plugcore/plugcore) ![npm](https://img.shields.io/npm/v/@plugcore/core) 
  
 # Plugcore Framework
  
