@@ -111,7 +111,7 @@ export class ArrayUtils {
 	 * offset of 1
 	 * @param maxNum
 	 */
-	public static orderedNumArray(maxNum: number, ofset: number = 0) {
+	public static orderedNumArray(maxNum: number, ofset = 0) {
 		return Array(maxNum).fill(0).map((_, i) => i + ofset);
 	}
 

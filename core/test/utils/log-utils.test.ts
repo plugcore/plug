@@ -16,10 +16,10 @@ export class LogUtilsTest extends AsserterService {
 			ex1 === 'Self time from start: 1 ms,\tTotal time from start: 1 ms'
 		);
 		this.assert.ok(
-			ex2 === 'Self time from start: 1.000 ms,\tTotal time from start: 100 ms' ||
-			ex2 === 'Self time from start: 1.000 ms,\tTotal time from start: 101 ms' ||
-			ex2 === 'Self time from start: 1.001 ms,\tTotal time from start: 100 ms' ||
-			ex2 === 'Self time from start: 1.001 ms,\tTotal time from start: 101 ms'
+			ex2 === 'Self time from start: 1000 ms,\tTotal time from start: 100 ms' ||
+			ex2 === 'Self time from start: 1000 ms,\tTotal time from start: 101 ms' ||
+			ex2 === 'Self time from start: 1001 ms,\tTotal time from start: 100 ms' ||
+			ex2 === 'Self time from start: 1001 ms,\tTotal time from start: 101 ms'
 		);
 	}
 
