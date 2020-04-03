@@ -1,6 +1,6 @@
 import { InjectLogger, Logger, Service } from '@plugcore/core';
-import { BasicAuthLogin, CustomAuth, JwtLogin } from '../../../src/routes/routes.decorators';
-import { Request } from '../../../src/routes/routes.shared';
+import { BasicAuthLogin, CustomAuth, JwtLogin, JwtPreHandle } from '../../../src/routes/routes.decorators';
+import { Request, Response } from '../../../src/routes/routes.shared';
 
 @Service()
 export class RoutesAuthImplExample {
@@ -24,6 +24,11 @@ export class RoutesAuthImplExample {
 				prop2: 2
 			};
 		}
+	}
+
+	@JwtPreHandle()
+	public async jwtPreHandle(request: Request, response: Response) {
+		this.log.info('jwtPreHandle - ' + JSON.stringify(request.jwtPayload) + ' - ' + JSON.stringify(response.context.config));
 	}
 
 	@CustomAuth()

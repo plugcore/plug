@@ -1,0 +1,9 @@
+{
+	"numberProp": 3,
+	"stringProp": "(123)456-7890",
+	"arrayProp": ["1", 2, false, "a"],
+	"numberSubProp": 3,
+	"stringSubProp": "",
+	"boolSubProp": false,
+	"otherNumberProp": 2
+}

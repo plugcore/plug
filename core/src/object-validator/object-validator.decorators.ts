@@ -1,8 +1,9 @@
 import { ClassParameter } from '../utils/typescript.utils';
 import {
-	EObjectValidatorPropertyTypes, IArraySchemaValidator, INumberSchemaValidator, IStringSchemaValidator
+	EObjectValidatorPropertyTypes, IArraySchemaValidator, INumberSchemaValidator, IStringSchemaValidator, IExendsSchemaConfig
 } from './object-validator.shared';
 import { ObjectValidatorDecoratorUtils } from './object-validator.utils';
+import { TypeChecker } from '../utils/type.checker';
 
 //
 // Decorators
@@ -54,5 +55,15 @@ export function Required() {
 		ObjectValidatorDecoratorUtils.addProperty({
 			target, propertyKey, type: EObjectValidatorPropertyTypes.required
 		});
+	};
+}
+
+export function ExtendsSchema(config: IExendsSchemaConfig) {
+	return (target: any) => {
+		if (TypeChecker.isClass(target)) {
+			ObjectValidatorDecoratorUtils.addExtendsSchema({
+				clazz: target, config
+			});
+		}
 	};
 }

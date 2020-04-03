@@ -2,7 +2,7 @@ import { TypeChecker } from '../utils/type.checker';
 import { ClassParameter } from '../utils/typescript.utils';
 import {
 	EObjectValidatorPropertyTypes, IPropertyValidatorMetadata, TObjectValidatorProeprtyOptions,
-	IStringSchemaValidator, INumberSchemaValidator, IArraySchemaValidator
+	IStringSchemaValidator, INumberSchemaValidator, IArraySchemaValidator, IExendsSchemaConfig
 } from './object-validator.shared';
 import { StringUtils } from '../utils/string.utils';
 
@@ -13,6 +13,7 @@ import { StringUtils } from '../utils/string.utils';
 export class ObjectValidatorDecoratorUtils {
 
 	public static readonly propertyMetadataPrefix = 'p-object-validator-prop:';
+	public static readonly propertyExtendsSchemaPrefix = 'p-object-validator-extends-schema:';
 
 	/**
 	 * Adds metadata to the target class about it's hoow to validate this field
@@ -33,6 +34,18 @@ export class ObjectValidatorDecoratorUtils {
 	}
 
 	/**
+	 * Adds metadata to the target class about a schema that extends
+	 * @param inp
+	 */
+	public static addExtendsSchema(inp: {
+		clazz: ClassParameter<any>;
+		config: IExendsSchemaConfig;
+	}) {
+		const targetName = inp.config.schema.name;
+		Reflect.defineMetadata(`${this.propertyExtendsSchemaPrefix}${targetName}`, inp.config, inp.clazz.prototype);
+	}
+
+	/**
 	 * Retrieves all the metadata added by the validator decorator to the target classes
 	 * @param clazz
 	 */
@@ -43,12 +56,35 @@ export class ObjectValidatorDecoratorUtils {
 			.map(metadataKey => Reflect.getMetadata(metadataKey, clazz.prototype));
 	}
 
+	/**
+	 * Returns a list of IExendsSchemaConfig of all the extended schemas
+	 * for this class
+	 * @param clazz
+	 */
+	public static getExtendedSchemas<T>(clazz: ClassParameter<T>): IExendsSchemaConfig[] {
+		const keys = Reflect.getMetadataKeys(clazz.prototype);
+		return keys
+			.filter(metadataKey => TypeChecker.isString(metadataKey) && metadataKey.startsWith(this.propertyExtendsSchemaPrefix))
+			.map(metadataKey => Reflect.getMetadata(metadataKey, clazz.prototype));
+	}
+
 	public static sortClassProperties<T>(clazz: ClassParameter<T>): {
 		objectProperties: Record<string, IPropertyValidatorMetadata<TObjectValidatorProeprtyOptions>[]>;
 		requiredProperties: IPropertyValidatorMetadata<undefined>[];
 	} {
 
-		const classProperties = this.getClassProperties(clazz);
+		const extendedSchemas = this.getExtendedSchemas(clazz);
+		let classProperties: IPropertyValidatorMetadata<TObjectValidatorProeprtyOptions>[] = [];
+		for (const extendedSchema of extendedSchemas) {
+			const targetClassProperties = this.getClassProperties(extendedSchema.schema);
+			classProperties = classProperties.concat(
+				targetClassProperties.filter(p => (
+					!extendedSchema.ignoreProperties ||
+					!extendedSchema.ignoreProperties.includes(p.property)
+				))
+			);
+		}
+		classProperties = classProperties.concat(this.getClassProperties(clazz));
 		const requiredProperties = classProperties.filter(PropertyValidatorTypeChecker.isRequired);
 		const objectProperties = classProperties
 			.filter(rp => !PropertyValidatorTypeChecker.isRequired(rp))

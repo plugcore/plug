@@ -2,15 +2,18 @@ import { join } from 'path';
 import { Container } from '../../src/dependecy-injection/di.container';
 import { FsUtils } from '../../src/io/fs.utils';
 import { ObjectValidator } from '../../src/object-validator/object-validator.service';
-import { BeforeTests, Test } from '../../src/test/test.decorators';
+import { BeforeTests, Test, TestService } from '../../src/test/test.decorators';
 import { AsserterService } from '../../src/test/test.shared';
-import { MyCustomModel } from './object-validator.models';
+import { ModelWithExtendedSchemas, MyCustomModel } from './object-validator.models';
+import { ObjectValidatorUtils } from '../../src/object-validator/object-validator.utils';
 
+@TestService()
 export class ObjectValidatorDecorators extends AsserterService {
 
 	private objectValidator: ObjectValidator;
 	private jsonFileSchema: Record<string, any>;
 	private jsonFileDataOk: Record<string, any>;
+	private jsonFileDataOkExtended: Record<string, any>;
 	private jsonFileDataError: Record<string, any>;
 	private customClassDataOk: MyCustomModel;
 	private customClassDataError: MyCustomModel;
@@ -18,6 +21,7 @@ export class ObjectValidatorDecorators extends AsserterService {
 	private readonly basePath = join(__dirname, '..', '..', '..', 'test', 'object-validator', 'test-files');
 	private jsonFileSchemaPath = join(this.basePath, 'json-file-schema.json');
 	private jsonFileDataOkPath = join(this.basePath, 'json-file-data-ok.json');
+	private jsonFileDataOkExtendedPath = join(this.basePath, 'custom-class-data-ok-extended.json');
 	private jsonFileDataErrorPath = join(this.basePath, 'json-file-data-errors.json');
 	private customClassDataOkPath = join(this.basePath, 'custom-class-data-ok.json');
 	private customClassDataErrorPath = join(this.basePath, 'custom-class-data-errors.json');
@@ -27,6 +31,7 @@ export class ObjectValidatorDecorators extends AsserterService {
 		this.objectValidator = await Container.get(ObjectValidator);
 		this.jsonFileSchema = await FsUtils.loadJsonFile<Record<string, any>>(this.jsonFileSchemaPath);
 		this.jsonFileDataOk = await FsUtils.loadJsonFile<Record<string, any>>(this.jsonFileDataOkPath);
+		this.jsonFileDataOkExtended = await FsUtils.loadJsonFile<Record<string, any>>(this.jsonFileDataOkExtendedPath);
 		this.jsonFileDataError = await FsUtils.loadJsonFile<Record<string, any>>(this.jsonFileDataErrorPath);
 		this.customClassDataOk = await FsUtils.loadJsonFile<MyCustomModel>(this.customClassDataOkPath);
 		this.customClassDataError = await FsUtils.loadJsonFile<MyCustomModel>(this.customClassDataErrorPath);
@@ -91,7 +96,6 @@ export class ObjectValidatorDecorators extends AsserterService {
 		this.assert.equal(typeof validatecustomClass, 'function');
 		const result = validatecustomClass(this.customClassDataOk);
 		const resultError = validatecustomClass(this.customClassDataError);
-		console.log(JSON.stringify(resultError.errors));
 		this.assert.ok(result.valid);
 		this.assert.deepEqual(result.errors, []);
 		this.assert.equal(resultError.valid, false);
@@ -118,6 +122,14 @@ export class ObjectValidatorDecorators extends AsserterService {
 		this.assert.equal(resultArrayOkError.errors.length, 3);
 		this.assert.equal(resultArrayError.valid, false);
 		this.assert.equal(resultArrayError.errors.length, 6);
+	}
+
+	@Test()
+	public async extendedSchema() {
+		const extended = this.objectValidator.createValidatorFromClass(ModelWithExtendedSchemas);
+		const result = this.objectValidator.validate(extended, this.jsonFileDataOkExtended);
+		this.assert.ok(result.valid);
+		this.assert.deepEqual(result.errors, []);
 	}
 
 }

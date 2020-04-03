@@ -92,8 +92,9 @@ export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOption
 
 export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, DefaultHeaders, Body>;
 
-export type BaiscAuthLoginFn = (user: string, password: string, request: Request) => Promise<boolean>;
-export type JwtLoginFn = (request: Request) => Promise<any>;
+export type BaiscAuthLoginFn = (user: string, password: string, request: Request, response: Response) => Promise<boolean>;
+export type JwtLoginFn = (request: Request, response: Response) => Promise<any>;
+export type JwtPreHandleFn = (request: Request, response: Response) => Promise<any>;
 export type CustomAuthFn = (request: Request, response: Response) => Promise<any>;
 
 //

@@ -1,4 +1,4 @@
-import { IsNumber, IsString, Required, IsBoolean, IsArray, IsObject } from '../../src/object-validator/object-validator.decorators';
+import { IsNumber, IsString, Required, IsBoolean, IsArray, IsObject, ExtendsSchema } from '../../src/object-validator/object-validator.decorators';
 
 export class MyCustomSubModel {
 
@@ -42,4 +42,12 @@ export class MyCustomModel {
 	@IsObject(MyCustomSubModel)
 	public subPropr: MyCustomSubModel;
 
+}
+
+@ExtendsSchema({ schema: MyCustomModel, ignoreProperties: ['objectsArrayProp', 'subPropr'] })
+@ExtendsSchema({ schema: MyCustomSubModel })
+export class ModelWithExtendedSchemas {
+	@Required()
+	@IsNumber()
+	public otherNumberProp: number;
 }

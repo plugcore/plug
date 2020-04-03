@@ -433,7 +433,7 @@ export class RoutesInitializer {
 
 	private async handleJwtLogin(request: Request, reply: Response) {
 
-		const payload = await RoutesUtils.jwtLoginFn(request);
+		const payload = await RoutesUtils.jwtLoginFn(request, reply);
 
 		if (payload === null || payload === undefined) {
 			throw new Error('Invalid credentials');
@@ -447,7 +447,7 @@ export class RoutesInitializer {
 
 	}
 
-	private async verifyJwt(request: Request) {
+	private async verifyJwt(request: Request, response: Response) {
 
 		const token = request.headers['authorization'] || request.headers['Authorization'];
 		if (ValidatorUtils.isBlank(token)) {
@@ -461,6 +461,10 @@ export class RoutesInitializer {
 		const jwtPayload = decode(jwt, this.jwtConfiguration.privateKey, undefined, this.jwtConfiguration.algorithm);
 
 		request.jwtPayload = jwtPayload;
+
+		if (RoutesUtils.jwtPreHandleFn) {
+			await RoutesUtils.jwtPreHandleFn(request, response);
+		}
 
 	}
 
@@ -482,7 +486,7 @@ export class RoutesInitializer {
 			throw new Error('Invalid basic auth value, it should be: "xxx:yyy"');
 		}
 
-		const result = await RoutesUtils.basicAuthLoginFn(userAndPasswordSplited[0], userAndPasswordSplited[1], request);
+		const result = await RoutesUtils.basicAuthLoginFn(userAndPasswordSplited[0], userAndPasswordSplited[1], request, respose);
 		if (!result) {
 			throw new Error('Invalid credentials');
 		}

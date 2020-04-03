@@ -42,6 +42,11 @@ export interface IPropertyValidatorMetadata<T extends TObjectValidatorProeprtyOp
 	options?: T;
 }
 
+export interface IExendsSchemaConfig {
+	schema: ClassParameter<any>;
+	ignoreProperties?: string[];
+}
+
 //
 // Enums
 //
@@ -52,7 +57,8 @@ export enum EObjectValidatorPropertyTypes {
 	boolean = 'boolean',
 	array = 'array',
 	object = 'object',
-	required = 'required'
+	required = 'required',
+	extendsSchema = 'extendsSchema'
 }
 
 //

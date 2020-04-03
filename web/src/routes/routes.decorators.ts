@@ -110,8 +110,8 @@ export function BasicAuthLogin(): Function {
 }
 
 /**
- * Registers a basic auth login function in a secive that is going to be called
- * when a jwt lolgin url arrives
+ * Registers service method that will be called when a request
+ * for JWT is performed
  */
 export function JwtLogin(): Function {
 	return function (target: any, propertyKey: string) {
@@ -120,6 +120,21 @@ export function JwtLogin(): Function {
 		}
 	};
 }
+
+/**
+ * Registers service method that will be called on every route
+ * with JWT security once the JWT payload verification
+ * has already been defined. It can throw an error to
+ * stop the request.
+ */
+export function JwtPreHandle(): Function {
+	return function (target: any, propertyKey: string) {
+		if (TypeChecker.isClass(target.constructor)) {
+			RoutesUtils.registerJwtPreHandleFn(target.constructor, propertyKey);
+		}
+	};
+}
+
 
 /**
  * A custom auth function that is going to be executen in all routes that

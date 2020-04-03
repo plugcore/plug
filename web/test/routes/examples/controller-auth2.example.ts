@@ -6,12 +6,12 @@ export class ControllerAuth2Example {
 
 	// Mix of securities
 
-	@Get({ security: ['basic', 'jwt'] })
+	@Get({ security: ['basic', 'jwt'], config: { testKey: 'testValue' }  })
 	public async getTest(req: Request) {
 		return { method: 'getTest', jwtPayload: req.jwtPayload };
 	}
 
-	@Post({ security: ['basic', 'jwt'] })
+	@Post({ security: ['basic', 'jwt'], config: { testKey: 'testValue' }  })
 	public async postTest(req: Request) {
 		return { method: 'postTest', jwtPayload: req.jwtPayload };
 	}
@@ -21,12 +21,12 @@ export class ControllerAuth2Example {
 		return { method: 'putTest', jwtPayload: req.jwtPayload };
 	}
 
-	@Delete({ security: ['jwt'] })
+	@Delete({ security: ['jwt'], config: { testKey: 'testValue' }  })
 	public async deleteTest(req: Request) {
 		return { method: 'deleteTest', jwtPayload: req.jwtPayload };
 	}
 
-	@Patch({ security: 'jwt' })
+	@Patch({ security: 'jwt', config: { testKey: 'testValue' }  })
 	public async patchTest(req: Request) {
 		return { method: 'patchTest', jwtPayload: req.jwtPayload };
 	}
