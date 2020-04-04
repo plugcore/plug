@@ -5,7 +5,6 @@ import { ObjectValidator } from '../../src/object-validator/object-validator.ser
 import { BeforeTests, Test, TestService } from '../../src/test/test.decorators';
 import { AsserterService } from '../../src/test/test.shared';
 import { ModelWithExtendedSchemas, MyCustomModel } from './object-validator.models';
-import { ObjectValidatorUtils } from '../../src/object-validator/object-validator.utils';
 
 @TestService()
 export class ObjectValidatorDecorators extends AsserterService {
