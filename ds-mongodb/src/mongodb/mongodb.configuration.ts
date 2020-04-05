@@ -10,9 +10,7 @@ export class MongodbDsConfiguration implements ConnectionConfiguration {
 	type: string;
 
 	@Required()
-	@IsString({
-		pattern: '(^(mongodb:(?:\/{2})?)((\w+?):(\w+?)@|:?@?)(\w+?):(\d+)\/(\w+?)$)|nedb'
-	})
+	@IsString()
 	url: string;
 
 	@Required()
