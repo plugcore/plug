@@ -117,9 +117,6 @@ export class RoutesInitializer {
 			// Other vars
 			const loginUrl = this.configuration.web.auth.jwtLoginPath || '/auth/login';
 
-			console.log('>>>', loginUrl, RoutesUtils.jwtLoginMeta ?
-				this.createFromRouteSchemas('POST', RoutesUtils.jwtLoginMeta.routeSchemas) : undefined);
-
 			// Register JWT login route
 			plugin.route({
 				method: 'POST',
@@ -303,12 +300,14 @@ export class RoutesInitializer {
 
 				// Schema definition
 				const routeSchemas = controllerOptions.routeSchemas;
-				const schema: RouteSchema = controllerOptions.schema || {};
+				let schema: RouteSchema = controllerOptions.schema || {};
 
 				// Route validations
 				if (routeSchemas) {
 
-					controllerOptions.schema = this.createFromRouteSchemas(method.httpMethod, routeSchemas, schema);
+					schema = this.createFromRouteSchemas(method.httpMethod, routeSchemas, schema);
+
+					console.log(11111, {schema});
 
 				}
 				controllerOptions.routeSchemas = undefined;
@@ -359,8 +358,6 @@ export class RoutesInitializer {
 						schema.headers = headerSchema;
 					}
 
-					controllerOptions.schema = schema;
-
 				}
 
 				// Check if we have to put some securty
@@ -391,6 +388,8 @@ export class RoutesInitializer {
 					}
 
 				}
+
+				controllerOptions.schema = schema;
 
 				const routeConfiguration = Object.assign(controllerOptions, {
 					method: method.httpMethod,

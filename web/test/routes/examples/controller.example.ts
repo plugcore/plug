@@ -32,7 +32,8 @@ export class ControllerExample {
 			request: ExampleRequest,
 			response: ExampleResponse,
 			query: ExampleParams,
-			headers: ExampleHeaders
+			headers: ExampleHeaders,
+			tags: ['customTag']
 		},
 		onRequest: ControllerExample.prototype.onRequest,
 		preParsing: ControllerExample.prototype.preParsing,
