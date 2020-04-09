@@ -2,7 +2,7 @@ import { TypeChecker } from '../utils/type.checker';
 import { ClassParameter } from '../utils/typescript.utils';
 import {
 	EObjectValidatorPropertyTypes, IPropertyValidatorMetadata, TObjectValidatorProeprtyOptions,
-	IStringSchemaValidator, INumberSchemaValidator, IArraySchemaValidator, IExendsSchemaConfig
+	IStringSchemaValidator, INumberSchemaValidator, IArraySchemaValidator, IExendsSchema
 } from './object-validator.shared';
 import { StringUtils } from '../utils/string.utils';
 
@@ -39,7 +39,7 @@ export class ObjectValidatorDecoratorUtils {
 	 */
 	public static addExtendsSchema(inp: {
 		clazz: ClassParameter<any>;
-		config: IExendsSchemaConfig;
+		config: IExendsSchema<any>;
 	}) {
 		const targetName = inp.config.schema.name;
 		Reflect.defineMetadata(`${this.propertyExtendsSchemaPrefix}${targetName}`, inp.config, inp.clazz.prototype);
@@ -61,7 +61,7 @@ export class ObjectValidatorDecoratorUtils {
 	 * for this class
 	 * @param clazz
 	 */
-	public static getExtendedSchemas<T>(clazz: ClassParameter<T>): IExendsSchemaConfig[] {
+	public static getExtendedSchemas<T>(clazz: ClassParameter<T>): IExendsSchema<any>[] {
 		const keys = Reflect.getMetadataKeys(clazz.prototype);
 		return keys
 			.filter(metadataKey => TypeChecker.isString(metadataKey) && metadataKey.startsWith(this.propertyExtendsSchemaPrefix))
@@ -79,8 +79,12 @@ export class ObjectValidatorDecoratorUtils {
 			const targetClassProperties = this.getClassProperties(extendedSchema.schema);
 			classProperties = classProperties.concat(
 				targetClassProperties.filter(p => (
-					!extendedSchema.ignoreProperties ||
-					!extendedSchema.ignoreProperties.includes(p.property)
+					extendedSchema.includeProperties ?
+						extendedSchema.includeProperties.includes(p.property) :
+						(
+							!extendedSchema.ignoreProperties ||
+							!extendedSchema.ignoreProperties.includes(p.property)
+						)
 				))
 			);
 		}

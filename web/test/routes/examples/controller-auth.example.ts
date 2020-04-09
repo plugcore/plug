@@ -6,7 +6,7 @@ export class ControllerAuthExample {
 
 	// Mix of securities
 
-	@Get({ security: ['basic', 'jwt'], config: { testKey: 'testValue' } })
+	@Get({ security: ['basic', 'jwt'], config: { testKey: 'testValue' }, routeSchemas: { tags: ['example']} })
 	public async getTest(req: Request) {
 		return { method: 'getTest', jwtPayload: req.jwtPayload };
 	}

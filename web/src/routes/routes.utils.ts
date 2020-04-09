@@ -2,7 +2,7 @@ import { ClassParameter, TypeChecker, IDiEntry, Container } from '@plugcore/core
 import { HTTPMethod } from 'fastify';
 import {
 	IControllerOptions, IRegisteredController, IRegsiteredMethod, TMethodOptions, BaiscAuthLoginFn,
-	JwtLoginFn, Request, Response, CustomAuthFn, JwtPreHandleFn
+	JwtLoginFn, Request, Response, CustomAuthFn, JwtPreHandleFn, JwtLoginMeta
 } from './routes.shared';
 
 export class RoutesUtils {
@@ -20,6 +20,7 @@ export class RoutesUtils {
 	public static jwtLoginFn: JwtLoginFn = async (request: Request) => {
 		throw new Error('Basic auth login not implemented');
 	};
+	public static jwtLoginMeta: JwtLoginMeta | undefined;
 	public static jwtPreHandleFn: JwtPreHandleFn | undefined;
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public static customAuthFn: CustomAuthFn = async (request: Request, response: Response) => {
@@ -34,6 +35,7 @@ export class RoutesUtils {
 	public static readonly propertyMetadataPrefix = 'p-controller-method:';
 	public static readonly basicAtuhMetadataPrefix = 'p-basic-auth-login-fn';
 	public static readonly jwtMetadataPrefix = 'p-jwt-login-fn';
+	public static readonly jwtRouteMetadataPrefix = 'p-jwt-login-route';
 	public static readonly jwtPreHandleMetadataPrefix = 'p-jwt-pre-handle-fn';
 	public static readonly customAuthMetadataPrefix = 'p-custom-auth-fn';
 
@@ -82,6 +84,7 @@ export class RoutesUtils {
 			// 1: Check if the have marked some function as login fn metada
 			const basicAuthLoginFn = Reflect.getMetadata(this.basicAtuhMetadataPrefix, entry.serviceClass.prototype);
 			const jwtLoginFn = Reflect.getMetadata(this.jwtMetadataPrefix, entry.serviceClass.prototype);
+			const jwtRouteMeta = Reflect.getMetadata(this.jwtRouteMetadataPrefix, entry.serviceClass.prototype);
 			const jwtPreHandleFn = Reflect.getMetadata(this.jwtPreHandleMetadataPrefix, entry.serviceClass.prototype);
 			const customAuthFn = Reflect.getMetadata(this.customAuthMetadataPrefix, entry.serviceClass.prototype);
 
@@ -98,6 +101,9 @@ export class RoutesUtils {
 			if (customAuthFn) {
 				this.customAuthFn = entry.object[customAuthFn].bind(entry.object);
 			}
+			if (jwtRouteMeta) {
+				this.jwtLoginMeta = jwtRouteMeta;
+			}
 
 		}
 	}
@@ -105,8 +111,11 @@ export class RoutesUtils {
 	public static registerBasicAuthLoginFn(clazz: ClassParameter<any>, methodName: string) {
 		Reflect.defineMetadata(this.basicAtuhMetadataPrefix, methodName, clazz.prototype);
 	}
-	public static registerJwtLoginFn(clazz: ClassParameter<any>, methodName: string) {
+	public static registerJwtLoginFn(clazz: ClassParameter<any>, methodName: string, meta?: JwtLoginMeta) {
 		Reflect.defineMetadata(this.jwtMetadataPrefix, methodName, clazz.prototype);
+		if (meta) {
+			Reflect.defineMetadata(this.jwtRouteMetadataPrefix, meta, clazz.prototype);
+		}
 	}
 	public static registerJwtPreHandleFn(clazz: ClassParameter<any>, methodName: string) {
 		Reflect.defineMetadata(this.jwtPreHandleMetadataPrefix, methodName, clazz.prototype);

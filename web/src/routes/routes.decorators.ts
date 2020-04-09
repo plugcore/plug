@@ -1,5 +1,5 @@
 import { ClassParameter, ObjectUtils, Service, TypeChecker } from '@plugcore/core';
-import { IControllerOptions, TMethodOptions } from './routes.shared';
+import { IControllerOptions, JwtLoginMeta, TMethodOptions } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 
 //
@@ -113,10 +113,10 @@ export function BasicAuthLogin(): Function {
  * Registers service method that will be called when a request
  * for JWT is performed
  */
-export function JwtLogin(): Function {
+export function JwtLogin(meta?: JwtLoginMeta): Function {
 	return function (target: any, propertyKey: string) {
 		if (TypeChecker.isClass(target.constructor)) {
-			RoutesUtils.registerJwtLoginFn(target.constructor, propertyKey);
+			RoutesUtils.registerJwtLoginFn(target.constructor, propertyKey, meta);
 		}
 	};
 }

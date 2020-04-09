@@ -4,7 +4,8 @@ import { FsUtils } from '../../src/io/fs.utils';
 import { ObjectValidator } from '../../src/object-validator/object-validator.service';
 import { BeforeTests, Test, TestService } from '../../src/test/test.decorators';
 import { AsserterService } from '../../src/test/test.shared';
-import { ModelWithExtendedSchemas, MyCustomModel } from './object-validator.models';
+import { ModelWithExtendedSchemas, MyCustomModel, ModelWithExtendedSchemas2 } from './object-validator.models';
+import { ObjectValidatorUtils } from '../../src/object-validator/object-validator.utils';
 
 @TestService()
 export class ObjectValidatorDecorators extends AsserterService {
@@ -125,10 +126,21 @@ export class ObjectValidatorDecorators extends AsserterService {
 
 	@Test()
 	public async extendedSchema() {
+
 		const extended = this.objectValidator.createValidatorFromClass(ModelWithExtendedSchemas);
 		const result = this.objectValidator.validate(extended, this.jsonFileDataOkExtended);
 		this.assert.ok(result.valid);
 		this.assert.deepEqual(result.errors, []);
+		const extended2 = this.objectValidator.createValidatorFromClass(ModelWithExtendedSchemas2);
+		const result2 = this.objectValidator.validate(extended2, this.jsonFileDataOkExtended);
+		this.assert.ok(result2.valid);
+		this.assert.deepEqual(result2.errors, []);
+
+		const schema1 = ObjectValidatorUtils.generateJsonSchema(ModelWithExtendedSchemas);
+		const schema2 = ObjectValidatorUtils.generateJsonSchema(ModelWithExtendedSchemas2);
+		this.assert.equal(schema1.type, schema2.type);
+		this.assert.deepEqual(schema1.properties, schema2.properties);
+		this.assert.deepEqual(schema1.required, schema2.required);
 	}
 
 }

@@ -1,13 +1,19 @@
-import { InjectLogger, Logger, Service } from '@plugcore/core';
+import { InjectLogger, Logger, Service, IsString, Required } from '@plugcore/core';
 import { BasicAuthLogin, CustomAuth, JwtLogin, JwtPreHandle } from '../../../src/routes/routes.decorators';
 import { Request, Response } from '../../../src/routes/routes.shared';
+
+export class JWTLoginReq {
+	@Required()
+	@IsString()
+	public user: string;
+}
 
 @Service()
 export class RoutesAuthImplExample {
 
 	constructor(
 		@InjectLogger('auth') private log: Logger
-	) {}
+	) { }
 
 	@BasicAuthLogin()
 	public async basicAuthLogin(user: string, password: string) {
@@ -15,7 +21,12 @@ export class RoutesAuthImplExample {
 		return user === 'testUser' && password === 'testPassword';
 	}
 
-	@JwtLogin()
+	@JwtLogin({
+		routeSchemas: {
+			tags: ['auth'],
+			request: JWTLoginReq
+		}
+	})
 	public async jwtLogin(request: Request) {
 		this.log.info('jwtLogin');
 		if (request.body && request.body.user === 'testUser') {

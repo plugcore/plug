@@ -65,8 +65,8 @@ export class RoutesAuthTest extends AsserterService {
 					eanbled: true,
 					jwtLoginPath: '/auth/jwt',
 					securityInAllRoutes: ['jwt', 'basic']
-				},
-				oas: { enableDocumentation: false }
+				}/* ,
+				oas: { enableDocumentation: false } */
 			}
 		});
 		this.routesService1 = new RoutesService(log, cfgServer1);

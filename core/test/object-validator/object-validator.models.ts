@@ -44,9 +44,17 @@ export class MyCustomModel {
 
 }
 
-@ExtendsSchema({ schema: MyCustomModel, ignoreProperties: ['objectsArrayProp', 'subPropr'] })
-@ExtendsSchema({ schema: MyCustomSubModel })
+@ExtendsSchema(MyCustomModel, { ignoreProperties: ['objectsArrayProp', 'subPropr'] })
+@ExtendsSchema(MyCustomSubModel)
 export class ModelWithExtendedSchemas {
+	@Required()
+	@IsNumber()
+	public otherNumberProp: number;
+}
+
+@ExtendsSchema(MyCustomModel, { includeProperties: ['numberProp', 'stringProp', 'arrayProp'] })
+@ExtendsSchema(MyCustomSubModel)
+export class ModelWithExtendedSchemas2 {
 	@Required()
 	@IsNumber()
 	public otherNumberProp: number;

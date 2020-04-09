@@ -58,11 +58,14 @@ export function Required() {
 	};
 }
 
-export function ExtendsSchema(config: IExendsSchemaConfig) {
+export function ExtendsSchema<T>(targetSchema: ClassParameter<T>, config?: IExendsSchemaConfig<T>) {
 	return (target: any) => {
 		if (TypeChecker.isClass(target)) {
 			ObjectValidatorDecoratorUtils.addExtendsSchema({
-				clazz: target, config
+				clazz: target, config: {
+					...{ schema: targetSchema },
+					...(config || {})
+				}
 			});
 		}
 	};

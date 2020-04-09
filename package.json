@@ -1,6 +1,6 @@
 {
 	"name": "plugcore-framework",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"description": "![plugcore.com](_docs/logo.png?raw=true \"plugcore.com\")",
 	"main": ".eslintrc.js",
 	"scripts": {

@@ -42,9 +42,13 @@ export interface IPropertyValidatorMetadata<T extends TObjectValidatorProeprtyOp
 	options?: T;
 }
 
-export interface IExendsSchemaConfig {
-	schema: ClassParameter<any>;
-	ignoreProperties?: string[];
+export interface IExendsSchema<T> extends IExendsSchemaConfig<T> {
+	schema: ClassParameter<T>;
+}
+
+export interface IExendsSchemaConfig<T> {
+	ignoreProperties?: (keyof T)[];
+	includeProperties?: (keyof T)[];
 }
 
 //

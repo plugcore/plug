@@ -4,7 +4,7 @@ import {
 	InjectLogger, Logger, ObjectUtils, ObjectValidatorUtils, OnEvent,
 	PublicEvents, Service, ValidatorUtils
 } from '@plugcore/core';
-import { RouteSchema, Plugin } from 'fastify';
+import { RouteSchema, Plugin, HTTPMethod } from 'fastify';
 import * as fastifyAuth from 'fastify-auth';
 import * as oas from 'fastify-oas';
 import * as fstatic from 'fastify-static';
@@ -13,7 +13,7 @@ import { decode, encode } from 'jwt-simple';
 import { WebConfiguration } from '../configuration/configuration.default';
 import { JwtAvailableAlgorithms, WebOasConfiguration } from '../configuration/configuration.insterfaces';
 import { RoutesService } from './routes.service';
-import { ErrorResponseModel, Request, Response, TMethodOptions, IRegisteredController } from './routes.shared';
+import { ErrorResponseModel, Request, Response, TMethodOptions, IRegisteredController, IRouteSchemas } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 import { join } from 'path';
 
@@ -66,9 +66,7 @@ export class RoutesInitializer {
 				// Custom data object that anybody can use in the request to put their data
 				.decorateRequest('customData', {})
 				// Auth plugin registration
-				.register(fastifyAuth)
-				// Auth routes
-				.register(this.authPlugin.bind(this));
+				.register(fastifyAuth);
 		}
 
 		this.routesService.fastifyInstance
@@ -79,6 +77,11 @@ export class RoutesInitializer {
 			// Custom routes
 			.register(this.methodsPlugin(restControllers));
 
+		if (this.securityEnabled) {
+			this.routesService.fastifyInstance
+				// Auth routes
+				.register(this.authPlugin.bind(this));
+		}
 		await this.routesService.startHttpServer();
 
 	}
@@ -114,12 +117,16 @@ export class RoutesInitializer {
 			// Other vars
 			const loginUrl = this.configuration.web.auth.jwtLoginPath || '/auth/login';
 
+			console.log('>>>', loginUrl, RoutesUtils.jwtLoginMeta ?
+				this.createFromRouteSchemas('POST', RoutesUtils.jwtLoginMeta.routeSchemas) : undefined);
+
 			// Register JWT login route
 			plugin.route({
 				method: 'POST',
 				url: loginUrl,
 				handler: <any>this.handleJwtLogin.bind(this),
-				schema: { hide: true }
+				schema: RoutesUtils.jwtLoginMeta ?
+					this.createFromRouteSchemas('POST', RoutesUtils.jwtLoginMeta.routeSchemas) : undefined
 			});
 
 		}
@@ -301,31 +308,7 @@ export class RoutesInitializer {
 				// Route validations
 				if (routeSchemas) {
 
-					if (method.httpMethod !== 'GET' && routeSchemas.request) {
-						schema.body = this.isModelArray(routeSchemas.request) ?
-							ObjectValidatorUtils.generateJsonSchema(routeSchemas.request.model, { asArray: true }) :
-							ObjectValidatorUtils.generateJsonSchema(routeSchemas.request);
-					}
-					if (routeSchemas.response) {
-						schema.response = {
-							200: this.isModelArray(routeSchemas.response) ?
-								ObjectValidatorUtils.generateJsonSchema(routeSchemas.response.model, { asArray: true }) :
-								ObjectValidatorUtils.generateJsonSchema(routeSchemas.response),
-							400: ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel),
-							500: ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel)
-						};
-					}
-					if (routeSchemas.query) {
-						schema.querystring = ObjectValidatorUtils.generateJsonSchema(routeSchemas.query);
-					}
-					if (routeSchemas.urlParameters) {
-						schema.params = ObjectValidatorUtils.generateJsonSchema(routeSchemas.urlParameters);
-					}
-					if (routeSchemas.headers) {
-						schema.headers = ObjectValidatorUtils.generateJsonSchema(routeSchemas.headers);
-					}
-
-					controllerOptions.schema = schema;
+					controllerOptions.schema = this.createFromRouteSchemas(method.httpMethod, routeSchemas, schema);
 
 				}
 				controllerOptions.routeSchemas = undefined;
@@ -497,6 +480,41 @@ export class RoutesInitializer {
 
 		// The custom auth takes care of throwing errors
 		await RoutesUtils.customAuthFn(request, respose);
+
+	}
+
+	private createFromRouteSchemas(httpMethod: HTTPMethod, routeSchemas: IRouteSchemas, schema?: RouteSchema) {
+
+		const result = ObjectUtils.deepClone(schema || {});
+
+		if (httpMethod !== 'GET' && routeSchemas.request) {
+			result.body = this.isModelArray(routeSchemas.request) ?
+				ObjectValidatorUtils.generateJsonSchema(routeSchemas.request.model, { asArray: true }) :
+				ObjectValidatorUtils.generateJsonSchema(routeSchemas.request);
+		}
+		if (routeSchemas.response) {
+			result.response = {
+				200: this.isModelArray(routeSchemas.response) ?
+					ObjectValidatorUtils.generateJsonSchema(routeSchemas.response.model, { asArray: true }) :
+					ObjectValidatorUtils.generateJsonSchema(routeSchemas.response),
+				400: ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel),
+				500: ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel)
+			};
+		}
+		if (routeSchemas.query) {
+			result.querystring = ObjectValidatorUtils.generateJsonSchema(routeSchemas.query);
+		}
+		if (routeSchemas.urlParameters) {
+			result.params = ObjectValidatorUtils.generateJsonSchema(routeSchemas.urlParameters);
+		}
+		if (routeSchemas.headers) {
+			result.headers = ObjectValidatorUtils.generateJsonSchema(routeSchemas.headers);
+		}
+		if (routeSchemas.tags) {
+			result.tags = routeSchemas.tags;
+		}
+
+		return result;
 
 	}
 

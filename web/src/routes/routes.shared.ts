@@ -62,6 +62,10 @@ export interface IRouteSchemas {
 	 * with validators
 	 */
 	headers?: ClassParameter<any>;
+	/**
+	 * Same as schema tags, it lets you categorice your apis
+	 */
+	tags?:  string[];
 }
 
 export interface Request<
@@ -72,6 +76,13 @@ export interface Request<
 	customData: CustomData;
 }
 export interface Response extends FastifyReply<ServerResponse> { }
+
+export interface JwtLoginMeta {
+	/**
+	 * Defines the route schemas that will be used in JWT login route.
+	 */
+	routeSchemas: IRouteSchemas;
+}
 
 //
 // Types
