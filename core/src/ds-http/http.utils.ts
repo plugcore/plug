@@ -104,7 +104,15 @@ export class HttpUtils {
 							if (
 								headers['Accept'] === 'application/json'
 							) {
-								result = JSON.parse(dataResponse.read());
+								const rawResult = dataResponse.read().toString();
+								try {
+									result = JSON.parse(rawResult);
+								} catch (error) {
+									reject({
+										contet: rawResult,
+										error: error
+									});
+								}
 							} else {
 								result = dataResponse.read();
 							}

@@ -1,6 +1,6 @@
 {
 	"name": "@plugcore/core",
-	"version": "1.0.8",
+	"version": "1.0.9",
 	"description": "plugcore.com core utilities",
 	"main": "index.js",
 	"repository": {

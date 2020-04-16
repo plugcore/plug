@@ -121,6 +121,13 @@ export class MongoDbDatasource implements OnInit {
 		}
 	}
 
+	public getMongoClient() {
+		return this.mongoClient;
+	}
+
+	public getConnection() {
+		return this.dbConnection;
+	}
 
 }
 

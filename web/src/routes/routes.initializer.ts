@@ -307,8 +307,6 @@ export class RoutesInitializer {
 
 					schema = this.createFromRouteSchemas(method.httpMethod, routeSchemas, schema);
 
-					console.log(11111, {schema});
-
 				}
 				controllerOptions.routeSchemas = undefined;
 
