@@ -16,6 +16,7 @@ import { RoutesService } from './routes.service';
 import { ErrorResponseModel, Request, Response, TMethodOptions, IRegisteredController, IRouteSchemas } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 import { join } from 'path';
+import { SecuritySchemeObject } from 'openapi3-ts';
 
 @Service()
 export class RoutesInitializer {
@@ -144,7 +145,7 @@ export class RoutesInitializer {
 		const oasConfiguration: WebOasConfiguration = (this.configuration.web && this.configuration.web.oas) ?
 			ObjectUtils.deepMerge(defaultConfiguration, this.configuration.web.oas) : defaultConfiguration;
 		const oasSecurity = this.configuration.web && this.configuration.web.auth && this.configuration.web.auth.securityInOas;
-		const securityHamdlers: any[] = [];
+		const securityHandlers: any[] = [];
 
 		if (!oasConfiguration.enableDocumentation) {
 			done();
@@ -155,10 +156,10 @@ export class RoutesInitializer {
 
 			// Create security handlers
 			if (oasSecurity.includes('jwt')) {
-				securityHamdlers.push(plugin.verifyJwt);
+				securityHandlers.push(plugin.verifyJwt);
 			}
 			if (oasSecurity.includes('basic')) {
-				securityHamdlers.push(plugin.verifyUserAndPassword);
+				securityHandlers.push(plugin.verifyUserAndPassword);
 			}
 
 		}
@@ -184,27 +185,24 @@ export class RoutesInitializer {
 				);
 			}
 			const possibleSecurityTypes = ArrayUtils.flatAndRemoveDuplicates(controllerSecurityTypes);
-			const oasSecuritySchema: Record<string, any>[] = [];
+			const securitySchemes: Record<string, SecuritySchemeObject> = {};
 
 			for (const securityType of possibleSecurityTypes) {
 
 				if (securityType === 'basic') {
-					oasSecuritySchema.push({
-						BasicAuth: { type: 'http', scheme: 'basic' }
-					});
+					securitySchemes['BasicAuth'] = { type: 'http', scheme: 'basic' };
 				}
 				if (securityType === 'jwt') {
-					oasSecuritySchema.push({
-						JWTBearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }
-					});
+					securitySchemes['JWTBearerAuth'] = { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' };
 				}
 
 			}
 
-			if (oasSecuritySchema.length > 0) {
-				const compoenets = oasConfiguration.components || {};
+			if (Object.keys(securitySchemes).length > 0) {
+				const components = oasConfiguration.components || {};
 				// TODO Remove any
-				compoenets.securitySchemes = <any>oasSecuritySchema;
+				components.securitySchemes = <any>securitySchemes;
+				oasConfiguration.components = components;
 			}
 
 		}
@@ -223,7 +221,7 @@ export class RoutesInitializer {
 			url: '/',
 			method: 'GET',
 			schema: { hide: true },
-			preHandler: securityHamdlers.length > 0 ? plugin.auth(securityHamdlers) : undefined,
+			preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
 			handler: (_, reply) => {
 				reply.redirect(this.oasDocumentationPath + '/index.html');
 			}
@@ -233,7 +231,7 @@ export class RoutesInitializer {
 			url: '/json',
 			method: 'GET',
 			schema: { hide: true },
-			preHandler: securityHamdlers.length > 0 ? plugin.auth(securityHamdlers) : undefined,
+			preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
 			handler: (_, reply) => {
 				reply.send(plugin.oas());
 			},
@@ -243,7 +241,7 @@ export class RoutesInitializer {
 			url: '/yaml',
 			method: 'GET',
 			schema: { hide: true },
-			preHandler: securityHamdlers.length > 0 ? plugin.auth(securityHamdlers) : undefined,
+			preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
 			handler: (_, reply) => {
 				reply.type('application/x-yaml').send((<any>plugin).oas({ yaml: true }));
 			},
@@ -341,7 +339,8 @@ export class RoutesInitializer {
 						schema.security = routeSecurity;
 					}
 
-					if (regexAuth.length > 0) {
+					// TODO: Check tests, and add heather only when necesssary
+					/* if (regexAuth.length > 0) {
 						const headerSchema: Record<string, any> = schema.headers || {
 							type: 'object',
 							properties: {}
@@ -353,8 +352,13 @@ export class RoutesInitializer {
 								pattern: `^(${regexAuth.join('|')}) .*$`
 							};
 						}
+						const prevRequired = headerSchema.required || [];
+						if (!prevRequired.includes('Authorization')) {
+							prevRequired.push('Authorization');
+						}
+						headerSchema.required = prevRequired;
 						schema.headers = headerSchema;
-					}
+					} */
 
 				}
 
