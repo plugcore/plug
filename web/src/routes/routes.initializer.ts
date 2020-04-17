@@ -348,7 +348,7 @@ export class RoutesInitializer {
 						};
 						const properties = headerSchema.properties || <any>{};
 						if (!properties.Authorization) {
-							properties.Authentication = {
+							properties.Authorization = {
 								type: 'string',
 								pattern: `^(${regexAuth.join('|')}) .*$`
 							};
@@ -363,26 +363,33 @@ export class RoutesInitializer {
 					const currentPreHandlers = controllerOptions.preHandler ?
 						Array.isArray(controllerOptions.preHandler) ? controllerOptions.preHandler : [controllerOptions.preHandler] : [];
 					const securityTypes = Array.isArray(controllerOptions.security) ? controllerOptions.security : [controllerOptions.security];
-					const securityHamdlers: any[] = [];
+					const securityHandlers: any[] = [];
 
 					if (securityOnAllRoutes.includes('jwt') || securityTypes.includes('jwt')) {
-						securityHamdlers.push(plugin.verifyJwt);
+						securityHandlers.push(plugin.verifyJwt);
 					}
 					if (securityOnAllRoutes.includes('basic') || securityTypes.includes('basic')) {
-						securityHamdlers.push(plugin.verifyUserAndPassword);
+						securityHandlers.push(plugin.verifyUserAndPassword);
 					}
 					if (securityOnAllRoutes.includes('custom') || securityTypes.includes('custom')) {
-						securityHamdlers.push(plugin.customAuth);
+						securityHandlers.push(plugin.customAuth);
 					}
 
 					if (
 						!(securityTypes.length === 1 && securityTypes[0] === 'none') &&
-						securityHamdlers.length > 0 && this.securityEnabled
+						securityHandlers.length > 0 && this.securityEnabled
 					) {
 						// TODO, remove <any>
 						controllerOptions.preHandler = <any>currentPreHandlers.concat(plugin.auth(
-							securityHamdlers
+							securityHandlers
 						));
+
+						if (schema.response) {
+							schema.response[401] = ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel);
+						} else {
+							schema.response = { 401 :ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel) };
+						}
+
 					}
 
 				}
