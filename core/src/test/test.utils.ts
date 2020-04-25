@@ -8,7 +8,8 @@ export class TestUtils {
 			init: { distFolder: '' },
 			connections: {},
 			log: {},
-			getConnectionConfiguration: <T>() => <T>{}
+			getConnectionConfiguration: <T>() => <T>{},
+			getConfigurationFolder: () => ''
 		};
 
 		return Object.assign(basicConfiguration, cfg);

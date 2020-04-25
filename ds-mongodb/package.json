@@ -24,7 +24,7 @@
 	},
 	"dependencies": {
 		"@plugcore/core": "file:../core/publish",
-		"mongodb": "^3.4.1"
+		"mongodb": "^3.5.6"
 	},
 	"devDependencies": {
 		"@types/mongodb": "^3.3.14",

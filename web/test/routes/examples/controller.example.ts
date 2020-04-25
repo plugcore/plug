@@ -1,7 +1,8 @@
-import { Logger } from '@plugcore/core';
+import { Logger, FsUtils } from '@plugcore/core';
 import { Controller, Delete, Get, Head, Options, Patch, Post, Put } from '../../../src/routes/routes.decorators';
-import { Request } from '../../../src/routes/routes.shared';
+import { Request, Response } from '../../../src/routes/routes.shared';
 import { ExampleHeaders, ExampleParams, ExampleRequest, ExampleResponse } from './route-validators.example';
+import { MimeTypes } from '../../../src/routes/routes.constants';
 
 @Controller({ urlBase: '/test' })
 export class ControllerExample {
@@ -26,6 +27,57 @@ export class ControllerExample {
 	public async headTest() {
 		return { method: 'headTest', test: 1 };
 	}
+
+	@Post('/upload', {
+		schema: {
+			body: {
+				type: 'object',
+				properties: {
+					upfile: {
+						type: 'object',
+						isFileType: true
+					},
+					upfileArray: {
+						type: 'array',
+						oasFieldStyle: 'form',
+						items: {
+							type: 'object',
+							isFileType: true
+						}
+					},
+					nonFileArray: {
+						type: 'array',
+						oasFieldStyle: 'form',
+						items: {
+							type: 'string'
+						}
+					}
+				},
+				required: ['upfile']
+			}
+		},
+		routeSchemas: {
+			query: ExampleParams,
+			headers: ExampleHeaders,
+			tags: ['customTag'],
+			consumes: [MimeTypes.multipartFormData],
+			operationId: 'testid',
+			description: 'Some description postTestUpload',
+			summary: 'This is a summary postTestUpload',
+			produces: [MimeTypes.jpeg]
+		},
+		onRequest: ControllerExample.prototype.onRequest,
+		preParsing: ControllerExample.prototype.preParsing,
+		preValidation: ControllerExample.prototype.preValidation,
+		preHandler: ControllerExample.prototype.preHandler,
+		preSerialization: ControllerExample.prototype.preSerialization
+	})
+	public async postTestUpload(req: Request<any>, res: Response) {
+		res.header('Content-Disposition', `attachment; filename="${req.body.upfile.fileName}"`);
+		res.type(MimeTypes.jpeg);
+		return FsUtils.createReadStream(req.body.upfile.filePath);
+	}
+
 
 	@Post('', {
 		routeSchemas: {

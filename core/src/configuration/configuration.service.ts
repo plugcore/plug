@@ -16,7 +16,8 @@ export class ProjectConfigurationService implements Configuration {
 
 	constructor(
 		originalConfiguration: Configuration,
-		private objectValidator: ObjectValidator
+		private objectValidator: ObjectValidator,
+		private configurationFolder: string
 	) {
 		this.frozenConfiguration = ObjectUtils.deepFreeze(
 			ObjectUtils.deepClone(originalConfiguration || {})
@@ -43,6 +44,10 @@ export class ProjectConfigurationService implements Configuration {
 		}
 
 		return <any>connectionConfiguration;
+	}
+
+	public getConfigurationFolder() {
+		return this.configurationFolder;
 	}
 
 }

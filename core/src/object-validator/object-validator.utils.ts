@@ -245,7 +245,7 @@ export class ObjectValidatorUtils {
 
 				}
 
-				aType.options.items = newItems;
+				aType.options.items = TypeChecker.isArray(aType.options.items) ? newItems : newItems[0];
 
 			}
 		}

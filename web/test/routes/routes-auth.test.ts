@@ -90,7 +90,7 @@ export class RoutesAuthTest extends AsserterService {
 	public async after() {
 		this.routesService1.shutdownHttpServer();
 		this.routesService2.shutdownHttpServer();
-		this.routesService3.shutdownHttpServer();
+		/* this.routesService3.shutdownHttpServer(); */
 	}
 
 	@Test()

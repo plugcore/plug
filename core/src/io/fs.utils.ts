@@ -1,5 +1,5 @@
 import { F_OK } from 'constants';
-import { access, lstat, readdir, readFile, rmdir, stat, Stats, unlink, write, writeFile, mkdir } from 'fs';
+import { access, lstat, readdir, readFile, rmdir, stat, Stats, unlink, write, writeFile, mkdir, rename, createReadStream, PathLike } from 'fs';
 import { join, basename, resolve } from 'path';
 import { StringConstants } from '../constants/string.constants';
 import { TypeChecker } from '../utils/type.checker';
@@ -242,7 +242,7 @@ export class FsUtils {
 				if (err) {
 					reject(err);
 				} else {
-					console.log({targetFile, file});
+					console.log({ targetFile, file });
 					writeFile(targetFile, file, err2 => {
 						if (err) {
 							reject(err2);
@@ -372,6 +372,43 @@ export class FsUtils {
 
 		});
 
+	}
+
+	public static async removeFile(filePath: string, ignoreError?: boolean) {
+		return new Promise((resolve, reject) => {
+			unlink(filePath, error => {
+				if (error && !ignoreError) {
+					reject(error);
+				} else {
+					resolve();
+				}
+			});
+		});
+	}
+
+	public static moveFile(sourceFile: string, targetFile: string) {
+		return new Promise((resolve, reject) => {
+			rename(sourceFile, targetFile, error => {
+				if (error) {
+					reject(error);
+				} else {
+					resolve();
+				}
+			});
+		});
+	}
+
+	public static createReadStream(file: PathLike, options?: string | {
+		flags?: string;
+		encoding?: string;
+		fd?: number;
+		mode?: number;
+		autoClose?: boolean;
+		start?: number;
+		end?: number;
+		highWaterMark?: number;
+	}) {
+		return createReadStream(file, options);
 	}
 
 }

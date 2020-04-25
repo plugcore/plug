@@ -58,7 +58,7 @@ export class PorjectInitialization {
 		const objectValidator = await Container.get(ObjectValidator);
 
 		// Create configuration serice
-		const configurationService = new ProjectConfigurationService(configuration, objectValidator);
+		const configurationService = new ProjectConfigurationService(configuration, objectValidator, configurationFolder);
 
 		// Add the configuratio to di container
 		Container.set(ProjectConfigurationService, configurationService);

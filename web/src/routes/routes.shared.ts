@@ -4,6 +4,7 @@ import {
 } from 'fastify';
 import { IncomingMessage, ServerResponse } from 'http';
 import { SupportedSecurityTypes } from '../configuration/configuration.insterfaces';
+import { SecurityRequirementObject } from 'openapi3-ts';
 
 //
 // Interfaces
@@ -65,7 +66,36 @@ export interface IRouteSchemas {
 	/**
 	 * Same as schema tags, it lets you categorice your apis
 	 */
-	tags?:  string[];
+	tags?: string[];
+	/**
+	 * Hides route from result OpenAPI document
+	 * @default false
+	 */
+	hide?: boolean;
+	/**
+	 * Route description
+	 */
+	description?: string;
+	/**
+	 * Route summary
+	 */
+	summary?: string;
+	/**
+	 * Media types route consumes
+	 */
+	consumes?: string[];
+	/**
+	 * Media types route produces
+	 */
+	produces?: string[];
+	/**
+	 * OpenAPI security definitions
+	 */
+	security?: SecurityRequirementObject[];
+	/**
+	 * OpenAPI operation unique identifier
+	 */
+	operationId?: string;
 }
 
 export interface Request<
@@ -73,6 +103,8 @@ export interface Request<
 	THeaders = DefaultHeaders, CustomData = any, JWTPayload = any | undefined
 > extends FastifyRequest<IncomingMessage, TParams, TUrlParams, THeaders, TBody> {
 	jwtPayload: JWTPayload;
+	isMultipart?: boolean;
+	multipartTempFiles?: string[];
 	customData: CustomData;
 }
 export interface Response extends FastifyReply<ServerResponse> { }
@@ -88,16 +120,16 @@ export interface JwtLoginMeta {
 // Types
 //
 
-export type InRouteShorthandOptions = RouteShorthandOptions<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, DefaultHeaders, Body>;
+export type InRouteShorthandOptions = RouteShorthandOptions<Request, Response, DefaultQuery, DefaultParams, DefaultHeaders, Body>;
 
 type OmitedShorthandOptions = 'url' | 'onRequest' | 'preParsing' | 'preValidation' | 'preHandler' | 'preSerialization';
 export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOptions> & {
 	routeSchemas?: IRouteSchemas;
-	onRequest?: InRouteShorthandOptions['onRequest'] | ((req: Request, res: Response) => Promise<any>);
-	preParsing?: InRouteShorthandOptions['preParsing'] | ((req: Request, res: Response) => Promise<any>);
-	preValidation?: InRouteShorthandOptions['preValidation'] | ((req: Request, res: Response) => Promise<any>);
-	preHandler?: InRouteShorthandOptions['preHandler'] | ((req: Request, res: Response) => Promise<any>);
-	preSerialization?: InRouteShorthandOptions['preSerialization'] | ((req: Request, res: Response, payload: any) => Promise<any>);
+	onRequest?: ((req: Request, res: Response) => Promise<void>) | ((req: Request, res: Response) => Promise<void>)[];
+	preParsing?: ((req: Request, res: Response) => Promise<void>) | ((req: Request, res: Response) => Promise<void>)[];
+	preValidation?: ((req: Request, res: Response) => Promise<void>) | ((req: Request, res: Response) => Promise<void>)[];
+	preHandler?: ((req: Request, res: Response) => Promise<void>) | ((req: Request, res: Response) => Promise<void>)[];
+	preSerialization?: ((req: Request, res: Response, payload: any) => Promise<void>);
 	security?: SupportedSecurityTypes | SupportedSecurityTypes[];
 };
 

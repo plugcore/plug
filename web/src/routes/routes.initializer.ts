@@ -1,22 +1,23 @@
-import { IncomingMessage, Server, ServerResponse } from 'http';
-import {
-	ArrayUtils, ClassParameter, Configuration, Container, InjectConfiguration,
-	InjectLogger, Logger, ObjectUtils, ObjectValidatorUtils, OnEvent,
-	PublicEvents, Service, ValidatorUtils
-} from '@plugcore/core';
-import { RouteSchema, Plugin, HTTPMethod } from 'fastify';
+import { ArrayUtils, ClassParameter, Configuration, Container, FsUtils, InjectConfiguration, InjectLogger, Logger, ObjectUtils, ObjectValidatorUtils, OnEvent, PublicEvents, Service, TypeChecker, ValidatorUtils } from '@plugcore/core';
+import * as Ajv from 'ajv';
+import * as Busboy from 'busboy';
+import { ContentTypeParser, HTTPMethod, Plugin, RouteSchema } from 'fastify';
 import * as fastifyAuth from 'fastify-auth';
+import * as cookies from 'fastify-cookie';
 import * as oas from 'fastify-oas';
 import * as fstatic from 'fastify-static';
-import * as cookies from 'fastify-cookie';
+import { createWriteStream } from 'fs';
+import { IncomingMessage, Server, ServerResponse } from 'http';
+import { JSONSchema7 } from 'json-schema';
 import { decode, encode } from 'jwt-simple';
-import { WebConfiguration } from '../configuration/configuration.default';
-import { JwtAvailableAlgorithms, WebOasConfiguration } from '../configuration/configuration.insterfaces';
-import { RoutesService } from './routes.service';
-import { ErrorResponseModel, Request, Response, TMethodOptions, IRegisteredController, IRouteSchemas } from './routes.shared';
-import { RoutesUtils } from './routes.utils';
-import { join } from 'path';
 import { SecuritySchemeObject } from 'openapi3-ts';
+import { join } from 'path';
+import { WebConfiguration } from '../configuration/configuration.default';
+import { FileUploadWebConfiguration, JwtAvailableAlgorithms, WebOasConfiguration } from '../configuration/configuration.insterfaces';
+import { MimeTypes } from './routes.constants';
+import { RoutesService } from './routes.service';
+import { ErrorResponseModel, IRegisteredController, IRouteSchemas, Request, Response, TMethodOptions } from './routes.shared';
+import { RoutesUtils } from './routes.utils';
 
 @Service()
 export class RoutesInitializer {
@@ -31,6 +32,7 @@ export class RoutesInitializer {
 		expiration: <number | undefined>undefined
 	};
 	private oasDocumentationPath: string;
+	private ajvCustomInstance: Ajv.Ajv;
 
 	constructor(
 		@InjectLogger('httpcontroller') private log: Logger,
@@ -44,6 +46,22 @@ export class RoutesInitializer {
 			configuration.web && configuration.web.oas && configuration.web.oas.documentationPath
 		) || WebConfiguration.default.web.oas.documentationPath || '/api/documentation';
 
+		this.ajvCustomInstance = new Ajv({
+			// removeAdditional: "all",
+			useDefaults: true,
+			coerceTypes: true,
+			$data: true,
+			extendRefs: true
+		});
+		this.ajvCustomInstance.addKeyword('isFileType', {
+			compile: (_, parent) => {
+				// Change the schema type, as this is post validation it doesn't appear to error.
+				(parent as any).type = 'file';
+				delete (parent as any).isFileType;
+				return () => true;
+			},
+		});
+
 	}
 
 	@OnEvent(PublicEvents.allServicesLoaded)
@@ -55,6 +73,17 @@ export class RoutesInitializer {
 	public async initHttpServer() {
 
 		const restControllers = await Promise.all(this.getMethodsServices());
+
+		if (this.configuration.web && this.configuration.web.fileUpload && this.configuration.web.fileUpload.enabled) {
+			this.routesService.fastifyInstance.addContentTypeParser('multipart', this.multiartImpl());
+			this.routesService.fastifyInstance
+				// Lets you Defile file fields
+				.setSchemaCompiler((schema: any) => this.ajvCustomInstance.compile(schema))
+				// Indicates if the request has been execcuted with fiel upload
+				.decorateRequest('isMultipart', false)
+				// If teh request is multipart, then this is a list of temp filtes to delete
+				.decorateRequest('multipartTempFiles', undefined);
+		}
 
 		if (this.securityEnabled) {
 			this.routesService.fastifyInstance
@@ -76,8 +105,10 @@ export class RoutesInitializer {
 			// Cookies support
 			.register(cookies)
 			// Custom routes
-			.register(this.methodsPlugin(restControllers));
-
+			.register(this.methodsPlugin(restControllers, {
+				configFilePath: this.configuration.getConfigurationFolder(),
+				config: this.configuration.web ? this.configuration.web.fileUpload : undefined,
+			}));
 		if (this.securityEnabled) {
 			this.routesService.fastifyInstance
 				// Auth routes
@@ -257,10 +288,16 @@ export class RoutesInitializer {
 
 	};
 
-	private methodsPlugin: (restControllers: {
-		controllerService: any;
-		controller: IRegisteredController;
-	}[]) => Plugin<Server, IncomingMessage, ServerResponse, fastifyAuth.Options> = (restControllers) => (plugin, _, done) => {
+	private methodsPlugin: (
+		restControllers: {
+			controllerService: any;
+			controller: IRegisteredController;
+		}[],
+		fileConfig: {
+			configFilePath: string;
+			config?: FileUploadWebConfiguration;
+		}
+	) => Plugin<Server, IncomingMessage, ServerResponse, fastifyAuth.Options> = (restControllers, fileConfig) => (plugin, _, done) => {
 
 		let securityOnAllRoutes = this.configuration && this.configuration.web &&
 			this.configuration.web.auth && this.securityEnabled && this.configuration.web.auth.securityInAllRoutes;
@@ -298,7 +335,7 @@ export class RoutesInitializer {
 
 				// Schema definition
 				const routeSchemas = controllerOptions.routeSchemas;
-				let schema: RouteSchema = controllerOptions.schema || {};
+				let schema: RouteSchema = this.cloneSchema(controllerOptions.schema || {});
 
 				// Route validations
 				if (routeSchemas) {
@@ -391,19 +428,28 @@ export class RoutesInitializer {
 						if (schema.response) {
 							schema.response[401] = ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel);
 						} else {
-							schema.response = { 401 :ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel) };
+							schema.response = { 401: ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel) };
 						}
 
 					}
 
 				}
 
-				controllerOptions.schema = schema;
+				// Check if we have a multipart request, then we have to transform
+				// incoming request body with request schema if exists
+				if ((schema.consumes || []).includes(MimeTypes.multipartFormData)) {
+					const currentPreValidation = controllerOptions.preValidation ?
+						Array.isArray(controllerOptions.preValidation) ? controllerOptions.preValidation :
+						[controllerOptions.preValidation] : [];
+					currentPreValidation.push(this.multipartBodyTransformer(this.cloneSchema(schema)));
+					controllerOptions.preValidation = currentPreValidation;
+				}
 
 				const routeConfiguration = Object.assign(controllerOptions, {
 					method: method.httpMethod,
 					url,
-					handler: controllerMethodHandler
+					handler: controllerMethodHandler,
+					schema
 				});
 
 				plugin.route(routeConfiguration);
@@ -412,6 +458,19 @@ export class RoutesInitializer {
 
 			}
 
+		}
+
+		///
+
+		if (fileConfig.config && fileConfig.config.enabled && !fileConfig.config.keepTempFilesAfterRequest) {
+			plugin.addHook('onSend', async request => {
+				const req = ((<any>request.raw) as Request);
+				if (req.isMultipart && req.multipartTempFiles) {
+					// TODO Remove temp files
+					await Promise.all(req.multipartTempFiles.map(p => FsUtils.removeFile(p, true)));
+				}
+
+			});
 		}
 
 		done();
@@ -493,7 +552,7 @@ export class RoutesInitializer {
 
 	private createFromRouteSchemas(httpMethod: HTTPMethod, routeSchemas: IRouteSchemas, schema?: RouteSchema) {
 
-		const result = ObjectUtils.deepClone(schema || {});
+		const result = schema || {};
 
 		if (httpMethod !== 'GET' && routeSchemas.request) {
 			result.body = this.isModelArray(routeSchemas.request) ?
@@ -521,9 +580,179 @@ export class RoutesInitializer {
 		if (routeSchemas.tags) {
 			result.tags = routeSchemas.tags;
 		}
+		if (routeSchemas.hide) {
+			result.hide = routeSchemas.hide;
+		}
+		if (routeSchemas.description) {
+			result.description = routeSchemas.description;
+		}
+		if (routeSchemas.summary) {
+			result.summary = routeSchemas.summary;
+		}
+		if (routeSchemas.consumes) {
+			result.consumes = routeSchemas.consumes;
+		}
+		if (routeSchemas.produces) {
+			result.produces = routeSchemas.produces;
+		}
+		if (routeSchemas.security) {
+			result.security = routeSchemas.security;
+		}
+		if (routeSchemas.operationId) {
+			result.operationId = routeSchemas.operationId;
+		}
 
 		return result;
 
+	}
+
+	private multipartBodyTransformer(schema: RouteSchema) {
+		return async (request: Request) => {
+
+			const bodySchema = (schema.body as JSONSchema7);
+			if (request.body && bodySchema && bodySchema.type === 'object' && bodySchema.properties) {
+
+				for (const bodyProperty of Object.keys(bodySchema.properties)) {
+
+					const currentValue = request.body[bodyProperty];
+					const propertySchema = bodySchema.properties[bodyProperty];
+
+					if (!TypeChecker.isBoolean(propertySchema) && currentValue !== undefined && currentValue !== null) {
+
+						if (propertySchema.type === 'string') {
+							request.body[bodyProperty] = `${currentValue[0]}`;
+						} else if (propertySchema.type === 'boolean') {
+							request.body[bodyProperty] = currentValue[0] === 'true' || currentValue[0] === true;
+						} else if (propertySchema.type === 'integer' || propertySchema.type === 'number') {
+							request.body[bodyProperty] = parseInt(currentValue[0], 10);
+						} else if (propertySchema.type === 'object') {
+							request.body[bodyProperty] = currentValue[0];
+						} else if (propertySchema.type === 'null') {
+							request.body[bodyProperty] = null;
+						} else if (propertySchema.type === 'array') {
+							const arrayType = propertySchema.items ? TypeChecker.isObject(propertySchema.items) ?
+								!TypeChecker.isArray(propertySchema.items) ? propertySchema.items.type :
+								undefined : undefined : undefined;
+							if (arrayType === 'string') {
+								request.body[bodyProperty] = currentValue.map((v: any) => `${v}`);
+							} else if (arrayType === 'boolean') {
+								request.body[bodyProperty] = currentValue.map((v: any) => v === 'true' || v === true);
+							} else if (arrayType === 'integer' || arrayType === 'number') {
+								request.body[bodyProperty] = currentValue.map((v: any) => parseInt(v, 10));
+							}
+						}
+
+					}
+
+				}
+
+			}
+
+		};
+	}
+
+	private multiartImpl: (config?: FileUploadWebConfiguration) => ContentTypeParser<IncomingMessage> = (config) => (request, done) => {
+		const body: any = {};
+		const multipartTempFiles: string[] = [];
+		const basePath = config ? config.enabled ? (config.tempFilesPath || __dirname) : __dirname : __dirname;
+
+		try {
+
+			const stream = new Busboy({
+				headers: request.headers,
+				limits: config ? config.limits : undefined
+			});
+
+			request.on('error', (err) => {
+				stream.end();
+				done(err);
+			});
+
+			stream.on('finish', () => done(null, body));
+			stream.on('fieldsLimit', (error: any) => {
+				stream.end();
+				done(error);
+			});
+			stream.on('filesLimit', (error: any) => {
+				stream.end();
+				done(error);
+			});
+			stream.on('partsLimit', (error: any) => {
+				stream.end();
+				done(error);
+			});
+			stream.on('error', (error: any) => {
+				stream.end();
+				done(error);
+			});
+
+			const cacheFiles: Record<string, string[]> = {};
+
+			stream.on('field', (fieldname, val) => {
+				if (!body[fieldname]) {
+					body[fieldname] = [];
+				}
+				if (val !== null && val !== undefined && (
+					(typeof val === 'string' && val.length > 0) ||
+					typeof val !== 'string'
+				)) {
+					body[fieldname].push(val);
+				}
+			});
+
+			stream.on('file', (field, file, fileName, encoding, mimetype) => {
+
+				try {
+
+					if (cacheFiles[field] && cacheFiles[field].includes(fileName)) {
+						cacheFiles[field].push(fileName);
+					}
+
+					const filePath = join(basePath, `${this.uuidv4()}-${fileName}`);
+					const fileStream = createWriteStream(filePath);
+					file.pipe(fileStream).on('error', error => {
+						stream.end();
+						done(error);
+					});
+					multipartTempFiles.push(filePath);
+
+					if (!body[field]) {
+						body[field] = [];
+					}
+					body[field].push({ fileName, encoding, mimetype, filePath });
+
+					file.on('error', error => {
+						stream.end();
+						done(error);
+					});
+
+				} catch (error) {
+					stream.end();
+					done(error);
+				}
+			});
+
+			(<any>request).isMultipart = true;
+			(<any>request).multipartTempFiles = multipartTempFiles;
+
+			request.pipe(stream);
+
+		} catch (error) {
+			done(error);
+		}
+
+	};
+
+	// https://stackoverflow.com/questions/105034/how-to-create-guid-uuid/2117523#2117523
+	private uuidv4() {
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+			const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+			return v.toString(16);
+		});
+	}
+
+	private cloneSchema(schema: RouteSchema) {
+		return JSON.parse(JSON.stringify(schema));
 	}
 
 }

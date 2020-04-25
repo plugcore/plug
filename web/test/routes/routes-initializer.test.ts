@@ -5,7 +5,7 @@ import { ControllerExample } from './examples/controller.example';
 import { Controller2Example } from './examples/controller2.example';
 import { ExampleRequest } from './examples/route-validators.example';
 
-@TestService()
+@TestService({ testThisOnly: true})
 export class RoutesInitializerTest extends AsserterService {
 
 	private httpClient: HttpDatasource;
@@ -33,7 +33,7 @@ export class RoutesInitializerTest extends AsserterService {
 
 	@AfterTests()
 	public async after() {
-		this.routesService.shutdownHttpServer();
+		/* this.routesService.shutdownHttpServer(); */
 	}
 
 	@Test()

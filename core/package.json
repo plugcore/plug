@@ -38,10 +38,10 @@
 		"plug": "./src/cli/plug.cli.js"
 	},
 	"dependencies": {
-		"ajv": "^6.10.1",
+		"ajv": "^6.12.1",
 		"eventemitter3": "^4.0.0",
-		"object-mapper": "^6.0.1",
-		"pino": "^5.12.6",
+		"object-mapper": "^6.2.0",
+		"pino": "^6.2.0",
 		"reflect-metadata": "^0.1.13"
 	},
 	"devDependencies": {

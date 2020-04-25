@@ -40,14 +40,16 @@ export class TestManager {
 		// 2: Load project configuration
 		process.env.NODE_ENV = 'test';
 		let configuration: Configuration;
+		let configurationFolder: string;
 		if (argConfigFolder) {
-			const configurationFolder = isAbsolute(argConfigFolder) ? argConfigFolder : join(process.cwd(), argConfigFolder);
+			configurationFolder = isAbsolute(argConfigFolder) ? argConfigFolder : join(process.cwd(), argConfigFolder);
 			configuration = await ConfigurationLoader.loadProject(configurationFolder);
 		} else {
+			configurationFolder = __dirname;
 			configuration = <any>defaultProjectConfiguration;
 		}
 		const objectValidator = await Container.get(ObjectValidator);
-		const configurationService = new ProjectConfigurationService(configuration, objectValidator);
+		const configurationService = new ProjectConfigurationService(configuration, objectValidator, configurationFolder);
 		Container.set(ProjectConfigurationService, configurationService);
 
 		// 3: Load all the classes inside the test folder

@@ -31,4 +31,7 @@ export interface Configuration {
 	// Helper functions
 	getConnectionConfiguration<T extends ConnectionConfiguration>(configurationClass: ClassParameter<T>, connection: string): T;
 
+	// Returns the folder where all the configuration files are located, useful for realtive routes
+	getConfigurationFolder(): string;
+
 }
