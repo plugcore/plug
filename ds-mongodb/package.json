@@ -1,6 +1,6 @@
 {
 	"name": "@plugcore/ds-mongodb",
-	"version": "1.0.11",
+	"version": "1.0.12",
 	"description": "plugcore.com Mongodb datasource",
 	"main": "index.js",
 	"repository": {

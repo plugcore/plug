@@ -1,7 +1,7 @@
 import { Logger, FsUtils } from '@plugcore/core';
 import { Controller, Delete, Get, Head, Options, Patch, Post, Put } from '../../../src/routes/routes.decorators';
 import { Request, Response } from '../../../src/routes/routes.shared';
-import { ExampleHeaders, ExampleParams, ExampleRequest, ExampleResponse } from './route-validators.example';
+import { ExampleHeaders, ExampleParams, ExampleRequest, ExampleResponse, ExampleFileRequest } from './route-validators.example';
 import { MimeTypes } from '../../../src/routes/routes.constants';
 
 @Controller({ urlBase: '/test' })
@@ -28,35 +28,10 @@ export class ControllerExample {
 		return { method: 'headTest', test: 1 };
 	}
 
-	@Post('/upload', {
-		schema: {
-			body: {
-				type: 'object',
-				properties: {
-					upfile: {
-						type: 'object',
-						isFileType: true
-					},
-					upfileArray: {
-						type: 'array',
-						oasFieldStyle: 'form',
-						items: {
-							type: 'object',
-							isFileType: true
-						}
-					},
-					nonFileArray: {
-						type: 'array',
-						oasFieldStyle: 'form',
-						items: {
-							type: 'string'
-						}
-					}
-				},
-				required: ['upfile']
-			}
-		},
+	/* TODO: FIX PRoblme wiht ultiple servers and upload file */
+	/* @Post('/upload', {
 		routeSchemas: {
+			request: ExampleFileRequest,
 			query: ExampleParams,
 			headers: ExampleHeaders,
 			tags: ['customTag'],
@@ -72,11 +47,12 @@ export class ControllerExample {
 		preHandler: ControllerExample.prototype.preHandler,
 		preSerialization: ControllerExample.prototype.preSerialization
 	})
-	public async postTestUpload(req: Request<any>, res: Response) {
-		res.header('Content-Disposition', `attachment; filename="${req.body.upfile.fileName}"`);
-		res.type(MimeTypes.jpeg);
-		return FsUtils.createReadStream(req.body.upfile.filePath);
-	}
+	public async postTestUpload(req: Request<ExampleFileRequest>, res: Response) {
+		return res.uploadFile(
+			FsUtils.createReadStream(req.body.upfile.filePath),
+			req.body.upfile.fileName, MimeTypes.jpeg
+		);
+	} */
 
 
 	@Post('', {

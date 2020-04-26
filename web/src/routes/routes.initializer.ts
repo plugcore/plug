@@ -6,7 +6,7 @@ import * as fastifyAuth from 'fastify-auth';
 import * as cookies from 'fastify-cookie';
 import * as oas from 'fastify-oas';
 import * as fstatic from 'fastify-static';
-import { createWriteStream } from 'fs';
+import { createWriteStream, ReadStream } from 'fs';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { JSONSchema7 } from 'json-schema';
 import { decode, encode } from 'jwt-simple';
@@ -16,7 +16,7 @@ import { WebConfiguration } from '../configuration/configuration.default';
 import { FileUploadWebConfiguration, JwtAvailableAlgorithms, WebOasConfiguration } from '../configuration/configuration.insterfaces';
 import { MimeTypes } from './routes.constants';
 import { RoutesService } from './routes.service';
-import { ErrorResponseModel, IRegisteredController, IRouteSchemas, Request, Response, TMethodOptions } from './routes.shared';
+import { ErrorResponseModel, IRegisteredController, IRouteSchemas, Request, Response, TMethodOptions, FileField } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 
 @Service()
@@ -75,7 +75,7 @@ export class RoutesInitializer {
 		const restControllers = await Promise.all(this.getMethodsServices());
 
 		if (this.configuration.web && this.configuration.web.fileUpload && this.configuration.web.fileUpload.enabled) {
-			this.routesService.fastifyInstance.addContentTypeParser('multipart', this.multiartImpl());
+			this.routesService.fastifyInstance.addContentTypeParser('multipart', this.multipartImpl());
 			this.routesService.fastifyInstance
 				// Lets you Defile file fields
 				.setSchemaCompiler((schema: any) => this.ajvCustomInstance.compile(schema))
@@ -109,11 +109,13 @@ export class RoutesInitializer {
 				configFilePath: this.configuration.getConfigurationFolder(),
 				config: this.configuration.web ? this.configuration.web.fileUpload : undefined,
 			}));
+
 		if (this.securityEnabled) {
 			this.routesService.fastifyInstance
 				// Auth routes
 				.register(this.authPlugin.bind(this));
 		}
+
 		await this.routesService.startHttpServer();
 
 	}
@@ -460,18 +462,20 @@ export class RoutesInitializer {
 
 		}
 
-		///
+		// Hook to remove temp files afeter upload
 
 		if (fileConfig.config && fileConfig.config.enabled && !fileConfig.config.keepTempFilesAfterRequest) {
 			plugin.addHook('onSend', async request => {
 				const req = ((<any>request.raw) as Request);
 				if (req.isMultipart && req.multipartTempFiles) {
-					// TODO Remove temp files
 					await Promise.all(req.multipartTempFiles.map(p => FsUtils.removeFile(p, true)));
 				}
 
 			});
 		}
+
+		// Add a helper to upload files
+		plugin.decorateReply('uploadFile', this.uploadFile);
 
 		done();
 
@@ -552,12 +556,29 @@ export class RoutesInitializer {
 
 	private createFromRouteSchemas(httpMethod: HTTPMethod, routeSchemas: IRouteSchemas, schema?: RouteSchema) {
 
-		const result = schema || {};
+		const result = this.cloneSchema(schema || {});
 
 		if (httpMethod !== 'GET' && routeSchemas.request) {
 			result.body = this.isModelArray(routeSchemas.request) ?
 				ObjectValidatorUtils.generateJsonSchema(routeSchemas.request.model, { asArray: true }) :
 				ObjectValidatorUtils.generateJsonSchema(routeSchemas.request);
+
+			// Check if we have to change some fiel fields as type = 'file'
+			const bodySchema = (result.body as JSONSchema7);
+			if (bodySchema && bodySchema.type === 'object' && bodySchema.properties) {
+				for (const property of Object.keys(bodySchema.properties)) {
+					const objProperty = bodySchema.properties[property];
+					if (TypeChecker.isObject(objProperty) && objProperty.title === FileField.name) {
+						bodySchema.properties[property] = <any>{ type: 'object', isFileType: true };
+					} else if (
+						TypeChecker.isObject(objProperty) && objProperty.type === 'array' &&
+						objProperty.items && TypeChecker.isObject(objProperty.items) &&
+						!TypeChecker.isArray(objProperty.items) && objProperty.items.title === FileField.name
+					) {
+						objProperty.items = <any>{ type: 'object', isFileType: true };
+					}
+				}
+			}
 		}
 		if (routeSchemas.response) {
 			result.response = {
@@ -651,7 +672,7 @@ export class RoutesInitializer {
 		};
 	}
 
-	private multiartImpl: (config?: FileUploadWebConfiguration) => ContentTypeParser<IncomingMessage> = (config) => (request, done) => {
+	private multipartImpl: (config?: FileUploadWebConfiguration) => ContentTypeParser<IncomingMessage> = (config) => (request, done) => {
 		const body: any = {};
 		const multipartTempFiles: string[] = [];
 		const basePath = config ? config.enabled ? (config.tempFilesPath || __dirname) : __dirname : __dirname;
@@ -753,6 +774,13 @@ export class RoutesInitializer {
 
 	private cloneSchema(schema: RouteSchema) {
 		return JSON.parse(JSON.stringify(schema));
+	}
+
+	private uploadFile(rs: ReadStream, fileName: string, mimeType: string) {
+		const reply: Response = (<any>this);
+		reply.header('Content-Disposition', `attachment; filename="${fileName}"`);
+		reply.type(mimeType);
+		return rs;
 	}
 
 }

@@ -15,6 +15,10 @@
 		"typicodeHttps": {
 			"type": "http",
 			"url": "https://jsonplaceholder.typicode.com"
+		},
+		"localhostHttp": {
+			"type": "http",
+			"url": "http://localhost:3000"
 		}
 	}
 }

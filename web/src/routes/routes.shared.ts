@@ -5,6 +5,7 @@ import {
 import { IncomingMessage, ServerResponse } from 'http';
 import { SupportedSecurityTypes } from '../configuration/configuration.insterfaces';
 import { SecurityRequirementObject } from 'openapi3-ts';
+import { ReadStream } from 'fs';
 
 //
 // Interfaces
@@ -107,7 +108,9 @@ export interface Request<
 	multipartTempFiles?: string[];
 	customData: CustomData;
 }
-export interface Response extends FastifyReply<ServerResponse> { }
+export interface Response extends FastifyReply<ServerResponse> {
+	uploadFile: (rs: ReadStream, fileName: string, mimeType: string) => ReadStream;
+}
 
 export interface JwtLoginMeta {
 	/**
@@ -160,4 +163,22 @@ export class DefaultResponseModel {
 	@IsBoolean()
 	@Required()
 	success: boolean;
+}
+
+export class FileField {
+	@IsString()
+	@Required()
+	fileName: string;
+
+	@IsString()
+	@Required()
+	encoding: string;
+
+	@IsString()
+	@Required()
+	mimetype: string;
+
+	@IsString()
+	@Required()
+	filePath: string;
 }

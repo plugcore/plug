@@ -57,7 +57,7 @@ export class HttpDatasourceTest extends AsserterService {
 
 		const callsResp = await Promise.all([
 			this.httpClient.get<IMockPost[]>(this.getEx),
-			this.httpClient.post<IMockPost>(this.postEx, this.mokPost,  { headers: {} }),
+			this.httpClient.post<IMockPost>(this.postEx, this.mokPost, { headers: {} }),
 			this.httpClient.put<IMockPost>(this.putEx, this.mokPost),
 			this.httpClient.patch<IMockPost>(this.pathcEx, this.mokPost),
 			this.httpClient.delete<IMockPost>(this.deleteEx, this.mokPost)
@@ -106,11 +106,6 @@ export class HttpDatasourceTest extends AsserterService {
 
 		const resDelete = callsResp[4];
 		this.assert.ok(resDelete);
-
-	}
-
-	@Test()
-	public otherFormats() {
 
 	}
 

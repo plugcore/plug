@@ -1,5 +1,5 @@
 import { F_OK } from 'constants';
-import { access, lstat, readdir, readFile, rmdir, stat, Stats, unlink, write, writeFile, mkdir, rename, createReadStream, PathLike } from 'fs';
+import { access, lstat, readdir, readFile, rmdir, stat, Stats, unlink, write, writeFile, mkdir, rename, createReadStream, PathLike, createWriteStream } from 'fs';
 import { join, basename, resolve } from 'path';
 import { StringConstants } from '../constants/string.constants';
 import { TypeChecker } from '../utils/type.checker';
@@ -410,5 +410,19 @@ export class FsUtils {
 	}) {
 		return createReadStream(file, options);
 	}
+
+	public static createWriteStream(file: PathLike, options?: string | {
+		flags?: string;
+		encoding?: string;
+		fd?: number;
+		mode?: number;
+		autoClose?: boolean;
+		start?: number;
+		end?: number;
+		highWaterMark?: number;
+	}) {
+		return createWriteStream(file, options);
+	}
+
 
 }

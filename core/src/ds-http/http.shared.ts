@@ -1,5 +1,6 @@
 import { RequestOptions as HttpRequestOptions } from 'http';
 import { RequestOptions as HttpsRequestOptions } from 'https';
+import { Writable } from 'stream';
 import { Omit } from '../utils/typescript.utils';
 
 export interface HttpCallOptions {
@@ -10,6 +11,7 @@ export interface HttpCallOptions {
 	contentType?: 'application/json' | 'application/xml' | string;
 	responseContentType?: 'application/json' | 'application/xml' | string;
 	responseEncoding?: 'utf8' | string;
+	responseStream?: Writable;
 }
 
 export interface HttpsCallOptions extends HttpCallOptions {

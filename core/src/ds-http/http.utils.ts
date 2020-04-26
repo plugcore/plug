@@ -1,6 +1,7 @@
+import * as FormData from 'form-data';
 import { request as httpRequest, RequestOptions as HttpRequestOptions } from 'http';
 import { request as httpsRequest, RequestOptions as HttpsRequestOptions } from 'https';
-import { Transform } from 'stream';
+import { Transform, Writable } from 'stream';
 import { URL, URLSearchParams } from 'url';
 import { TypeChecker } from '../utils/type.checker';
 import { HttpCallOptions, HttpsCallOptions } from './http.shared';
@@ -14,13 +15,21 @@ export class HttpUtils {
 	public static async httpCall<T>(url: URL | string, options?: HttpCallOptions, body?: any): Promise<T> {
 		const opts = this.createOptions(url, options, body);
 		opts.protocol = 'http:';
-		return this.makeCall(opts, body, options ? options.responseEncoding : undefined);
+		return this.makeCall({
+			opts, body,
+			responseEncoding: options ? options.responseEncoding : undefined,
+			responseStream: options ? options.responseStream : undefined
+		});
 	}
 
 	public static async httpsCall<T>(url: URL | string, options?: HttpsCallOptions, body?: any): Promise<T> {
 		const opts = this.createOptions(url, options, body);
 		opts.protocol = 'https:';
-		return this.makeCall(opts, body, options ? options.responseEncoding : undefined);
+		return this.makeCall({
+			opts, body,
+			responseEncoding: options ? options.responseEncoding : undefined,
+			responseStream: options ? options.responseStream : undefined
+		});
 	}
 
 	//
@@ -64,70 +73,103 @@ export class HttpUtils {
 		return opts;
 	}
 
-	private static makeCall<T>(opts: HttpRequestOptions | HttpsRequestOptions, body?: any, responseEncoding?: string): Promise<T> {
+	private static makeCall<T>(inp: {
+		opts: HttpRequestOptions | HttpsRequestOptions;
+		body?: any;
+		responseEncoding?: string;
+		responseStream?: Writable;
+	}): Promise<T> {
 
 		return new Promise<T>((resolve, reject) => {
 			try {
 
-				const headers = opts.headers || {};
+				let headers = inp.opts.headers || {};
 				let bodyObj: any | undefined;
-
+				let multipartForm: FormData | undefined;
 				if ((
-					opts.method !== 'GET' && body && TypeChecker.isObject(body)
+					inp.opts.method !== 'GET' && inp.body && TypeChecker.isObject(inp.body)
 				) && (
 					headers['Content-Type'] === 'application/json'
 				)) {
-					bodyObj = JSON.stringify(body);
+					bodyObj = JSON.stringify(inp.body);
 					headers['Content-Length'] = bodyObj.length;
 				} else {
-					bodyObj = body;
+					bodyObj = inp.body;
 				}
 
-				opts.headers = headers;
+				if (headers['Content-Type'] === 'multipart/form-data') {
+					multipartForm = new FormData();
+					for (const key of Object.keys(bodyObj || {})) {
+						multipartForm.append(key, bodyObj[key]);
+					}
+					multipartForm.on('error', error => {
+						if (inp.responseStream) {
+							inp.responseStream.destroy();
+						}
+						reject(error);
+					});
+					headers = Object.assign(
+						headers,
+						multipartForm.getHeaders()
+					);
+				}
+
+				inp.opts.headers = headers;
 				let protocol = httpsRequest;
-				if (opts.protocol === 'http:') {
+				if (inp.opts.protocol === 'http:') {
 					protocol = httpRequest;
 				}
 
-				const req = protocol(opts, res => {
+				const req = protocol(inp.opts, res => {
 
-					res.setEncoding(responseEncoding || 'utf8');
-
-					const dataResponse = new Transform();
-					res.on('data', chunk => {
-						dataResponse.push(chunk);
-					});
-
-					res.on('end', () => {
-						try {
-							let result: any;
-							if (
-								headers['Accept'] === 'application/json'
-							) {
-								const rawResult = dataResponse.read().toString();
-								try {
-									result = JSON.parse(rawResult);
-								} catch (error) {
-									reject({
-										contet: rawResult,
-										error: error
-									});
+					if (inp.responseStream) {
+						res.pipe(inp.responseStream);
+						res.on('end', () => {
+							resolve();
+						});
+					} else {
+						res.setEncoding(inp.responseEncoding || 'utf8');
+						const dataResponse = new Transform();
+						res.on('data', chunk => {
+							dataResponse.push(chunk);
+						});
+						res.on('end', () => {
+							try {
+								let result: any;
+								if (
+									headers['Accept'] === 'application/json'
+								) {
+									const rawResult = dataResponse.read().toString();
+									try {
+										result = JSON.parse(rawResult);
+									} catch (error) {
+										reject({
+											content: rawResult,
+											error: error
+										});
+									}
+								} else {
+									result = dataResponse.read();
 								}
-							} else {
-								result = dataResponse.read();
-							}
 
-							if (`${res.statusCode}`[0] !== '2') {
-								reject(new Error(`Invalid response code: ${res.statusCode}, with response: ${JSON.stringify(result)}`));
-							} else {
-								resolve(result);
+								if (`${res.statusCode}`[0] !== '2') {
+									reject({
+										statusCode: res.statusCode,
+										result
+									});
+								} else {
+									resolve(result);
+								}
+							} catch (error) {
+								reject(error);
 							}
-						} catch (error) {
-							reject(error);
-						}
-					});
+						});
+					}
 
 					res.on('error', error => {
+						if (inp.responseStream) {
+							inp.responseStream.destroy();
+						}
 						reject(error);
 					});
 
@@ -137,15 +179,19 @@ export class HttpUtils {
 					reject(error);
 				});
 
-				if (bodyObj) {
+				if (multipartForm) {
+					multipartForm.pipe(req);
+				} else if (bodyObj) {
 					if (TypeChecker.isString(bodyObj) || TypeChecker.isBuffer(bodyObj)) {
 						req.write(bodyObj);
 					} else {
 						req.write(`${bodyObj}`);
 					}
+					req.end();
+				} else {
+					req.end();
 				}
 
-				req.end();
 
 			} catch (error) {
 				reject(error);

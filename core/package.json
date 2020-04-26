@@ -1,6 +1,6 @@
 {
 	"name": "@plugcore/core",
-	"version": "1.0.11",
+	"version": "1.0.12",
 	"description": "plugcore.com core utilities",
 	"main": "index.js",
 	"repository": {
@@ -40,6 +40,7 @@
 	"dependencies": {
 		"ajv": "^6.12.1",
 		"eventemitter3": "^4.0.0",
+		"form-data": "^3.0.0",
 		"object-mapper": "^6.2.0",
 		"pino": "^6.2.0",
 		"reflect-metadata": "^0.1.13"

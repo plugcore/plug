@@ -1,4 +1,5 @@
-import { IsString, Required, IsNumber, IsBoolean } from '@plugcore/core';
+import { IsString, Required, IsNumber, IsBoolean, IsArray, IsObject } from '@plugcore/core';
+import { FileField } from '../../../src/routes/routes.shared';
 
 export class ExampleParams {
 
@@ -20,6 +21,21 @@ export class ExampleRequest {
 
 	@IsBoolean()
 	public isPublic: boolean;
+
+}
+
+
+export class ExampleFileRequest {
+
+	@Required()
+	@IsObject(FileField)
+	public upfile: FileField;
+
+	@IsArray({ items: FileField })
+	public upfileArray: FileField[];
+
+	@IsArray({ items: { type: 'string' } })
+	public nonFileArray: string;
 
 }
 
