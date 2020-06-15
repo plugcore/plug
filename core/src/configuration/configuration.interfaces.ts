@@ -18,12 +18,11 @@ export interface ConnectionConfiguration {
  * Plug framework configuration file
  */
 export interface Configuration {
+
 	init: IInitConfiguration;
+
 	// Supported pino log configuration
-	log: Pick<LoggerOptions,
-	'level' | 'useLevelLabels' | 'changeLevelName' | 'redact' |
-	'messageKey' | 'prettyPrint' | 'enabled' | 'base'
-	> & { timestamp?: boolean };
+	log: Partial<LoggerOptions>;
 
 	// Connections object
 	connections: Record<string, ConnectionConfiguration>;

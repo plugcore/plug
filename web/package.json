@@ -1,6 +1,6 @@
 {
 	"name": "@plugcore/web",
-	"version": "1.0.12",
+	"version": "1.0.14",
 	"description": "plugcore.com web utilities",
 	"main": "index.js",
 	"repository": {
@@ -25,20 +25,20 @@
 	},
 	"dependencies": {
 		"@plugcore/core": "file:../core/publish",
-		"ajv": "^6.12.1",
-		"busboy": "^0.3.1",
-		"fastify": "^2.13.0",
-		"fastify-auth": "^0.7.2",
-		"fastify-cookie": "^3.6.0",
-		"fastify-oas": "^2.6.2",
-		"fastify-static": "^2.6.0",
-		"jwt-simple": "^0.5.6",
-		"openapi3-ts": "^1.3.0"
+		"ajv": "6.12.2",
+		"busboy": "0.3.1",
+		"fastify": "2.14.0",
+		"fastify-auth": "0.7.2",
+		"fastify-cookie": "3.6.1",
+		"fastify-oas": "2.7.0",
+		"fastify-static": "2.7.0",
+		"jwt-simple": "0.5.6",
+		"openapi3-ts": "1.4.0"
 	},
 	"devDependencies": {
-		"@types/busboy": "^0.2.3",
-		"@types/node": "^12.0.3",
-		"@types/swagger-schema-official": "^2.0.21"
+		"@types/busboy": "0.2.3",
+		"@types/node": "12.12.6",
+		"@types/swagger-schema-official": "2.0.21"
 	},
 	"types": "./web.d.ts"
 }
