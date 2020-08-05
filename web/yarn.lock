@@ -39,20 +39,10 @@ abstract-logging@^2.0.0:
   resolved "https://registry.yarnpkg.com/abstract-logging/-/abstract-logging-2.0.0.tgz#08a85814946c98ef06f4256ad470aba1886d4490"
   integrity sha512-/oA9z7JszpIioo6J6dB79LVUgJ3eD3cxkAmdCkvWWS+Y9tPtALs1rLqOekLUXUbYqM2fB9TTK0ibAyZJJOP/CA==
 
-ajv@6.12.2, ajv@^6.12.0:
+ajv@6.12.2, ajv@^6.10.2, ajv@^6.11.0, ajv@^6.12.0:
   version "6.12.2"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.2.tgz#c629c5eced17baf314437918d2da88c99d5958cd"
   integrity sha512-k+V+hzjm5q/Mr8ef/1Y9goCmlsK4I6Sm74teeyGvFk1XrOsbsKLjEdrvny42CZ+a8sXbk8KWpY/bDwS+FLL2UQ==
-  dependencies:
-    fast-deep-equal "^3.1.1"
-    fast-json-stable-stringify "^2.0.0"
-    json-schema-traverse "^0.4.1"
-    uri-js "^4.2.2"
-
-ajv@^6.10.2, ajv@^6.11.0:
-  version "6.12.0"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.0.tgz#06d60b96d87b8454a5adaba86e7854da629db4b7"
-  integrity sha512-D6gFiFA0RRLyUbvijN74DWAjXSFxWKaWP7mldxkVhyhAV3+SWA9HEJPHQ2c9soIeTFJqcSdFDGFgdqs1iUU2Hw==
   dependencies:
     fast-deep-equal "^3.1.1"
     fast-json-stable-stringify "^2.0.0"
@@ -86,10 +76,10 @@ atomic-sleep@^1.0.0:
   resolved "https://registry.yarnpkg.com/atomic-sleep/-/atomic-sleep-1.0.0.tgz#eb85b77a601fc932cfe432c5acd364a9e2c9075b"
   integrity sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==
 
-avvio@^6.3.1:
-  version "6.4.1"
-  resolved "https://registry.yarnpkg.com/avvio/-/avvio-6.4.1.tgz#bb4127ca8b9b9c322d742a9b40962dfdca5d68b1"
-  integrity sha512-jeZaUK+F7MuWSNT3VHfltskPJZKqVeTWQqBA4SDaDoLaQ0lb5TOgLeQT1BEuhTIUNISCDCGY3zjYyVmQQ48gKA==
+avvio@^6.4.1:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/avvio/-/avvio-6.5.0.tgz#d2cf119967fe90d2156afc29de350ced800cdaab"
+  integrity sha512-BmzcZ7gFpyFJsW8G+tfQw8vJNUboA9SDkkHLZ9RAALhvw/rplfWwni8Ee1rA11zj/J7/E5EvZmweusVvTHjWCA==
   dependencies:
     archy "^1.0.0"
     debug "^4.0.0"
@@ -288,14 +278,14 @@ fastify-static@2.7.0, fastify-static@^2.7.0:
     readable-stream "^3.4.0"
     send "^0.16.0"
 
-fastify@2.14.0:
-  version "2.14.0"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-2.14.0.tgz#296c300884bf9dbf403bac1723f3ae0f0325dfe4"
-  integrity sha512-uofJOU9Zf20iklDrACZZVe+qef6dswOe8IUnxUdHTY9QfHv301MgPxodvJFiRE2WAse7YrWr4sI5Lx6YIAuUAA==
+fastify@2.15.1:
+  version "2.15.1"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-2.15.1.tgz#195a068bca87c7b57a83fe81f0aa66e86c6a3992"
+  integrity sha512-pEE1pa5j/vtZeZTbPpFgsJgzLbThcYgiLDw2yZIG8qNZ5LkF1Ew2vbv9k3nTXNxGEPYFBbyNTCKRSj3JbX+FhA==
   dependencies:
     abstract-logging "^2.0.0"
     ajv "^6.12.0"
-    avvio "^6.3.1"
+    avvio "^6.4.1"
     fast-json-stringify "^1.18.0"
     find-my-way "^2.2.2"
     flatstr "^1.0.12"
