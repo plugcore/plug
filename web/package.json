@@ -1,6 +1,6 @@
 {
 	"name": "@plugcore/web",
-	"version": "1.0.14",
+	"version": "1.0.15",
 	"description": "plugcore.com web utilities",
 	"main": "index.js",
 	"repository": {

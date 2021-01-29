@@ -36,7 +36,7 @@ export class ObjectUtilsTest extends AsserterService {
 
 	@Test()
 	public detectChanges() {
-		const exObject1 = {
+		const exObject1: any = {
 			a: undefined,
 			b: null,
 			c: 1,
@@ -49,7 +49,7 @@ export class ObjectUtilsTest extends AsserterService {
 			j: '',
 			k: 'k'
 		};
-		const exObject2 = {
+		const exObject2: any = {
 			a: 1,
 			b: 1,
 			c: 1,

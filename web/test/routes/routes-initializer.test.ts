@@ -3,6 +3,7 @@ import { RoutesInitializer } from '../../src/routes/routes.initializer';
 import { RoutesService } from '../../src/routes/routes.service';
 import { ControllerExample } from './examples/controller.example';
 import { Controller2Example } from './examples/controller2.example';
+import { FastifyConfigurationExample } from './examples/fastify-configuration.example';
 import { ExampleRequest } from './examples/route-validators.example';
 
 @TestService()
@@ -14,6 +15,7 @@ export class RoutesInitializerTest extends AsserterService {
 	private routesInitializer: RoutesInitializer;
 	private routesService: RoutesService;
 	private controllerExample: ControllerExample;
+	private fastifyConfigurationExample: FastifyConfigurationExample;
 
 	@BeforeTests()
 	public async before() {
@@ -22,11 +24,18 @@ export class RoutesInitializerTest extends AsserterService {
 			Container.get<ControllerExample>(ControllerExample),
 			Container.get(Controller2Example),
 			Container.get<RoutesInitializer>(RoutesInitializer),
-			Container.get<RoutesService>(RoutesService)
-		]).then(r => ({ controllerExample: r[0], routesInitializer: r[2], routesService: r[3] }));
+			Container.get<RoutesService>(RoutesService),
+			Container.get<FastifyConfigurationExample>(FastifyConfigurationExample)
+		]).then(r => ({
+			controllerExample: r[0],
+			routesInitializer: r[2],
+			routesService: r[3],
+			configurationExample: r[4]
+		}));
 		this.routesInitializer = deps.routesInitializer;
 		this.routesService = deps.routesService;
 		this.controllerExample = deps.controllerExample;
+		this.fastifyConfigurationExample = deps.configurationExample;
 		await this.routesInitializer.initHttpServer();
 		this.httpClient = await Container.get(HttpDatasource, { [Container.connection]: 'local' });
 	}
@@ -71,6 +80,13 @@ export class RoutesInitializerTest extends AsserterService {
 		this.assert.ok(this.controllerExample.preValidationCalled);
 		this.assert.ok(this.controllerExample.onRequestCalled);
 		this.assert.ok(this.controllerExample.loggerNotNull);
+
+	}
+
+	@Test()
+	public async fastifyConfigurationInits() {
+
+		this.assert.ok(this.fastifyConfigurationExample.fastifyRegsitered);
 
 	}
 

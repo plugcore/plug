@@ -147,3 +147,20 @@ export function CustomAuth(): Function {
 		}
 	};
 }
+
+//
+// Configuration decorators
+//
+
+/**
+ * This function will recive a FastifyInstance and will be
+ * able add some custome configuration, such as adding custom
+ * plugins.
+ */
+export function FastifyConfiguration(): Function {
+	return function (target: any, propertyKey: string) {
+		if (TypeChecker.isClass(target.constructor)) {
+			RoutesUtils.registerFastifyConfigurationFn(target.constructor, propertyKey);
+		}
+	};
+}

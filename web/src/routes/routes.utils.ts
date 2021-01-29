@@ -1,5 +1,6 @@
 import { ClassParameter, TypeChecker, IDiEntry, Container } from '@plugcore/core';
-import { HTTPMethod } from 'fastify';
+import { FastifyInstance, HTTPMethod } from 'fastify';
+import { IncomingMessage, Server, ServerResponse } from 'http';
 import {
 	IControllerOptions, IRegisteredController, IRegsiteredMethod, TMethodOptions, BaiscAuthLoginFn,
 	JwtLoginFn, Request, Response, CustomAuthFn, JwtPreHandleFn, JwtLoginMeta
@@ -26,6 +27,9 @@ export class RoutesUtils {
 	public static customAuthFn: CustomAuthFn = async (request: Request, response: Response) => {
 		throw new Error('Custom auth not implemented');
 	};
+	public static fastifyConfigurationFns: (
+		(instance: FastifyInstance<Server, IncomingMessage, ServerResponse>) => Promise<void>
+	)[] = [];
 
 
 	//
@@ -38,6 +42,7 @@ export class RoutesUtils {
 	public static readonly jwtRouteMetadataPrefix = 'p-jwt-login-route';
 	public static readonly jwtPreHandleMetadataPrefix = 'p-jwt-pre-handle-fn';
 	public static readonly customAuthMetadataPrefix = 'p-custom-auth-fn';
+	public static readonly fastifyConfigurationMethodPrefix = 'p-fastify-configuration-method';
 
 	//
 	// Controller utils
@@ -87,6 +92,7 @@ export class RoutesUtils {
 			const jwtRouteMeta = Reflect.getMetadata(this.jwtRouteMetadataPrefix, entry.serviceClass.prototype);
 			const jwtPreHandleFn = Reflect.getMetadata(this.jwtPreHandleMetadataPrefix, entry.serviceClass.prototype);
 			const customAuthFn = Reflect.getMetadata(this.customAuthMetadataPrefix, entry.serviceClass.prototype);
+			const fastifyConfigurationMethod = Reflect.getMetadata(this.fastifyConfigurationMethodPrefix, entry.serviceClass.prototype);
 
 			// 2: if it's the case, then replace the default function
 			if (basicAuthLoginFn) {
@@ -103,6 +109,11 @@ export class RoutesUtils {
 			}
 			if (jwtRouteMeta) {
 				this.jwtLoginMeta = jwtRouteMeta;
+			}
+			if (fastifyConfigurationMethod) {
+				this.fastifyConfigurationFns.push(
+					entry.object[fastifyConfigurationMethod].bind(entry.object)
+				);
 			}
 
 		}
@@ -123,6 +134,10 @@ export class RoutesUtils {
 	public static registerCustomAuthFn(clazz: ClassParameter<any>, methodName: string) {
 		Reflect.defineMetadata(this.customAuthMetadataPrefix, methodName, clazz.prototype);
 	}
+	public static registerFastifyConfigurationFn(clazz: ClassParameter<any>, methodName: string) {
+		Reflect.defineMetadata(this.fastifyConfigurationMethodPrefix, methodName, clazz.prototype);
+	}
+
 
 }
 

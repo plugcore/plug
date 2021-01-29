@@ -8,7 +8,6 @@ import * as oas from 'fastify-oas';
 import * as fstatic from 'fastify-static';
 import { createWriteStream, ReadStream } from 'fs';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import { JSONSchema7 } from 'json-schema';
 import { decode, encode } from 'jwt-simple';
 import { SecuritySchemeObject } from 'openapi3-ts';
 import { join } from 'path';
@@ -114,6 +113,14 @@ export class RoutesInitializer {
 			this.routesService.fastifyInstance
 				// Auth routes
 				.register(this.authPlugin.bind(this));
+		}
+
+		for (const cfgFn of RoutesUtils.fastifyConfigurationFns) {
+			try {
+				cfgFn(this.routesService.fastifyInstance);
+			} catch (error) {
+				this.log.error('Error on Fastify configuration method: ', error);
+			}
 		}
 
 		await this.routesService.startHttpServer();
@@ -454,7 +461,7 @@ export class RoutesInitializer {
 					schema
 				});
 
-				plugin.route(routeConfiguration);
+				plugin.route(routeConfiguration as any);
 
 				this.log.debug(`Registered http method < ${restController.controller.controller.name} > ${method.httpMethod}  ${url}`);
 
@@ -564,7 +571,7 @@ export class RoutesInitializer {
 				ObjectValidatorUtils.generateJsonSchema(routeSchemas.request);
 
 			// Check if we have to change some fiel fields as type = 'file'
-			const bodySchema = (result.body as JSONSchema7);
+			const bodySchema = (result.body as any);
 			if (bodySchema && bodySchema.type === 'object' && bodySchema.properties) {
 				for (const property of Object.keys(bodySchema.properties)) {
 					const objProperty = bodySchema.properties[property];
@@ -630,7 +637,7 @@ export class RoutesInitializer {
 	private multipartBodyTransformer(schema: RouteSchema) {
 		return async (request: Request) => {
 
-			const bodySchema = (schema.body as JSONSchema7);
+			const bodySchema = (schema.body as any);
 			if (request.body && bodySchema && bodySchema.type === 'object' && bodySchema.properties) {
 
 				for (const bodyProperty of Object.keys(bodySchema.properties)) {
