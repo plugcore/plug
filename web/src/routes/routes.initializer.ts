@@ -71,6 +71,14 @@ export class RoutesInitializer {
 
 	public async initHttpServer() {
 
+		for (const cfgFn of RoutesUtils.fastifyConfigurationFns) {
+			try {
+				cfgFn(this.routesService.fastifyInstance);
+			} catch (error) {
+				this.log.error('Error on Fastify configuration method: ', error);
+			}
+		}
+
 		const restControllers = await Promise.all(this.getMethodsServices());
 
 		if (this.configuration.web && this.configuration.web.fileUpload && this.configuration.web.fileUpload.enabled) {
@@ -113,14 +121,6 @@ export class RoutesInitializer {
 			this.routesService.fastifyInstance
 				// Auth routes
 				.register(this.authPlugin.bind(this));
-		}
-
-		for (const cfgFn of RoutesUtils.fastifyConfigurationFns) {
-			try {
-				cfgFn(this.routesService.fastifyInstance);
-			} catch (error) {
-				this.log.error('Error on Fastify configuration method: ', error);
-			}
 		}
 
 		await this.routesService.startHttpServer();
