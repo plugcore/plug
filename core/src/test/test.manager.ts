@@ -98,7 +98,7 @@ export class TestManager {
 		});
 	}
 
-	public static registerTestMethod(testClass: string, methodName: string, methodFunc: Function, decoratorArgs: ITestMethodArgs) {
+	public static registerTestMethod(testClass: string, methodName: string, methodFunc: (...args: any) => any, decoratorArgs: ITestMethodArgs) {
 		this.tmpMethods[testClass] = (this.tmpMethods[testClass] || []).concat(<ITestMethod>{
 			methodName,
 			methodFunc,
@@ -106,13 +106,13 @@ export class TestManager {
 		});
 	}
 
-	public static registerBeforeTestMethod(testClass: string, methodName: string, methodFunc: Function) {
+	public static registerBeforeTestMethod(testClass: string, methodName: string, methodFunc: (...args: any) => any) {
 		this.tmpBeforeMethods[testClass] = (this.tmpBeforeMethods[testClass] || []).concat(<ITestMethod>{
 			methodName, methodFunc
 		});
 	}
 
-	public static registerAfterTestMethod(testClass: string, methodName: string, methodFunc: Function) {
+	public static registerAfterTestMethod(testClass: string, methodName: string, methodFunc: (...args: any) => any) {
 		this.tmpAfterMethods[testClass] = (this.tmpAfterMethods[testClass] || []).concat(<ITestMethod>{
 			methodName, methodFunc
 		});
@@ -352,7 +352,7 @@ export class TestManager {
 
 	private static async executeTestMethod(method: ITestMethod, testObj: any, clazz: ITestService): Promise<boolean> {
 		try {
-			await (<Function>testObj[method.methodName])();
+			await testObj[method.methodName]();
 			this.finishedTestMethod(clazz.name, method.methodName);
 			return true;
 		} catch (error) {

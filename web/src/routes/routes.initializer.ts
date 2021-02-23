@@ -1,5 +1,6 @@
 import { ArrayUtils, ClassParameter, Configuration, Container, FsUtils, InjectConfiguration, InjectLogger, Logger, ObjectUtils, ObjectValidatorUtils, OnEvent, PublicEvents, Service, TypeChecker, ValidatorUtils } from '@plugcore/core';
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import * as Busboy from 'busboy';
 import { FastifyPluginCallback, FastifyRequest, FastifySchema, HTTPMethods, RawRequestDefaultExpression } from 'fastify';
 import fastifyAuth from 'fastify-auth';
@@ -8,12 +9,11 @@ import * as oas from 'fastify-oas';
 import fstatic from 'fastify-static';
 import { ContentTypeParserDoneFunction, FastifyContentTypeParser } from 'fastify/types/content-type-parser';
 import { createWriteStream, ReadStream } from 'fs';
-import { IncomingMessage, Server, ServerResponse } from 'http';
 import { decode, encode } from 'jwt-simple';
 import { SecuritySchemeObject } from 'openapi3-ts';
 import { join } from 'path';
 import { WebConfiguration } from '../configuration/configuration.default';
-import { FileUploadWebConfiguration, JwtAvailableAlgorithms, SupportedSecurityTypes, WebOasConfiguration } from '../configuration/configuration.insterfaces';
+import { FileUploadWebConfiguration, JwtAvailableAlgorithms, WebOasConfiguration } from '../configuration/configuration.insterfaces';
 import { MimeTypes } from './routes.constants';
 import { RoutesService } from './routes.service';
 import { ErrorResponseModel, FileField, IRegisteredController, IRouteSchemas, Request, Response, TMethodOptions } from './routes.shared';
@@ -46,11 +46,11 @@ export class RoutesInitializer {
 			configuration.web && configuration.web.oas && configuration.web.oas.documentationPath
 		) || WebConfiguration.default.web.oas.documentationPath || '/api/documentation';
 
-		this.ajvCustomInstance = new Ajv({
+		this.ajvCustomInstance = addFormats(new Ajv({
 			useDefaults: true,
 			coerceTypes: true,
 			$data: true
-		});
+		}));
 		this.ajvCustomInstance.addKeyword('isFileType', {
 			keyword: 'isFileType',
 			compile: (_, parent) => {
@@ -85,7 +85,7 @@ export class RoutesInitializer {
 			this.routesService.fastifyInstance.addContentTypeParser('multipart', this.multipartImpl());
 			this.routesService.fastifyInstance
 				// Lets you Defile file fields
-				/* .schemaCompiler((schema: any) => this.ajvCustomInstance.compile(schema)) */
+				.setValidatorCompiler((schema: any) => this.ajvCustomInstance.compile(schema))
 				// Indicates if the request has been execcuted with fiel upload
 				.decorateRequest('isMultipart', false)
 				// If teh request is multipart, then this is a list of temp filtes to delete
@@ -144,7 +144,7 @@ export class RoutesInitializer {
 
 	}
 
-	private authPlugin: FastifyPluginCallback<{}> = (plugin, _, done) => {
+	private authPlugin: FastifyPluginCallback<any> = (plugin, _, done) => {
 
 		// Auth system
 
@@ -176,7 +176,7 @@ export class RoutesInitializer {
 	private oasPlugin: (restControllers: {
 		controllerService: any;
 		controller: IRegisteredController;
-	}[]) => FastifyPluginCallback<{}> = (restControllers) => (plugin, _, done) => {
+	}[]) => FastifyPluginCallback<any> = (restControllers) => (plugin, _, done) => {
 
 		// OAS configuration
 
@@ -306,7 +306,7 @@ export class RoutesInitializer {
 			configFilePath: string;
 			config?: FileUploadWebConfiguration;
 		}
-	) => FastifyPluginCallback<{}> = (restControllers, fileConfig) => (plugin, _, done) => {
+	) => FastifyPluginCallback<any> = (restControllers, fileConfig) => (plugin, _, done) => {
 
 		let securityOnAllRoutes = this.configuration && this.configuration.web &&
 			this.configuration.web.auth && this.securityEnabled && this.configuration.web.auth.securityInAllRoutes;
@@ -679,10 +679,7 @@ export class RoutesInitializer {
 		};
 	}
 
-	private multipartImpl:
-		(config?: FileUploadWebConfiguration) => FastifyContentTypeParser =
-		(config) => (request: FastifyRequest, payload: RawRequestDefaultExpression, done: ContentTypeParserDoneFunction) =>
-	{
+	private multipartImpl: (config?: FileUploadWebConfiguration) => FastifyContentTypeParser = (config) => (request: FastifyRequest, payload: RawRequestDefaultExpression, done: ContentTypeParserDoneFunction) => {
 		const body: any = {};
 		const multipartTempFiles: string[] = [];
 		const basePath = config ? config.enabled ? (config.tempFilesPath || __dirname) : __dirname : __dirname;

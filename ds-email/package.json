@@ -1,7 +1,7 @@
 {
-	"name": "@plugcore/ds-mongodb",
-	"version": "1.0.17",
-	"description": "plugcore.com Mongodb datasource",
+	"name": "@plugcore/ds-email",
+	"version": "1.0.16",
+	"description": "plugcore.com Email datasource",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
@@ -12,11 +12,11 @@
 	"bugs": {
 		"url": "https://github.com/plugcore/plugcore/issues"
 	},
-	"homepage": "https://github.com/plugcore/plugcore/ds-mongodb/#readme",
+	"homepage": "https://github.com/plugcore/plugcore/ds-email/#readme",
 	"scripts": {
 		"build": "node ../node_modules/npm-run-all/bin/run-s/index.js build:compile build:publish",
 		"build:compile": "node ../node_modules/typescript/bin/tsc",
-		"build:publish": "node ../_scripts/build-ds-mongodb.js",
+		"build:publish": "node ../_scripts/build-ds-email.js",
 		"test": "node node_modules/@plugcore/core/src/test/test.cli.js test ./dist/test ./test/configuration | node ../node_modules/pino-pretty/bin.js -t -i pid,hostname,name",
 		"test:info": "node node_modules/@plugcore/core/src/test/test.cli.js info ./dist/test",
 		"lint": "node ../node_modules/eslint/bin/eslint.js -c ../.eslintrc.js src/**/*.ts",
@@ -24,13 +24,11 @@
 	},
 	"dependencies": {
 		"@plugcore/core": "file:../core/publish",
-		"mongodb": "3.6.4"
+		"nodemailer": "6.4.18"
 	},
 	"devDependencies": {
-		"@types/mongodb": "3.6.8",
 		"@types/node": "14.14.31",
-		"mkdirp": "1.0.4",
-		"nedb": "1.8.0"
+		"@types/nodemailer": "6.4.0"
 	},
-	"types": "./ds-mongodb.d.ts"
+	"types": "./ds-email.d.ts"
 }

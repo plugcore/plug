@@ -1,4 +1,5 @@
 import { setTimeout } from 'timers';
+import { ClassParameter } from '../utils/typescript.utils';
 
 export class CronUtils {
 
@@ -41,11 +42,11 @@ export class CronUtils {
 		}
 	};
 
-	public static createCronJob(expression: string, method: Function, clazz?: string | Function) {
+	public static createCronJob(expression: string, method: (...args: any[]) => any, clazz?: string | ClassParameter<any>) {
 
 		let clazzName: string;
 		if (typeof (clazz) === 'function') {
-			clazzName = (<Function>clazz).constructor.name;
+			clazzName = clazz.constructor.name;
 		} else {
 			clazzName = <string>clazz;
 		}
@@ -72,7 +73,7 @@ export class CronUtils {
 		}
 	}
 
-	private static async manageCronExecution(expression: string, method: Function, clazzName: string): Promise<any> {
+	private static async manageCronExecution(expression: string, method: (...args: any[]) => any, clazzName: string): Promise<any> {
 
 		/* const initDate = new Date().getTime();
 

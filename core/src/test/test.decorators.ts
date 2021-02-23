@@ -1,15 +1,16 @@
 import 'reflect-metadata';
-import { TestManager } from './test.manager';
-import { ITestServiceArgs, ITestMethodArgs } from './test.shared';
 import { Service } from '../dependecy-injection/di.decorators';
 import { TypeChecker } from '../utils/type.checker';
+import { ClassParameter } from '../utils/typescript.utils';
+import { TestManager } from './test.manager';
+import { ITestMethodArgs, ITestServiceArgs } from './test.shared';
 
 /**
  * Decorate the class that envelops a determinated set of tests in order
  * to be able to execute them
  */
-export function TestService(decoratorArgs: ITestServiceArgs = {}): Function {
-	return (target: Function) => {
+export function TestService(decoratorArgs: ITestServiceArgs = {}) {
+	return (target: ClassParameter<any>) => {
 
 		// Check if decorator has been used in a class
 		if (TypeChecker.isClass(target)) {
@@ -25,7 +26,7 @@ export function TestService(decoratorArgs: ITestServiceArgs = {}): Function {
  * Use this in any method inside a class decorated with `@TestService()` to
  * execute it while testing. It can by an async or normal function.
  */
-export function Test(decoratorArgs: ITestMethodArgs = {}): Function {
+export function Test(decoratorArgs: ITestMethodArgs = {}) {
 	return (object: Record<string, any>, propertyKey: string, descriptor: PropertyDescriptor) => {
 
 		// Check if decorator has been used in a method
@@ -46,7 +47,7 @@ export function Test(decoratorArgs: ITestMethodArgs = {}): Function {
  * execute it before any tests are performed inside this class.
  * It can by an async or normal function.
  */
-export function BeforeTests(): Function {
+export function BeforeTests() {
 	return (object: Record<string, any>, propertyKey: string, descriptor: PropertyDescriptor) => {
 
 		// Check if decorator has been used in a method
@@ -67,7 +68,7 @@ export function BeforeTests(): Function {
  * execute it after all tests are performed inside this class.
  * It can by an async or normal function.
  */
-export function AfterTests(): Function {
+export function AfterTests() {
 	return (object: Record<string, any>, propertyKey: string, descriptor: PropertyDescriptor) => {
 
 		// Check if decorator has been used in a method

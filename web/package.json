@@ -1,6 +1,6 @@
 {
 	"name": "@plugcore/web",
-	"version": "1.0.16",
+	"version": "1.0.17",
 	"description": "plugcore.com web utilities",
 	"main": "index.js",
 	"repository": {
@@ -26,6 +26,7 @@
 	"dependencies": {
 		"@plugcore/core": "file:../core/publish",
 		"ajv": "7.1.1",
+		"ajv-formats": "^1.5.1",
 		"busboy": "0.3.1",
 		"fastify": "3.12.0",
 		"fastify-auth": "1.0.1",

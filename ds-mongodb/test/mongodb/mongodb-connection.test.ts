@@ -24,7 +24,7 @@ export class MongoDbConnectionTest extends AsserterService {
 		this.mongoDbConnection.closeConnection();
 	}
 
-	@Test({ testThisOnly: true })
+	@Test()
 	public async connectionTest() {
 
 		const testData: DbCollectionExample = {

@@ -1,4 +1,5 @@
 import { Inject } from '../dependecy-injection/di.decorators';
+import { ClassParameter } from '../utils/typescript.utils';
 import { ProjectConfigurationService } from './configuration.service';
 
 /**
@@ -6,8 +7,8 @@ import { ProjectConfigurationService } from './configuration.service';
  * the project
  * @param sId
  */
-export function InjectConfiguration(): Function {
-	return (target: Record<string, any> | Function, propertyName: string, index?: number) => {
+export function InjectConfiguration() {
+	return (target: Record<string, any> | ClassParameter<any>, propertyName: string, index?: number) => {
 		Inject({ sId: ProjectConfigurationService })(target, propertyName, index);
 	};
 }

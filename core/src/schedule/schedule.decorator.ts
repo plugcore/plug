@@ -1,15 +1,16 @@
 
 import { Service } from '../dependecy-injection/di.decorators';
-import { IServiceArgs, IServiceIdentifier } from '../dependecy-injection/di.shared';
 import { DiService } from '../dependecy-injection/di.service';
+import { IServiceArgs, IServiceIdentifier } from '../dependecy-injection/di.shared';
 import { ExtCtxGenerator } from '../extensions/ext-ctx.generator';
 import { JsStackUtils } from '../utils/js-stack.utils';
-import { CronUtils } from './scheduler';
 import { TypeChecker } from '../utils/type.checker';
+import { ClassParameter } from '../utils/typescript.utils';
+import { CronUtils } from './scheduler';
 
 export function Scheduler({ sId, ctx }: IServiceArgs = {}) {
 
-	return (target: Function) => {
+	return (target: ClassParameter<any>) => {
 
 		// If arguments size is 1 it means its a class definition
 		if (arguments.length === 1 && TypeChecker.isClass(target)) {

@@ -1,0 +1,17 @@
+{
+	"log": {
+		"level": "debug"
+	},
+	"connections": {
+		"testemail": {
+			"type": "email",
+			"host": "smtp.ethereal.email",
+			"port": 587,
+			"secure": false,
+			"auth": {
+				"user": "testuser",
+				"pass": "testpass"
+			}
+		}
+	}
+}

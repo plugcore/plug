@@ -46,6 +46,7 @@ module.exports = {
 		['@typescript-eslint/explicit-member-accessibility']: 0,
 		['@typescript-eslint/no-use-before-define']: 0,
 		['@typescript-eslint/no-empty-interface']: 0,
-		['@typescript-eslint/consistent-type-assertions']: 0
+		['@typescript-eslint/consistent-type-assertions']: 0,
+		['@typescript-eslint/explicit-module-boundary-types']: 0
 	}
 };

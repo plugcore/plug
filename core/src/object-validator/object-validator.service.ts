@@ -6,11 +6,12 @@ import { TypeChecker } from '../utils/type.checker';
 import { ValidationResult, CompiledValidation, ObjectValidatorFunction } from './object-validator.shared';
 import { ClassParameter } from '../utils/typescript.utils';
 import { ObjectValidatorUtils } from './object-validator.utils';
+import addFormats from 'ajv-formats';
 
 @Service()
 export class ObjectValidator {
 
-	private readonly ajv = new Ajv({ allErrors: true });
+	private readonly ajv = addFormats(new Ajv({ allErrors: true }));
 
 	/**
 	 * Executes a validation from a compiled JSON schema validation or form a JSON schema object
@@ -19,7 +20,7 @@ export class ObjectValidator {
 	 * @param schemaOrValidateFunction
 	 * @param objToValidate
 	 */
-	public validate<T = any>(schemaOrValidateFunction: object | AjvTypes.ValidateFunction, objToValidate: T): ValidationResult  {
+	public validate<T = any>(schemaOrValidateFunction: Record<string, any> | AjvTypes.ValidateFunction, objToValidate: T): ValidationResult  {
 		const func = TypeChecker.isObject(schemaOrValidateFunction) ? this.compile(schemaOrValidateFunction) : schemaOrValidateFunction;
 		const result = func(objToValidate);
 		if (TypeChecker.isPromise(result)) {
@@ -38,7 +39,7 @@ export class ObjectValidator {
 	 * @param schemaOrValidateFunction
 	 * @param objToValidate
 	 */
-	public async asyncValidate<T>(schemaOrValidateFunction: object | AjvTypes.ValidateFunction, objToValidate: T): Promise<ValidationResult>  {
+	public async asyncValidate<T>(schemaOrValidateFunction: Record<string, any> | AjvTypes.ValidateFunction, objToValidate: T): Promise<ValidationResult>  {
 		const func = TypeChecker.isObject(schemaOrValidateFunction) ? this.compile(schemaOrValidateFunction) : schemaOrValidateFunction;
 		const result = func(objToValidate);
 		if (TypeChecker.isPromise(result)) {
@@ -57,7 +58,7 @@ export class ObjectValidator {
 	 * schema in order to improve performance
 	 * @param schema
 	 */
-	public compile(schema: object): CompiledValidation {
+	public compile(schema: Record<string, any>): CompiledValidation {
 		return this.ajv.compile(schema);
 	}
 
@@ -65,7 +66,7 @@ export class ObjectValidator {
 	 * Same than `compile` but can execute async functionality
 	 * @param schema
 	 */
-	public async asyncCompile(schema: object): Promise<CompiledValidation> {
+	public async asyncCompile(schema: Record<string, any>): Promise<CompiledValidation> {
 		return this.ajv.compile(schema);
 	}
 
@@ -74,7 +75,7 @@ export class ObjectValidator {
 	 * @param jsonFile
 	 */
 	public async compileFromFile(jsonFile: string) {
-		const fileContent = await FsUtils.loadJsonFile<object>(jsonFile);
+		const fileContent = await FsUtils.loadJsonFile<Record<string, any>>(jsonFile);
 		return await this.asyncCompile(fileContent);
 	}
 

@@ -1,5 +1,4 @@
 import * as fastify from 'fastify';
-import { SupportedSecurityTypes } from '../configuration/configuration.insterfaces';
 
 // Extends fastify types
 declare module 'fastify' {

@@ -13,6 +13,8 @@ async function setPackagesVersion() {
 	const webPublishPackageJsonPath = join(__dirname, '..', 'web', 'publish', 'package.json');
 	const dataPackageJsonPath = join(__dirname, '..', 'ds-mongodb', 'package.json');
 	const dataPublishPackageJsonPath = join(__dirname, '..', 'ds-mongodb', 'publish', 'package.json');
+	const emailPackageJsonPath = join(__dirname, '..', 'ds-email', 'package.json');
+	const emailPublishPackageJsonPath = join(__dirname, '..', 'ds-email', 'publish', 'package.json');
 	const mainPackageJsonPath = join(__dirname, '..', 'package.json');
 
 	const corePackageJson = await loadJsonFile(corePackageJsonPath);
@@ -30,6 +32,8 @@ async function setPackagesVersion() {
 		const webPublishPackageJson = await loadJsonFile(webPublishPackageJsonPath);
 		const dataPackageJson = await loadJsonFile(dataPackageJsonPath);
 		const dataPublishPackageJson = await loadJsonFile(dataPublishPackageJsonPath);
+		const emailPackageJson = await loadJsonFile(emailPackageJsonPath);
+		const emailPublishPackageJson = await loadJsonFile(emailPublishPackageJsonPath);
 		const mainPackageJson = await loadJsonFile(mainPackageJsonPath);
 
 		corePackageJson.version = newVersion;
@@ -38,12 +42,14 @@ async function setPackagesVersion() {
 		webPublishPackageJson.version = newVersion;
 		dataPackageJson.version = newVersion;
 		dataPublishPackageJson.version = newVersion;
+		emailPackageJson.version = newVersion;
+		emailPublishPackageJson.version = newVersion;
 		mainPackageJson.version = newVersion;
 
 		// Published versions must be without file:...
 		webPublishPackageJson.dependencies['@plugcore/core'] = newVersion;
 		dataPublishPackageJson.dependencies['@plugcore/core'] = newVersion;
-
+		emailPublishPackageJson.dependencies['@plugcore/core'] = newVersion;
 
 		// JSON files updates
 		await Promise.all([
@@ -53,6 +59,8 @@ async function setPackagesVersion() {
 			saveObjectAsJsonFile(webPublishPackageJsonPath, webPublishPackageJson),
 			saveObjectAsJsonFile(dataPackageJsonPath, dataPackageJson),
 			saveObjectAsJsonFile(dataPublishPackageJsonPath, dataPublishPackageJson),
+			saveObjectAsJsonFile(emailPackageJsonPath, emailPackageJson),
+			saveObjectAsJsonFile(emailPublishPackageJsonPath, emailPublishPackageJson),
 			saveObjectAsJsonFile(mainPackageJsonPath, mainPackageJson)
 		]);
 

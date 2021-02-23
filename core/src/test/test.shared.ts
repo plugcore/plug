@@ -46,7 +46,7 @@ export interface ITestService {
 
 export interface ITestMethod {
 	methodName: string;
-	methodFunc: Function;
+	methodFunc: (...args: any) => any;
 	testThisOnly?: boolean;
 }
 

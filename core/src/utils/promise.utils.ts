@@ -90,11 +90,11 @@ export class PromiseUtils {
 	 * https://stackoverflow.com/questions/48944552/typescript-how-to-unwrap-remove-promise-from-a-type/48945362
 	 */
 	public static async unravelPromiseObject<T>(obj: T): Promise<AwaitProps<T>> {
-		const keys = Object.keys(obj)
+		const keys = Object.keys(obj);
 		const awaitables = keys.map(key => (obj as any)[key]);
-		const values = await Promise.all(awaitables)
-		const result = {}
-		keys.forEach((key, i) => (result as any)[key] = values[i])
+		const values = await Promise.all(awaitables);
+		const result = {};
+		keys.forEach((key, i) => (result as any)[key] = values[i]);
 		return <AwaitProps<T>>result;
 	}
 

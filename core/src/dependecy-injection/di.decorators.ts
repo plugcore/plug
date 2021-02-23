@@ -9,9 +9,9 @@ import { IInjectArgs, IServiceArgs, IServiceIdentifier } from './di.shared';
  * Service decorator made to easily registrer the class into the container
  * @param sId
  */
-export function Service({ ctx, sId, connection }: IServiceArgs = {}): Function {
+export function Service({ ctx, sId, connection }: IServiceArgs = {}) {
 
-	return (target: Function) => {
+	return (target: ClassParameter<any>) => {
 
 		// If arguments size is 1 it means its a class definition
 		if (TypeChecker.isClass(target)) {
@@ -38,8 +38,8 @@ export function Service({ ctx, sId, connection }: IServiceArgs = {}): Function {
  * definition at class level or at constructor level
  * @param sId
  */
-export function Inject(inp?: IServiceIdentifier<any> | IInjectArgs): Function {
-	return (target: Record<string, any> | Function, propertyName: string, index?: number) => {
+export function Inject(inp?: IServiceIdentifier<any> | IInjectArgs) {
+	return (target: Record<string, any> | ClassParameter<any>, propertyName: string, index?: number) => {
 
 		const type = Reflect.getMetadata(RmdConstats.objectClass, target, propertyName);
 
@@ -127,8 +127,8 @@ export function Inject(inp?: IServiceIdentifier<any> | IInjectArgs): Function {
  * definition at class level or at constructor level
  * @param sId
  */
-export function InjectConnection(): Function {
-	return (target: Record<string, any> | Function, propertyName: string, index?: number) => {
+export function InjectConnection() {
+	return (target: Record<string, any> | ClassParameter<any>, propertyName: string, index?: number) => {
 		Inject({ variationVarName: Container.connection })(target, propertyName, index);
 	};
 }

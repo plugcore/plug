@@ -1,7 +1,6 @@
 import { ClassParameter, IsBoolean, IServiceArgs, IsNumber, IsString, Required } from '@plugcore/core';
-import { FastifyReply, FastifyRequest, HTTPMethods, RouteOptions, RouteShorthandOptions } from 'fastify';
+import { FastifyReply, FastifyRequest, HTTPMethods, RouteOptions } from 'fastify';
 import { ReadStream } from 'fs';
-import { IncomingMessage, ServerResponse } from 'http';
 import { SecurityRequirementObject } from 'openapi3-ts';
 import { SupportedSecurityTypes } from '../configuration/configuration.insterfaces';
 
@@ -101,11 +100,11 @@ export interface Request<
 	TBody = any, TUrlParams = any, TParams = any,
 	THeaders = any, CustomData = any, JWTPayload = any | undefined
 > extends FastifyRequest<{
-	Body?: TBody;
-	Querystring?: TUrlParams;
-	Params?: TParams;
-	Headers?: THeaders;
-}> {
+		Body?: TBody;
+		Querystring?: TUrlParams;
+		Params?: TParams;
+		Headers?: THeaders;
+	}> {
 	jwtPayload: JWTPayload;
 	isMultipart?: boolean;
 	multipartTempFiles?: string[];

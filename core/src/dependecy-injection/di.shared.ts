@@ -61,7 +61,7 @@ export interface IDiEntry<T = any> {
 	object?: any;
 	constructorHandlers?: IDiConstructorHandler[];
 	depsLeft?: IDiDepLeft[];
-	cbWaiting?: Function[];
+	cbWaiting?: ((obj: any) => any)[];
 	propertiesWaiting?: {
 		id: IServiceIdentifier;
 		ctx?: string;

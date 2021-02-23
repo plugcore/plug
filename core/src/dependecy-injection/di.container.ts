@@ -270,7 +270,7 @@ export class Container {
 	 * if no metadata is found
 	 * @param clazz
 	 */
-	public static getServiceMetadata(clazz: Function): IDiServiceMetadata | undefined {
+	public static getServiceMetadata(clazz: ClassParameter<any>): IDiServiceMetadata | undefined {
 		let result: IDiServiceMetadata | undefined;
 		const metadata = (<any>clazz)[this.serviceMetadata];
 
@@ -527,7 +527,7 @@ export class Container {
 		});
 
 		if (entry.cbWaiting) {
-			entry.cbWaiting.forEach((callBack: Function) => {
+			entry.cbWaiting.forEach(callBack => {
 				callBack(entry.object);
 			});
 			// Only di.container manages entries so there are no races
@@ -660,7 +660,7 @@ export class Container {
 		}
 	}
 
-	private static setServiceMetadata(clazz: Function, serviceId: IServiceIdentifier, ctx?: string) {
+	private static setServiceMetadata(clazz: ClassParameter<any>, serviceId: IServiceIdentifier, ctx?: string) {
 		(<any>clazz)[this.serviceMetadata] = <IDiServiceMetadata>{ serviceId, ctx };
 	}
 

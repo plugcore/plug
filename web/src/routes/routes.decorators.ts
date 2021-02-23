@@ -101,7 +101,7 @@ export function Patch(path?: string | TMethodOptions, options?: TMethodOptions) 
  * Registers a basic auth login function that is going to be called in all
  * the routes that have basic security
  */
-export function BasicAuthLogin(): Function {
+export function BasicAuthLogin() {
 	return function (target: any, propertyKey: string) {
 		if (TypeChecker.isClass(target.constructor)) {
 			RoutesUtils.registerBasicAuthLoginFn(target.constructor, propertyKey);
@@ -113,7 +113,7 @@ export function BasicAuthLogin(): Function {
  * Registers service method that will be called when a request
  * for JWT is performed
  */
-export function JwtLogin(meta?: JwtLoginMeta): Function {
+export function JwtLogin(meta?: JwtLoginMeta) {
 	return function (target: any, propertyKey: string) {
 		if (TypeChecker.isClass(target.constructor)) {
 			RoutesUtils.registerJwtLoginFn(target.constructor, propertyKey, meta);
@@ -127,7 +127,7 @@ export function JwtLogin(meta?: JwtLoginMeta): Function {
  * has already been defined. It can throw an error to
  * stop the request.
  */
-export function JwtPreHandle(): Function {
+export function JwtPreHandle() {
 	return function (target: any, propertyKey: string) {
 		if (TypeChecker.isClass(target.constructor)) {
 			RoutesUtils.registerJwtPreHandleFn(target.constructor, propertyKey);
@@ -140,7 +140,7 @@ export function JwtPreHandle(): Function {
  * A custom auth function that is going to be executen in all routes that
  * have custom auth security
  */
-export function CustomAuth(): Function {
+export function CustomAuth() {
 	return function (target: any, propertyKey: string) {
 		if (TypeChecker.isClass(target.constructor)) {
 			RoutesUtils.registerCustomAuthFn(target.constructor, propertyKey);
@@ -157,7 +157,7 @@ export function CustomAuth(): Function {
  * able add some custome configuration, such as adding custom
  * plugins.
  */
-export function FastifyConfiguration(): Function {
+export function FastifyConfiguration() {
 	return function (target: any, propertyKey: string) {
 		if (TypeChecker.isClass(target.constructor)) {
 			RoutesUtils.registerFastifyConfigurationFn(target.constructor, propertyKey);

@@ -2,6 +2,7 @@ import { FsUtils } from '../io/fs.utils';
 import { Container } from './di.container';
 import { IDiServiceMetadata } from './di.shared';
 import { DiService } from './di.service';
+import { ClassParameter } from '../utils/typescript.utils';
 
 export class DiUtils {
 
@@ -90,8 +91,8 @@ export class DiUtils {
 	 * Returns a list of all the classes loaded by the loadFolder function
 	 * @param jsFiles
 	 */
-	private static getClasses(jsFiles: any[]): Function[] {
-		const result: Function[] = [];
+	private static getClasses(jsFiles: any[]) {
+		const result: ClassParameter<any>[] = [];
 
 		jsFiles.forEach(jsFile => {
 			Object.keys(jsFile).forEach(key => {
