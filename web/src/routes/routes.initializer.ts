@@ -1,21 +1,22 @@
 import { ArrayUtils, ClassParameter, Configuration, Container, FsUtils, InjectConfiguration, InjectLogger, Logger, ObjectUtils, ObjectValidatorUtils, OnEvent, PublicEvents, Service, TypeChecker, ValidatorUtils } from '@plugcore/core';
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 import * as Busboy from 'busboy';
-import { ContentTypeParser, HTTPMethod, Plugin, RouteSchema } from 'fastify';
-import * as fastifyAuth from 'fastify-auth';
-import * as cookies from 'fastify-cookie';
+import { FastifyPluginCallback, FastifyRequest, FastifySchema, HTTPMethods, RawRequestDefaultExpression } from 'fastify';
+import fastifyAuth from 'fastify-auth';
+import cookies from 'fastify-cookie';
 import * as oas from 'fastify-oas';
-import * as fstatic from 'fastify-static';
+import fstatic from 'fastify-static';
+import { ContentTypeParserDoneFunction, FastifyContentTypeParser } from 'fastify/types/content-type-parser';
 import { createWriteStream, ReadStream } from 'fs';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { decode, encode } from 'jwt-simple';
 import { SecuritySchemeObject } from 'openapi3-ts';
 import { join } from 'path';
 import { WebConfiguration } from '../configuration/configuration.default';
-import { FileUploadWebConfiguration, JwtAvailableAlgorithms, WebOasConfiguration } from '../configuration/configuration.insterfaces';
+import { FileUploadWebConfiguration, JwtAvailableAlgorithms, SupportedSecurityTypes, WebOasConfiguration } from '../configuration/configuration.insterfaces';
 import { MimeTypes } from './routes.constants';
 import { RoutesService } from './routes.service';
-import { ErrorResponseModel, IRegisteredController, IRouteSchemas, Request, Response, TMethodOptions, FileField } from './routes.shared';
+import { ErrorResponseModel, FileField, IRegisteredController, IRouteSchemas, Request, Response, TMethodOptions } from './routes.shared';
 import { RoutesUtils } from './routes.utils';
 
 @Service()
@@ -31,7 +32,7 @@ export class RoutesInitializer {
 		expiration: <number | undefined>undefined
 	};
 	private oasDocumentationPath: string;
-	private ajvCustomInstance: Ajv.Ajv;
+	private ajvCustomInstance: Ajv;
 
 	constructor(
 		@InjectLogger('httpcontroller') private log: Logger,
@@ -46,13 +47,12 @@ export class RoutesInitializer {
 		) || WebConfiguration.default.web.oas.documentationPath || '/api/documentation';
 
 		this.ajvCustomInstance = new Ajv({
-			// removeAdditional: "all",
 			useDefaults: true,
 			coerceTypes: true,
-			$data: true,
-			extendRefs: true
+			$data: true
 		});
 		this.ajvCustomInstance.addKeyword('isFileType', {
+			keyword: 'isFileType',
 			compile: (_, parent) => {
 				// Change the schema type, as this is post validation it doesn't appear to error.
 				(parent as any).type = 'file';
@@ -85,7 +85,7 @@ export class RoutesInitializer {
 			this.routesService.fastifyInstance.addContentTypeParser('multipart', this.multipartImpl());
 			this.routesService.fastifyInstance
 				// Lets you Defile file fields
-				.setSchemaCompiler((schema: any) => this.ajvCustomInstance.compile(schema))
+				/* .schemaCompiler((schema: any) => this.ajvCustomInstance.compile(schema)) */
 				// Indicates if the request has been execcuted with fiel upload
 				.decorateRequest('isMultipart', false)
 				// If teh request is multipart, then this is a list of temp filtes to delete
@@ -144,7 +144,7 @@ export class RoutesInitializer {
 
 	}
 
-	private authPlugin: Plugin<Server, IncomingMessage, ServerResponse, fastifyAuth.Options> = (plugin, _, done) => {
+	private authPlugin: FastifyPluginCallback<{}> = (plugin, _, done) => {
 
 		// Auth system
 
@@ -176,7 +176,7 @@ export class RoutesInitializer {
 	private oasPlugin: (restControllers: {
 		controllerService: any;
 		controller: IRegisteredController;
-	}[]) => Plugin<Server, IncomingMessage, ServerResponse, fastifyAuth.Options> = (restControllers) => (plugin, _, done) => {
+	}[]) => FastifyPluginCallback<{}> = (restControllers) => (plugin, _, done) => {
 
 		// OAS configuration
 
@@ -260,7 +260,7 @@ export class RoutesInitializer {
 		plugin.route({
 			url: '/',
 			method: 'GET',
-			schema: { hide: true },
+			schema: { hide: true } as any,
 			preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
 			handler: (_, reply) => {
 				reply.redirect(this.oasDocumentationPath + '/index.html');
@@ -270,7 +270,7 @@ export class RoutesInitializer {
 		plugin.route({
 			url: '/json',
 			method: 'GET',
-			schema: { hide: true },
+			schema: { hide: true } as any,
 			preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
 			handler: (_, reply) => {
 				reply.send(plugin.oas());
@@ -280,7 +280,7 @@ export class RoutesInitializer {
 		plugin.route({
 			url: '/yaml',
 			method: 'GET',
-			schema: { hide: true },
+			schema: { hide: true } as any,
 			preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
 			handler: (_, reply) => {
 				reply.type('application/x-yaml').send((<any>plugin).oas({ yaml: true }));
@@ -306,7 +306,7 @@ export class RoutesInitializer {
 			configFilePath: string;
 			config?: FileUploadWebConfiguration;
 		}
-	) => Plugin<Server, IncomingMessage, ServerResponse, fastifyAuth.Options> = (restControllers, fileConfig) => (plugin, _, done) => {
+	) => FastifyPluginCallback<{}> = (restControllers, fileConfig) => (plugin, _, done) => {
 
 		let securityOnAllRoutes = this.configuration && this.configuration.web &&
 			this.configuration.web.auth && this.securityEnabled && this.configuration.web.auth.securityInAllRoutes;
@@ -324,7 +324,7 @@ export class RoutesInitializer {
 			for (const method of methods) {
 
 				const controllerMethodHandler = restController.controllerService[method.methodName].bind(restController.controllerService);
-				const controllerOptions: TMethodOptions = method.options || {};
+				const controllerOptions: TMethodOptions = method.options || <TMethodOptions>{};
 				const url = restController.controller.options.urlBase + (method.path || '');
 
 				// Check all events, since they can be names of custom functions of the service
@@ -344,7 +344,7 @@ export class RoutesInitializer {
 
 				// Schema definition
 				const routeSchemas = controllerOptions.routeSchemas;
-				let schema: RouteSchema = this.cloneSchema(controllerOptions.schema || {});
+				let schema: FastifySchema = this.cloneSchema(controllerOptions.schema || {});
 
 				// Route validations
 				if (routeSchemas) {
@@ -369,7 +369,7 @@ export class RoutesInitializer {
 						);
 					}
 					const allSecurityTypes = ArrayUtils.removeDuplicates(allAffectedSecurityTypes);
-					const routeSecurity = [];
+					const routeSecurity: any[] = [];
 					const regexAuth: string[] = [];
 					for (const securityType of allSecurityTypes) {
 						if (securityType === 'jwt') {
@@ -435,7 +435,7 @@ export class RoutesInitializer {
 						));
 
 						if (schema.response) {
-							schema.response[401] = ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel);
+							(schema.response as any)[401] = ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel);
 						} else {
 							schema.response = { 401: ObjectValidatorUtils.generateJsonSchema(ErrorResponseModel) };
 						}
@@ -561,7 +561,7 @@ export class RoutesInitializer {
 
 	}
 
-	private createFromRouteSchemas(httpMethod: HTTPMethod, routeSchemas: IRouteSchemas, schema?: RouteSchema) {
+	private createFromRouteSchemas(httpMethod: HTTPMethods, routeSchemas: IRouteSchemas, schema?: FastifySchema) {
 
 		const result = this.cloneSchema(schema || {});
 
@@ -634,7 +634,7 @@ export class RoutesInitializer {
 
 	}
 
-	private multipartBodyTransformer(schema: RouteSchema) {
+	private multipartBodyTransformer(schema: FastifySchema) {
 		return async (request: Request) => {
 
 			const bodySchema = (schema.body as any);
@@ -679,7 +679,10 @@ export class RoutesInitializer {
 		};
 	}
 
-	private multipartImpl: (config?: FileUploadWebConfiguration) => ContentTypeParser<IncomingMessage> = (config) => (request, done) => {
+	private multipartImpl:
+		(config?: FileUploadWebConfiguration) => FastifyContentTypeParser =
+		(config) => (request: FastifyRequest, payload: RawRequestDefaultExpression, done: ContentTypeParserDoneFunction) =>
+	{
 		const body: any = {};
 		const multipartTempFiles: string[] = [];
 		const basePath = config ? config.enabled ? (config.tempFilesPath || __dirname) : __dirname : __dirname;
@@ -691,7 +694,7 @@ export class RoutesInitializer {
 				limits: config ? config.limits : undefined
 			});
 
-			request.on('error', (err) => {
+			request.raw.on('error', (err: any) => {
 				stream.end();
 				done(err);
 			});
@@ -763,7 +766,7 @@ export class RoutesInitializer {
 			(<any>request).isMultipart = true;
 			(<any>request).multipartTempFiles = multipartTempFiles;
 
-			request.pipe(stream);
+			request.raw.pipe(stream);
 
 		} catch (error) {
 			done(error);
@@ -779,7 +782,7 @@ export class RoutesInitializer {
 		});
 	}
 
-	private cloneSchema(schema: RouteSchema) {
+	private cloneSchema(schema: FastifySchema) {
 		return JSON.parse(JSON.stringify(schema));
 	}
 

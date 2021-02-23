@@ -1,5 +1,5 @@
-import * as http from 'http';
 import * as fastify from 'fastify';
+import { SupportedSecurityTypes } from '../configuration/configuration.insterfaces';
 
 // Extends fastify types
 declare module 'fastify' {
@@ -15,30 +15,25 @@ declare module 'fastify' {
 		signed?: boolean;
 	}
 
-	interface FastifyRequest<
-		HttpRequest,
-		Query = fastify.DefaultQuery,
-		Params = fastify.DefaultParams,
-		Headers = fastify.DefaultHeaders,
-		Body = any
-	> {
+	interface FastifyRequest {
 		/**
 		 * Request cookies
 		 */
 		cookies: { [cookieName: string]: string };
 	}
 
-	interface FastifyInstance<
-		HttpServer = http.Server,
-		HttpRequest = http.IncomingMessage,
-		HttpResponse = http.ServerResponse
-	> {
+	interface FastifySchema {
+		security?: any[];
+		consumes?: string[]
+	}
+
+	interface FastifyInstance {
 		auth(inp: any[]): any;
 		verifyJwt: any;
 		verifyUserAndPassword: any;
 		customAuth: any;
 	}
-	interface FastifyReply<HttpResponse> {
+	interface FastifyReply {
 		/**
 		 * Set response cookie
 		 * @param name Cookie name
@@ -49,7 +44,7 @@ declare module 'fastify' {
 			name: string,
 			value: string,
 			options?: CookieSerializeOptions
-		): fastify.FastifyReply<HttpResponse>;
+		): fastify.FastifyReply;
 
 		/**
 		 * clear response cookie
@@ -59,6 +54,6 @@ declare module 'fastify' {
 		clearCookie(
 			name: string,
 			options?: CookieSerializeOptions
-		): fastify.FastifyReply<HttpResponse>;
+		): fastify.FastifyReply;
 	}
 }

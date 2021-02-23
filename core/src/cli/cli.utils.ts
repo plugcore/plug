@@ -9,7 +9,7 @@ export class CliUtils {
      * @param opts
      */
 	public static async executeCommand(commandName: string, opts: string[]) {
-		return new Promise((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			let hasError = false;
 			try {
 				// TODO: Remove any

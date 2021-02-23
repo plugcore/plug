@@ -76,7 +76,7 @@ export class HttpUtils {
 	private static makeCall<T>(inp: {
 		opts: HttpRequestOptions | HttpsRequestOptions;
 		body?: any;
-		responseEncoding?: string;
+		responseEncoding?: BufferEncoding;
 		responseStream?: Writable;
 	}): Promise<T> {
 
@@ -125,7 +125,7 @@ export class HttpUtils {
 					if (inp.responseStream) {
 						res.pipe(inp.responseStream);
 						res.on('end', () => {
-							resolve();
+							resolve(null as any); // The response is in the responseStream, this is just to end the stream
 						});
 					} else {
 						res.setEncoding(inp.responseEncoding || 'utf8');

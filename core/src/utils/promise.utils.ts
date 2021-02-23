@@ -1,3 +1,4 @@
+import { AwaitProps } from './typescript.utils';
 
 export class PromiseUtils {
 
@@ -68,11 +69,33 @@ export class PromiseUtils {
 	 * @param milsToWait
 	 */
 	public static async wait(milsToWait: number) {
-		return new Promise(resolve => {
+		return new Promise<void>(resolve => {
 			setTimeout(() => {
 				resolve();
 			}, milsToWait);
 		});
+	}
+
+	/**
+	 * From an object that has promise values, it resolves all promises and returns the same object structure
+	 * with the promises resolved. ex:
+	 * From {
+	 * 	first: Promise<string>,
+	 *  second: Promise<number>
+	 * }
+	 * Returns {
+	 *   first: sting,
+	 *   second: number
+	 * }
+	 * https://stackoverflow.com/questions/48944552/typescript-how-to-unwrap-remove-promise-from-a-type/48945362
+	 */
+	public static async unravelPromiseObject<T>(obj: T): Promise<AwaitProps<T>> {
+		const keys = Object.keys(obj)
+		const awaitables = keys.map(key => (obj as any)[key]);
+		const values = await Promise.all(awaitables)
+		const result = {}
+		keys.forEach((key, i) => (result as any)[key] = values[i])
+		return <AwaitProps<T>>result;
 	}
 
 }

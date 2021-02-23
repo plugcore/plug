@@ -1,4 +1,3 @@
-import { ListenOptions } from 'fastify';
 import {
 	ComponentsObject, ExternalDocumentationObject, InfoObject, SchemasObject,
 	SecurityRequirementObject, Server, TagObject
@@ -59,7 +58,10 @@ export interface FileUploadWebConfiguration {
 }
 
 export interface PlugWebConfiguration {
-	server?: ListenOptions;
+	server?: {
+		port: number;
+		host?: string
+	};
 	oas?: WebOasConfiguration;
 	auth?: WebAuthConfiguration;
 	fileUpload?: FileUploadWebConfiguration;

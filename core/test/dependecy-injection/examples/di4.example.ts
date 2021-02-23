@@ -17,7 +17,7 @@ export class Di4Example implements OnInit {
 	}
 
 	public async onInit(): Promise<void> {
-		await new Promise((resolve) => {
+		await new Promise<void>((resolve) => {
 			setTimeout(() => { resolve(); }, 500);
 		});
 	}

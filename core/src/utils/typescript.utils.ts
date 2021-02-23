@@ -24,3 +24,6 @@ export type TPrimitive = boolean | null | undefined | number | string | Symbol;
 
 // eslint-disable @typescript-eslint/prefer-interface
 export interface ClassParameter<T> { new (...args: any[]): T }
+
+export type Await<T> = T extends Promise<infer U> ? U : T
+export type AwaitProps<T> = {[P in keyof T]: Await<T[P]>}

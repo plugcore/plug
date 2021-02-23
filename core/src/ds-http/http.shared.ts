@@ -10,7 +10,7 @@ export interface HttpCallOptions {
 	options?: Omit<HttpRequestOptions, 'method' | 'path' | 'headers' | 'hostname' | 'protocol'>;
 	contentType?: 'application/json' | 'application/xml' | string;
 	responseContentType?: 'application/json' | 'application/xml' | string;
-	responseEncoding?: 'utf8' | string;
+	responseEncoding?: BufferEncoding;
 	responseStream?: Writable;
 }
 

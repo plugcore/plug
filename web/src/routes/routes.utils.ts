@@ -1,5 +1,5 @@
 import { ClassParameter, TypeChecker, IDiEntry, Container } from '@plugcore/core';
-import { FastifyInstance, HTTPMethod } from 'fastify';
+import { FastifyInstance, HTTPMethods } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import {
 	IControllerOptions, IRegisteredController, IRegsiteredMethod, TMethodOptions, BaiscAuthLoginFn,
@@ -60,7 +60,7 @@ export class RoutesUtils {
 	}
 
 	public static registerMethod(
-		decoratorOptions: { httpMethod: HTTPMethod; path?: string; options?: TMethodOptions },
+		decoratorOptions: { httpMethod: HTTPMethods; path?: string; options?: TMethodOptions },
 		decoratorMeta: { controller: ClassParameter<any>; methodName: string },
 	) {
 		const registeredMethod: IRegsiteredMethod = {

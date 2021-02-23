@@ -1,5 +1,6 @@
 import { Service } from '../dependecy-injection/di.decorators';
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
+import * as AjvTypes from 'ajv';
 import { FsUtils } from '../io/fs.utils';
 import { TypeChecker } from '../utils/type.checker';
 import { ValidationResult, CompiledValidation, ObjectValidatorFunction } from './object-validator.shared';
@@ -18,7 +19,7 @@ export class ObjectValidator {
 	 * @param schemaOrValidateFunction
 	 * @param objToValidate
 	 */
-	public validate<T = any>(schemaOrValidateFunction: object | Ajv.ValidateFunction, objToValidate: T): ValidationResult  {
+	public validate<T = any>(schemaOrValidateFunction: object | AjvTypes.ValidateFunction, objToValidate: T): ValidationResult  {
 		const func = TypeChecker.isObject(schemaOrValidateFunction) ? this.compile(schemaOrValidateFunction) : schemaOrValidateFunction;
 		const result = func(objToValidate);
 		if (TypeChecker.isPromise(result)) {
@@ -37,7 +38,7 @@ export class ObjectValidator {
 	 * @param schemaOrValidateFunction
 	 * @param objToValidate
 	 */
-	public async asyncValidate<T>(schemaOrValidateFunction: object | Ajv.ValidateFunction, objToValidate: T): Promise<ValidationResult>  {
+	public async asyncValidate<T>(schemaOrValidateFunction: object | AjvTypes.ValidateFunction, objToValidate: T): Promise<ValidationResult>  {
 		const func = TypeChecker.isObject(schemaOrValidateFunction) ? this.compile(schemaOrValidateFunction) : schemaOrValidateFunction;
 		const result = func(objToValidate);
 		if (TypeChecker.isPromise(result)) {

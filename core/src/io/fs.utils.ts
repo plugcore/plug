@@ -138,7 +138,7 @@ export class FsUtils {
 	 */
 	public static async saveFile(filePath: string, fileContent: string) {
 
-		return new Promise((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 
 			writeFile(filePath, fileContent, (err) => {
 				if (err) {
@@ -165,7 +165,7 @@ export class FsUtils {
 		const parent = resolve(folderPath, '..');
 		await this.createFolder(parent);
 
-		return new Promise((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			mkdir(folderPath, error => {
 				if (error) {
 					reject(error);
@@ -237,7 +237,7 @@ export class FsUtils {
 			throw new Error('Target is not a directory ' + source);
 		}
 		const targetFile = join(target, basename(source));
-		return new Promise((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			readFile(source, (err, file) => {
 				if (err) {
 					reject(err);
@@ -353,7 +353,7 @@ export class FsUtils {
 	 * Tries to load the file path contents as JSON, can throw exceptions
 	 * @param filePath
 	 */
-	public static async loadJsonFile<T>(filePath: string, options?: { encoding?: string; flag?: string }) {
+	public static async loadJsonFile<T>(filePath: string, options?: { encoding?: BufferEncoding; flag?: string }) {
 
 		return new Promise<T>((resolve, reject) => {
 
@@ -375,7 +375,7 @@ export class FsUtils {
 	}
 
 	public static async removeFile(filePath: string, ignoreError?: boolean) {
-		return new Promise((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			unlink(filePath, error => {
 				if (error && !ignoreError) {
 					reject(error);
@@ -387,7 +387,7 @@ export class FsUtils {
 	}
 
 	public static moveFile(sourceFile: string, targetFile: string) {
-		return new Promise((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			rename(sourceFile, targetFile, error => {
 				if (error) {
 					reject(error);
@@ -400,7 +400,7 @@ export class FsUtils {
 
 	public static createReadStream(file: PathLike, options?: string | {
 		flags?: string;
-		encoding?: string;
+		encoding?: BufferEncoding;
 		fd?: number;
 		mode?: number;
 		autoClose?: boolean;
@@ -413,7 +413,7 @@ export class FsUtils {
 
 	public static createWriteStream(file: PathLike, options?: string | {
 		flags?: string;
-		encoding?: string;
+		encoding?: BufferEncoding;
 		fd?: number;
 		mode?: number;
 		autoClose?: boolean;

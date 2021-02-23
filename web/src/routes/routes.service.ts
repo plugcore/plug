@@ -1,5 +1,5 @@
 import { Configuration, InjectConfiguration, InjectLogger, Logger, Service } from '@plugcore/core';
-import * as fastify from 'fastify';
+import fastify from 'fastify';
 import { FastifyInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { WebConfiguration } from '../configuration/configuration.default';
@@ -33,7 +33,10 @@ export class RoutesService {
 	}
 
 	public async startHttpServer() {
-		this.addressListenning = await this.fastifyInstance.listen(this.httpPort);
+		this.addressListenning = await this.fastifyInstance.listen({
+			port: this.httpPort,
+			host: this.host
+		});
 	}
 
 	public async shutdownHttpServer() {

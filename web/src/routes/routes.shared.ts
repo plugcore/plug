@@ -1,11 +1,9 @@
 import { ClassParameter, IsBoolean, IServiceArgs, IsNumber, IsString, Required } from '@plugcore/core';
-import {
-	DefaultParams, DefaultQuery, FastifyReply, FastifyRequest, HTTPMethod, RequestHandler, RouteShorthandOptions, DefaultHeaders
-} from 'fastify';
-import { IncomingMessage, ServerResponse } from 'http';
-import { SupportedSecurityTypes } from '../configuration/configuration.insterfaces';
-import { SecurityRequirementObject } from 'openapi3-ts';
+import { FastifyReply, FastifyRequest, HTTPMethods, RouteOptions, RouteShorthandOptions } from 'fastify';
 import { ReadStream } from 'fs';
+import { IncomingMessage, ServerResponse } from 'http';
+import { SecurityRequirementObject } from 'openapi3-ts';
+import { SupportedSecurityTypes } from '../configuration/configuration.insterfaces';
 
 //
 // Interfaces
@@ -22,7 +20,7 @@ export interface IRegisteredController {
 }
 
 export interface IRegsiteredMethod {
-	httpMethod: HTTPMethod;
+	httpMethod: HTTPMethods;
 	options?: TMethodOptions;
 	path?: string;
 	methodName: string;
@@ -100,15 +98,20 @@ export interface IRouteSchemas {
 }
 
 export interface Request<
-	TBody = any, TUrlParams = DefaultParams, TParams = DefaultQuery,
-	THeaders = DefaultHeaders, CustomData = any, JWTPayload = any | undefined
-> extends FastifyRequest<IncomingMessage, TParams, TUrlParams, THeaders, TBody> {
+	TBody = any, TUrlParams = any, TParams = any,
+	THeaders = any, CustomData = any, JWTPayload = any | undefined
+> extends FastifyRequest<{
+	Body?: TBody;
+	Querystring?: TUrlParams;
+	Params?: TParams;
+	Headers?: THeaders;
+}> {
 	jwtPayload: JWTPayload;
 	isMultipart?: boolean;
 	multipartTempFiles?: string[];
 	customData: CustomData;
 }
-export interface Response extends FastifyReply<ServerResponse> {
+export interface Response extends FastifyReply {
 	uploadFile: (rs: ReadStream, fileName: string, mimeType: string) => ReadStream;
 }
 
@@ -123,10 +126,8 @@ export interface JwtLoginMeta {
 // Types
 //
 
-export type InRouteShorthandOptions = RouteShorthandOptions<Request, Response, DefaultQuery, DefaultParams, DefaultHeaders, Body>;
-
-type OmitedShorthandOptions = 'url' | 'onRequest' | 'preParsing' | 'preValidation' | 'preHandler' | 'preSerialization';
-export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOptions> & {
+type OmitedShorthandOptions = 'url' | 'onRequest' | 'preParsing' | 'preValidation' | 'preHandler' | 'preSerialization' | 'method' | 'handler';
+export type TMethodOptions = Omit<RouteOptions, OmitedShorthandOptions> & {
 	routeSchemas?: IRouteSchemas;
 	onRequest?: ((req: Request, res: Response) => Promise<void>) | ((req: Request, res: Response) => Promise<void>)[];
 	preParsing?: ((req: Request, res: Response) => Promise<void>) | ((req: Request, res: Response) => Promise<void>)[];
@@ -135,8 +136,6 @@ export type TMethodOptions = Omit<InRouteShorthandOptions, OmitedShorthandOption
 	preSerialization?: ((req: Request, res: Response, payload: any) => Promise<void>);
 	security?: SupportedSecurityTypes | SupportedSecurityTypes[];
 };
-
-export type TRequestHandler = RequestHandler<IncomingMessage, ServerResponse, DefaultQuery, DefaultParams, DefaultHeaders, Body>;
 
 export type BaiscAuthLoginFn = (user: string, password: string, request: Request, response: Response) => Promise<boolean>;
 export type JwtLoginFn = (request: Request, response: Response) => Promise<any>;

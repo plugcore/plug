@@ -38,16 +38,16 @@
 		"plug": "./src/cli/plug.cli.js"
 	},
 	"dependencies": {
-		"ajv": "6.12.2",
-		"eventemitter3": "4.0.4",
-		"form-data": "3.0.0",
+		"ajv": "7.1.1",
+		"eventemitter3": "4.0.7",
+		"form-data": "4.0.0",
 		"object-mapper": "6.2.0",
-		"pino": "6.3.2",
+		"pino": "6.11.1",
 		"reflect-metadata": "0.1.13"
 	},
 	"devDependencies": {
-		"@types/node": "12.12.6",
-		"@types/pino": "6.3.0"
+		"@types/node": "14.14.31",
+		"@types/pino": "6.3.6"
 	},
 	"types": "./core.d.ts"
 }
