@@ -3,6 +3,7 @@ import * as mail from 'nodemailer';
 import * as SMTPConnection from 'nodemailer/lib/smtp-connection';
 import { Readable } from 'stream';
 import { EmailAddress, EmailDatasourceConfiguration, GmailApiConfiguration } from './email.configuration';
+import { MailOptions } from './email.interfaces';
 
 @DataSource({ type: 'email' })
 export class EmailDataSource {
@@ -37,20 +38,24 @@ export class EmailDataSource {
 	 * Default 'from' can be configured
 	 * @param options
 	 */
-	public async sendMail(options: mail.SendMailOptions): Promise<mail.SentMessageInfo> {
+	public async sendEmail(options: MailOptions): Promise<mail.SentMessageInfo> {
 
 		if (!this.dsConfiguration) {
 			throw new Error('Invalid email configuration');
 		}
-		if (this.defaultFrom) {
+		if (!options.from  && this.defaultFrom) {
 			options.from = this.defaultFrom;
 		}
 
 		if (this.dsConfiguration.ccOnAllEmails) {
-			options.cc = options.cc || ObjectUtils.deepClone(this.dsConfiguration.ccOnAllEmails || {}) as any;
+			options.cc = (Array.isArray(options.cc) ? options.cc : options.cc ? [options.cc] : [] || []).concat(
+				ObjectUtils.deepClone(this.dsConfiguration.ccOnAllEmails)
+			);
 		}
 		if (this.dsConfiguration.bccOnAllEmails) {
-			options.bcc = options.bcc || ObjectUtils.deepClone(this.dsConfiguration.bccOnAllEmails || {}) as any;
+			options.bcc = (Array.isArray(options.bcc) ? options.bcc : options.bcc ? [options.bcc] : [] || []).concat(
+				ObjectUtils.deepClone(this.dsConfiguration.bccOnAllEmails)
+			);
 		}
 
 		return this.transport.sendMail(options);
@@ -70,7 +75,7 @@ export class EmailDataSource {
 			name: 'gsuiteemail',
 			version: '0.1.0',
 			send: (mail, callback) => {
-				this.sendEmail(mail.message.createReadStream(), apiCfg, google, gmail, callback);
+				this.sendGmailMail(mail.message.createReadStream(), apiCfg, google, gmail, callback);
 			}
 		};
 
@@ -78,7 +83,7 @@ export class EmailDataSource {
 
 	}
 
-	private async sendEmail(
+	private async sendGmailMail(
 		stream: Readable, apiCfg: GmailApiConfiguration,
 		google: any, gmail: any,
 		callback: (err: Error | null, info: mail.SentMessageInfo) => void

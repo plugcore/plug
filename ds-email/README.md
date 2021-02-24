@@ -1,125 +1,124 @@
 
 ![plugcore.com](https://raw.githubusercontent.com/plugcore/plug/master/_docs/logo.png "plugcore.com")
 
-## @plugcore/ds-mongodb
+## @plugcore/ds-email
 
-[![https://nodei.co/npm/@plugcore/ds-mongodb.png?downloads=false&downloadRank=false&stars=false](https://nodei.co/npm/@plugcore/ds-mongodb.png?downloads=false&downloadRank=false&stars=false)](https://www.npmjs.com/package/@plugcore/ds-mongodb)
+[![https://nodei.co/npm/@plugcore/ds-email.png?downloads=false&downloadRank=false&stars=false](https://nodei.co/npm/@plugcore/ds-email.png?downloads=false&downloadRank=false&stars=false)](https://www.npmjs.com/package/@plugcore/ds-email)
 
-Documentation can be found at [the wiki](https://github.com/plugcore/plugcore/wiki/MongoDB-connection).
+Documentation can be found at [the wiki](https://github.com/plugcore/plugcore/wiki/Email-connection).
  
-## Datasource: MongoDB
+## Datasource: Email
  
-This utility will help us connect to a Mongodb server using the [datsources system](https://github.com/plugcore/plugcore/wiki/Datasources-configuration),
-where very instance of the client will target a specific database.
+This utility will help connect to an Email server (ex: SMTP server, GMAIL, Outlook 365, etc)  to send our emails. It uses the [datsources system](https://github.com/plugcore/plugcore/wiki/Datasources-configuration),
+where every instance of the client will target an specific email server.
  
-Internally it uses the [MongoDB connector](https://www.npmjs.com/package/mongodb) without any layers on top of it, this means with no other framework,
-this is because we believe the MongoDB connector is already high level enough and we want to remove as many layers as possible.
- 
-Also we will be able to use [nedb](https://github.com/louischatriot/nedb) as temporal memory database, this will be useful for
-demos o tests execution.
+Internally it uses [nodemailer](https://nodemailer.com/about/) to connect to any email server, but it also adds some helper functions to connect to a Google API Gmail account, which can be very helpful if you are using a gmail account to send your emails, or a GSuite account, where you can configure SPF, DKIM or DMARC records to secure your emails and evade SPAM filters.
  
 ## Configuration
  
 Inside our configuration file, for example `{PROJECT_ROOT}/configuration/configuration.json`, we will have to add a new
-entry for each database we want to connect, like in this example:
+entry for each email server we want to connect, like in this example:
  
 ```
 {
     "connections": {
-        "mymongo": { // Connection id
-            "type": "mongodb", // Datasource type
-            "url": "mongodb://myuser:mypassword@mongodb0.example.com:27017/admin", // As defined in https://docs.mongodb.com/manual/reference/connection-string/#standard-connection-string-format
-            "databaseName": "mydatabase" // Database name that we want to connect
+        "myemail": { // Connection id
+            "type": "email", // Datasource type
+            "host": "smtp.email.com", // SMTP Host
+            "port": 587, // SMTP port
+            "secure": false, // true for 465, false for other ports
+            "auth": {
+                "user": "user", // User/email
+                "pass": "password",
+            },
+            "defaultFrom": { // Email address that will be used to send the emails
+                "name": "Company name",
+                "address": "info@company.com"
+            }
         },
         ...
     },
     ...
 }
 ```
- 
+
+For more information about configuration you can go to: [https://nodemailer.com/smtp/](https://nodemailer.com/smtp/)
+
 ## Usage
  
-Once the connection is defined in the configuration we are ready to create a service decorated with `@Service({ connection: 'mymongo' })`
-that will be able access the MongoDB. From the datasource wi will have to preload which collections we want to use
-and then with those collection instance we will be able to call all the MongoDB actions such as find, update, etc.
+Once the connection is defined in the configuration we are ready to create a service decorated with `@Service({ connection: 'myemail' })`
+that will be able to send emails through the configured server. 
  
 Basic example:
  
 ```typescript
-// First we should create somewhere an interface that will define the connection objects structure
-interface Vehicle {
-    id: string;
-    year: number;
-    model: string
-}
+import { MailOptions, EmailAddress } from '@plugcore/ds-email';
  
 // Service that will use the connection we defined before
-@Service({ connection: 'mymongo' })
-// We are going to need to execute some async operations before marking this service as ready,
-// for this we have to implement the OnInit interface
-export class VehicleService implements OnInit { 
- 
-    // Here is where we are going to store the collection reference
-    private collection: Collection<Vehicle>;
+@Service({ connection: 'myemail' })
+export class EmailService { 
  
     constructor(
-        // Connection to "mymongo"
-        private mongoDbConnection: MongoDbDatasource
+        // Connection to "myemail"
+        private emailDataSource: EmailDataSource
     ) {}
  
-    // This method will be executed before marking this service as ready,
-    // we could load the collections that we are going to need
-    public async onInit() {
-        // For the method "getCollection" we can use either a class or a string. 
-        // If a class is provided, then the collection will be called as the class, and it will
-        // also serve as a type for the collection
-        // If a string is provided, then we can use any type we want for the collection
-        this.collection = await this.mongoDbConnection.getCollection<Vehicle>('Vehicle');
+    // Basic example
+ 
+    public async sendEmail() {
+        await this.emailDataSource.sendEmail(<MailOptions>{
+            from: 'info@company.com', // This field optional and it's recommended to leave it empty so the system will use the 
+                                      // "defaultFrom" property from the configuration file
+            to: <EmailAddress>{ name:'Customer Al', address: 'al@other.com' },
+            cc: [
+                'test@company.com',
+                { name:'Admin', address: 'admin@company.com' }
+            ],
+            subject: 'New receipt',
+            html: `
+                <div>
+                    <img src="cid:embeddedlogo" title="Company logo">
+                </div>
+                <h2>Hi this is a title</h2>
+                <p>This is text</p>
+            `,
+            attachments: [
+                {
+                    filename: 'logo.png',
+                    path: '/path/to/logo.png',
+                    cid: 'embeddedlogo'
+                },
+                {
+                    filename: 'receipt.pdf',
+                    content: createReadStream('/path/to/local/file.pdf')
+                }
+            ]
+        });
     }
- 
-    // Basic CRUD example
- 
-    public async create(vehicle: Vehicle) {
-        return this.collection.insert(vehicle);
-    }
- 
-    public async findById(id: string): Promise<Vehicle | null> {
-        return this.collection.findOne({ id });
-    }
- 
-    public async update(vehicle: Vehicle) {
-        return this.collection.updateOne({ id: vehicle.id }, vehicle);
-    }
- 
-    public async remove(id: string) {
-        return this.collection.remove({ id });
-    }
- 
+  
 }
 ```
  
-# Nedb
+You can learn more about MailOptions at [https://nodemailer.com/message/](https://nodemailer.com/message/) and form file attch options at [https://nodemailer.com/message/attachments/](https://nodemailer.com/message/attachments/)
+
+# Google API
  
-[Nedb](https://github.com/louischatriot/nedb) will allow us to use a [subset of the Mongodb API](https://github.com/louischatriot/nedb#api), 
-but we have to take into account that it doesn't support (aggregation)[https://docs.mongodb.com/manual/aggregation/]. If we have services
-that only use those methods, we can change the MongoDB connection to Nedb. This might be useful if we want to tests our services without 
-the need of a MongoDB instance already configured that might be accessed by multiple users at the same time. Or for example if we want
-to create a portable demo. This database won't be saved into any file, and all data will be destroyed after every restart.
+In order to send emails safely using Google Suite accounts, we have created a special configuration. You can learn how to create your Oauth 2.0 certificate here: [https://developers.google.com/gmail/api/auth/web-server](https://developers.google.com/gmail/api/auth/web-server), after this you will have to configure the datasource like in this example:
  
-In order to use __Nedb__ first we need to install iT:
-```
-npm install nedb --save-dev
-```
- 
-And then configure the __connection__ that we want to change, for example if we want to use it only in the tests execution we could create:
-__{PROJECT_ROOT}/configuration/configuration.test.json__
 ```
 {
     "connections": {
-        "mymongo": { // Connection id
-            "type": "mongodb", // The data source type is allways es Mongodb
-            "url": "nedb", // With this special url we are telling the Mongodb datasource to use Nedb instead of Mongodb
-            "databaseName": "mydatabase" // Any value will do since this field is ignored
+        "myemail": { // Connection id
+            "type": "email", // Datasource type
+            "defaultFrom": {
+                "name": "Company name",
+                "address": "info@company.com"
+            },
+            "gSuiteApi": {
+                    "clientEmail": "example@supple-hangout-999999.iam.gserviceaccount.com",
+                    "privateKey": "-----BEGIN PRIVATE KEY-----\nabc123...ab123==\n-----END PRIVATE KEY-----\n", // Important to scape the new lines with "\n"
+                    "userId": "info@company.com" // Same value as from address
+            }
         },
         ...
     },
@@ -127,4 +126,5 @@ __{PROJECT_ROOT}/configuration/configuration.test.json__
 }
 ```
  
-From this moment only the nedb database will be executed while doing tests, but only in the services that are using the `mymongo` connection.
+With this you will be able to send emails through the Gmail API instead of an SMTP server.
+ 
