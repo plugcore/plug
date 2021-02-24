@@ -46,7 +46,7 @@ export class RoutesInitializer {
 			configuration.web && configuration.web.oas && configuration.web.oas.documentationPath
 		) || WebConfiguration.default.web.oas.documentationPath || '/api/documentation';
 
-		this.ajvCustomInstance = addFormats(new Ajv({
+		this.ajvCustomInstance = new Ajv({
 			removeAdditional: true,
 			useDefaults: true,
 			coerceTypes: 'array',
@@ -54,15 +54,19 @@ export class RoutesInitializer {
 			strict: false,
 			strictTuples: false,
 			$data: true
-		}));
+		});
+		addFormats(this.ajvCustomInstance);
 		this.ajvCustomInstance.addKeyword({
 			keyword: 'isFileType',
 			type: 'object',
-			compile: (_, parent) => {
+			code: ctx => {
 				// Change the schema type, as this is post validation it doesn't appear to error.
-				(parent as any).type = 'file';
-				delete (parent as any).isFileType;
-				return () => true;
+				ctx.parentSchema.type = 'file';
+				delete ctx.parentSchema.isFileType;
+			},
+			errors: false,
+			metaSchema: {
+				type: 'boolean'
 			},
 		});
 
@@ -90,7 +94,7 @@ export class RoutesInitializer {
 			this.routesService.fastifyInstance.addContentTypeParser('multipart', this.multipartImpl());
 			this.routesService.fastifyInstance
 				// Lets you Defile file fields
-				.setValidatorCompiler((schema: any) => this.ajvCustomInstance.compile(schema))
+				.setValidatorCompiler(({ schema }) => this.ajvCustomInstance.compile(schema))
 				// Indicates if the request has been execcuted with fiel upload
 				.decorateRequest('isMultipart', false)
 				// If teh request is multipart, then this is a list of temp filtes to delete
@@ -106,7 +110,7 @@ export class RoutesInitializer {
 				// With this we are telling fastify that we will have a new property of the request object
 				.decorateRequest('jwtPayload', undefined)
 				// Custom data object that anybody can use in the request to put their data
-				.decorateRequest('customData', {})
+				.decorateRequest('customData', undefined)
 				// Auth plugin registration
 				.register(fastifyAuth);
 		}
