@@ -3,9 +3,10 @@
 
 
 "@plugcore/core@file:../core/publish":
-  version "1.0.16"
+  version "1.0.17"
   dependencies:
     ajv "7.1.1"
+    ajv-formats "^1.5.1"
     eventemitter3 "4.0.7"
     form-data "4.0.0"
     object-mapper "6.2.0"
@@ -24,7 +25,14 @@
   dependencies:
     "@types/node" "*"
 
-ajv@7.1.1:
+ajv-formats@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/ajv-formats/-/ajv-formats-1.5.1.tgz#0f301b1b3846182f224cc563fc0a032daafb7dab"
+  integrity sha512-s1RBVF4HZd2UjGkb6t6uWoXjf6o7j7dXPQIL7vprcIT/67bTD6+5ocsU0UKShS2qWxueGDWuGfKHfOxHWrlTQg==
+  dependencies:
+    ajv "^7.0.0"
+
+ajv@7.1.1, ajv@^7.0.0:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-7.1.1.tgz#1e6b37a454021fa9941713f38b952fc1c8d32a84"
   integrity sha512-ga/aqDYnUy/o7vbsRTFhhTsNeXiYb5JWDIcRIeZfwRNCefwjNTVYCGdGSUrEmiu3yDK3vFvNbgJxvrQW4JXrYQ==

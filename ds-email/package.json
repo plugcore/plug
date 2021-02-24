@@ -1,6 +1,6 @@
 {
 	"name": "@plugcore/ds-email",
-	"version": "1.0.16",
+	"version": "1.0.18",
 	"description": "plugcore.com Email datasource",
 	"main": "index.js",
 	"repository": {

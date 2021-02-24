@@ -5,7 +5,7 @@ import * as Busboy from 'busboy';
 import { FastifyPluginCallback, FastifyRequest, FastifySchema, HTTPMethods, RawRequestDefaultExpression } from 'fastify';
 import fastifyAuth from 'fastify-auth';
 import cookies from 'fastify-cookie';
-import * as oas from 'fastify-oas';
+import fastifySwagger, { SwaggerOptions } from 'fastify-swagger';
 import fstatic from 'fastify-static';
 import { ContentTypeParserDoneFunction, FastifyContentTypeParser } from 'fastify/types/content-type-parser';
 import { createWriteStream, ReadStream } from 'fs';
@@ -47,12 +47,17 @@ export class RoutesInitializer {
 		) || WebConfiguration.default.web.oas.documentationPath || '/api/documentation';
 
 		this.ajvCustomInstance = addFormats(new Ajv({
+			removeAdditional: true,
 			useDefaults: true,
-			coerceTypes: true,
+			coerceTypes: 'array',
+			allErrors: true,
+			strict: false,
+			strictTuples: false,
 			$data: true
 		}));
-		this.ajvCustomInstance.addKeyword('isFileType', {
+		this.ajvCustomInstance.addKeyword({
 			keyword: 'isFileType',
+			type: 'object',
 			compile: (_, parent) => {
 				// Change the schema type, as this is post validation it doesn't appear to error.
 				(parent as any).type = 'file';
@@ -106,16 +111,25 @@ export class RoutesInitializer {
 				.register(fastifyAuth);
 		}
 
+		
+		const defaultServers = { servers: [{ url: `http://${this.routesService.host}:${this.routesService.httpPort}` }] };
+		const defaultConfiguration = ObjectUtils.deepMerge(ObjectUtils.deepClone(WebConfiguration.default.web.oas), defaultServers);
+		const oasConfiguration: WebOasConfiguration = (this.configuration.web && this.configuration.web.oas) ?
+			ObjectUtils.deepMerge(defaultConfiguration, this.configuration.web.oas) : defaultConfiguration;
 		this.routesService.fastifyInstance
 			// OAS
-			.register(this.oasPlugin(restControllers), { prefix: this.oasDocumentationPath })
+			.register(this.oasPlugin(restControllers, oasConfiguration), { prefix: this.oasDocumentationPath, oasConfiguration })
 			// Cookies support
 			.register(cookies)
 			// Custom routes
-			.register(this.methodsPlugin(restControllers, {
-				configFilePath: this.configuration.getConfigurationFolder(),
-				config: this.configuration.web ? this.configuration.web.fileUpload : undefined,
-			}));
+			.register(this.methodsPlugin(
+				restControllers,
+				{
+					configFilePath: this.configuration.getConfigurationFolder(),
+					config: this.configuration.web ? this.configuration.web.fileUpload : undefined,
+				},
+				oasConfiguration
+			));
 
 		if (this.securityEnabled) {
 			this.routesService.fastifyInstance
@@ -173,124 +187,23 @@ export class RoutesInitializer {
 
 	};
 
-	private oasPlugin: (restControllers: {
-		controllerService: any;
-		controller: IRegisteredController;
-	}[]) => FastifyPluginCallback<any> = (restControllers) => (plugin, _, done) => {
-
-		// OAS configuration
-
-		const defaultServers = { servers: [{ url: `http://${this.routesService.host}:${this.routesService.httpPort}` }] };
-		const defaultConfiguration = ObjectUtils.deepMerge(ObjectUtils.deepClone(WebConfiguration.default.web.oas), defaultServers);
-		const oasConfiguration: WebOasConfiguration = (this.configuration.web && this.configuration.web.oas) ?
-			ObjectUtils.deepMerge(defaultConfiguration, this.configuration.web.oas) : defaultConfiguration;
-		const oasSecurity = this.configuration.web && this.configuration.web.auth && this.configuration.web.auth.securityInOas;
-		const securityHandlers: any[] = [];
+	private oasPlugin: (
+		restControllers: {
+			controllerService: any;
+			controller: IRegisteredController;
+		}[],
+		oasConfiguration: WebOasConfiguration
+	) => FastifyPluginCallback<any> = (restControllers, oasConfiguration) => (plugin, _, done) => {
 
 		if (!oasConfiguration.enableDocumentation) {
 			done();
 			return;
 		}
 
-		if (this.securityEnabled && oasSecurity) {
-
-			// Create security handlers
-			if (oasSecurity.includes('jwt')) {
-				securityHandlers.push(plugin.verifyJwt);
-			}
-			if (oasSecurity.includes('basic')) {
-				securityHandlers.push(plugin.verifyUserAndPassword);
-			}
-
-		}
-
-		if (this.securityEnabled) {
-
-			// Check all controllers and global configuration
-			// to know all the security types
-			const allControllerSecurity = restControllers.map(r =>
-				RoutesUtils.getRegisteredMethods(r.controller.controller).map(c =>
-					c.options ?
-						c.options.security ? Array.isArray(c.options.security) ? c.options.security : [c.options.security] :
-						[] : []
-				)
-			);
-			const controllerSecurityTypes = ArrayUtils.flat(allControllerSecurity);
-			if (this.configuration.web && this.configuration.web.auth && this.securityEnabled) {
-				controllerSecurityTypes.concat(
-					this.configuration.web.auth.securityInAllRoutes ?
-						Array.isArray(this.configuration.web.auth.securityInAllRoutes) ?
-							this.configuration.web.auth.securityInAllRoutes : [this.configuration.web.auth.securityInAllRoutes] :
-						[]
-				);
-			}
-			const possibleSecurityTypes = ArrayUtils.flatAndRemoveDuplicates(controllerSecurityTypes);
-			const securitySchemes: Record<string, SecuritySchemeObject> = {};
-
-			for (const securityType of possibleSecurityTypes) {
-
-				if (securityType === 'basic') {
-					securitySchemes['BasicAuth'] = { type: 'http', scheme: 'basic' };
-				}
-				if (securityType === 'jwt') {
-					securitySchemes['JWTBearerAuth'] = { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' };
-				}
-
-			}
-
-			if (Object.keys(securitySchemes).length > 0) {
-				const components = oasConfiguration.components || {};
-				// TODO Remove any
-				components.securitySchemes = <any>securitySchemes;
-				oasConfiguration.components = components;
-			}
-
-		}
-
-		plugin.register(oas, {
-			routePrefix: this.oasDocumentationPath,
-			exposeRoute: false,
-			addModels: true,
-			swagger: oasConfiguration
-		});
-
-		this.log.info('Registering API documentation at: ' + this.oasDocumentationPath);
-
-		// Documentation route
-		plugin.route({
-			url: '/',
-			method: 'GET',
-			schema: { hide: true } as any,
-			preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
-			handler: (_, reply) => {
-				reply.redirect(this.oasDocumentationPath + '/index.html');
-			}
-		});
-
-		plugin.route({
-			url: '/json',
-			method: 'GET',
-			schema: { hide: true } as any,
-			preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
-			handler: (_, reply) => {
-				reply.send(plugin.oas());
-			},
-		});
-
-		plugin.route({
-			url: '/yaml',
-			method: 'GET',
-			schema: { hide: true } as any,
-			preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
-			handler: (_, reply) => {
-				reply.type('application/x-yaml').send((<any>plugin).oas({ yaml: true }));
-			},
-		});
-
 		// serve swagger-ui with the help of fs-static
-		const oasNodeModulePath = require.resolve('fastify-oas');
+		const oasNodeModulePath = require.resolve('fastify-swagger');
 		plugin.register(fstatic, {
-			root: join(oasNodeModulePath, '..', '..', 'static'),
+			root: join(oasNodeModulePath, '..', 'static'),
 		});
 
 		done();
@@ -305,8 +218,118 @@ export class RoutesInitializer {
 		fileConfig: {
 			configFilePath: string;
 			config?: FileUploadWebConfiguration;
+		},
+		oasConfiguration: WebOasConfiguration
+	) => FastifyPluginCallback<any> = (restControllers, fileConfig, oasConfiguration) => (plugin, _, done) => {
+
+		//
+		// OAS
+		//
+
+		if (oasConfiguration.enableDocumentation) {
+			// OAS configuration
+
+			const oasSecurity = this.configuration.web && this.configuration.web.auth && this.configuration.web.auth.securityInOas;
+			const securityHandlers: any[] = [];
+
+			if (this.securityEnabled && oasSecurity) {
+
+				// Create security handlers
+				if (oasSecurity.includes('jwt')) {
+					securityHandlers.push(plugin.verifyJwt);
+				}
+				if (oasSecurity.includes('basic')) {
+					securityHandlers.push(plugin.verifyUserAndPassword);
+				}
+
+			}
+
+			if (this.securityEnabled) {
+
+				// Check all controllers and global configuration
+				// to know all the security types
+				const allControllerSecurity = restControllers.map(r =>
+					RoutesUtils.getRegisteredMethods(r.controller.controller).map(c =>
+						c.options ?
+							c.options.security ? Array.isArray(c.options.security) ? c.options.security : [c.options.security] : [] : []
+					)
+				);
+				const controllerSecurityTypes = ArrayUtils.flat(allControllerSecurity);
+				if (this.configuration.web && this.configuration.web.auth && this.securityEnabled) {
+					controllerSecurityTypes.concat(
+						this.configuration.web.auth.securityInAllRoutes ?
+							Array.isArray(this.configuration.web.auth.securityInAllRoutes) ?
+								this.configuration.web.auth.securityInAllRoutes : [this.configuration.web.auth.securityInAllRoutes] :
+							[]
+					);
+				}
+				const possibleSecurityTypes = ArrayUtils.flatAndRemoveDuplicates(controllerSecurityTypes);
+				const securitySchemes: Record<string, SecuritySchemeObject> = {};
+
+				for (const securityType of possibleSecurityTypes) {
+
+					if (securityType === 'basic') {
+						securitySchemes['BasicAuth'] = { type: 'http', scheme: 'basic' };
+					}
+					if (securityType === 'jwt') {
+						securitySchemes['JWTBearerAuth'] = { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' };
+					}
+
+				}
+
+				if (Object.keys(securitySchemes).length > 0) {
+					const components = oasConfiguration.components || {};
+					// TODO Remove any
+					components.securitySchemes = <any>securitySchemes;
+					oasConfiguration.components = components;
+				}
+
+			}
+
+			this.log.info('Registering API documentation at: ' + this.oasDocumentationPath);
+
+			// Documentation route
+
+			plugin.route({
+				url: this.oasDocumentationPath + '/',
+				method: 'GET',
+				schema: { hide: true } as any,
+				preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
+				handler: (_, reply) => {
+					reply.redirect(this.oasDocumentationPath + '/index.html');
+				}
+			});
+			plugin.route({
+				url: this.oasDocumentationPath + '/json',
+				method: 'GET',
+				schema: { hide: true } as any,
+				preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
+				handler: (_, reply) => {
+					reply.send(plugin.swagger());
+				},
+			});
+
+			plugin.route({
+				url: this.oasDocumentationPath + '/yaml',
+				method: 'GET',
+				schema: { hide: true } as any,
+				preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
+				handler: (_, reply) => {
+					reply.type('application/x-yaml').send((<any>plugin).oas({ yaml: true }));
+				},
+			});
+
+			plugin.register(fastifySwagger, <SwaggerOptions>{
+				routePrefix: this.oasDocumentationPath,
+				exposeRoute: false,
+				openapi: oasConfiguration
+			});
+
 		}
-	) => FastifyPluginCallback<any> = (restControllers, fileConfig) => (plugin, _, done) => {
+
+		//
+		// Routes mapping
+		// 
 
 		let securityOnAllRoutes = this.configuration && this.configuration.web &&
 			this.configuration.web.auth && this.securityEnabled && this.configuration.web.auth.securityInAllRoutes;
@@ -360,8 +383,8 @@ export class RoutesInitializer {
 					// and or specific security of this route
 					let allAffectedSecurityTypes = (
 						this.configuration.web && this.configuration.web.auth && this.configuration.web.auth.securityInAllRoutes ?
-							Array.isArray(this.configuration.web.auth.securityInAllRoutes) ? this.configuration.web.auth.securityInAllRoutes :
-							[this.configuration.web.auth.securityInAllRoutes] : []
+							Array.isArray(this.configuration.web.auth.securityInAllRoutes) ? this.configuration.web.auth.securityInAllRoutes : [
+								this.configuration.web.auth.securityInAllRoutes] : []
 					) || [];
 					if (controllerOptions.security) {
 						allAffectedSecurityTypes = allAffectedSecurityTypes.concat(
@@ -448,8 +471,8 @@ export class RoutesInitializer {
 				// incoming request body with request schema if exists
 				if ((schema.consumes || []).includes(MimeTypes.multipartFormData)) {
 					const currentPreValidation = controllerOptions.preValidation ?
-						Array.isArray(controllerOptions.preValidation) ? controllerOptions.preValidation :
-						[controllerOptions.preValidation] : [];
+						Array.isArray(controllerOptions.preValidation) ? controllerOptions.preValidation : [
+							controllerOptions.preValidation] : [];
 					currentPreValidation.push(this.multipartBodyTransformer(this.cloneSchema(schema)));
 					controllerOptions.preValidation = currentPreValidation;
 				}
@@ -659,8 +682,7 @@ export class RoutesInitializer {
 							request.body[bodyProperty] = null;
 						} else if (propertySchema.type === 'array') {
 							const arrayType = propertySchema.items ? TypeChecker.isObject(propertySchema.items) ?
-								!TypeChecker.isArray(propertySchema.items) ? propertySchema.items.type :
-								undefined : undefined : undefined;
+								!TypeChecker.isArray(propertySchema.items) ? propertySchema.items.type : undefined : undefined : undefined;
 							if (arrayType === 'string') {
 								request.body[bodyProperty] = currentValue.map((v: any) => `${v}`);
 							} else if (arrayType === 'boolean') {

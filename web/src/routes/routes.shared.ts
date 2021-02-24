@@ -100,10 +100,10 @@ export interface Request<
 	TBody = any, TUrlParams = any, TParams = any,
 	THeaders = any, CustomData = any, JWTPayload = any | undefined
 > extends FastifyRequest<{
-		Body?: TBody;
-		Querystring?: TUrlParams;
-		Params?: TParams;
-		Headers?: THeaders;
+		Body: TBody;
+		Querystring: TParams;
+		Params: TUrlParams;
+		Headers: THeaders;
 	}> {
 	jwtPayload: JWTPayload;
 	isMultipart?: boolean;

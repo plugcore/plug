@@ -11,7 +11,15 @@ import addFormats from 'ajv-formats';
 @Service()
 export class ObjectValidator {
 
-	private readonly ajv = addFormats(new Ajv({ allErrors: true }));
+	private readonly ajv;
+
+	constructor() {
+		this.ajv = new Ajv({
+			allErrors: true,
+			strictTuples: false
+		});
+		addFormats(this.ajv);
+	}
 
 	/**
 	 * Executes a validation from a compiled JSON schema validation or form a JSON schema object

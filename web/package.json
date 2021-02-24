@@ -1,6 +1,6 @@
 {
 	"name": "@plugcore/web",
-	"version": "1.0.17",
+	"version": "1.0.18",
 	"description": "plugcore.com web utilities",
 	"main": "index.js",
 	"repository": {
@@ -31,8 +31,8 @@
 		"fastify": "3.12.0",
 		"fastify-auth": "1.0.1",
 		"fastify-cookie": "5.1.0",
-		"fastify-oas": "3.0.8",
 		"fastify-static": "4.0.1",
+		"fastify-swagger": "^4.3.1",
 		"jwt-simple": "0.5.6",
 		"openapi3-ts": "2.0.1"
 	},
