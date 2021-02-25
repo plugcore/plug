@@ -463,7 +463,7 @@ We can configure any aspects of the security using [the projct configuration](ht
 {
     "web": {
         "auth": {
-            "eanbled": true, // Enable/disable security for all the application
+            "enabled": true, // Enable/disable security for all the application
             "securityInAllRoutes": ['jwt', 'basic'] // Array that will contain which security systems are going to be used for all the routes
             "securityInOas": ['basic'], // Security in the OAS documentation page
             "jwtPrivateKey": '8981F9391AF549443CC7D5141B24DJ4C',

@@ -40,7 +40,7 @@ export class RoutesInitializer {
 		@InjectConfiguration() private configuration: Configuration
 	) {
 
-		this.securityEnabled = configuration.web && configuration.web.auth && configuration.web.auth.eanbled || false;
+		this.securityEnabled = configuration.web && configuration.web.auth && configuration.web.auth.enabled || false;
 
 		this.oasDocumentationPath = (
 			configuration.web && configuration.web.oas && configuration.web.oas.documentationPath
@@ -135,12 +135,6 @@ export class RoutesInitializer {
 				oasConfiguration
 			));
 
-		if (this.securityEnabled) {
-			this.routesService.fastifyInstance
-				// Auth routes
-				.register(this.authPlugin.bind(this));
-		}
-
 		await this.routesService.startHttpServer();
 
 	}
@@ -161,35 +155,6 @@ export class RoutesInitializer {
 		});
 
 	}
-
-	private authPlugin: FastifyPluginCallback<any> = (plugin, _, done) => {
-
-		// Auth system
-
-		if (this.configuration.web && this.configuration.web.auth && this.securityEnabled) {
-
-			// Set jwt configuration
-			this.jwtConfiguration.algorithm = this.configuration.web.auth.jwtAlgorithm || this.jwtConfiguration.algorithm;
-			this.jwtConfiguration.privateKey = this.configuration.web.auth.jwtPrivateKey || this.jwtConfiguration.privateKey;
-			this.jwtConfiguration.expiration = this.configuration.web.auth.jwtExpiration || this.jwtConfiguration.expiration;
-
-			// Other vars
-			const loginUrl = this.configuration.web.auth.jwtLoginPath || '/auth/login';
-
-			// Register JWT login route
-			plugin.route({
-				method: 'POST',
-				url: loginUrl,
-				handler: <any>this.handleJwtLogin.bind(this),
-				schema: RoutesUtils.jwtLoginMeta ?
-					this.createFromRouteSchemas('POST', RoutesUtils.jwtLoginMeta.routeSchemas) : undefined
-			});
-
-		}
-
-		done();
-
-	};
 
 	private oasPlugin: (
 		restControllers: {
@@ -295,7 +260,7 @@ export class RoutesInitializer {
 			// Documentation route
 
 			plugin.route({
-				url: this.oasDocumentationPath + '/',
+				url: this.oasDocumentationPath,
 				method: 'GET',
 				schema: { hide: true } as any,
 				preHandler: securityHandlers.length > 0 ? plugin.auth(securityHandlers) : undefined,
@@ -327,6 +292,31 @@ export class RoutesInitializer {
 				routePrefix: this.oasDocumentationPath,
 				exposeRoute: false,
 				openapi: oasConfiguration
+			});
+
+		}
+
+		//
+		// Auth system
+		//
+
+		if (this.configuration.web && this.configuration.web.auth && this.securityEnabled) {
+
+			// Set jwt configuration
+			this.jwtConfiguration.algorithm = this.configuration.web.auth.jwtAlgorithm || this.jwtConfiguration.algorithm;
+			this.jwtConfiguration.privateKey = this.configuration.web.auth.jwtPrivateKey || this.jwtConfiguration.privateKey;
+			this.jwtConfiguration.expiration = this.configuration.web.auth.jwtExpiration || this.jwtConfiguration.expiration;
+
+			// Other vars
+			const loginUrl = this.configuration.web.auth.jwtLoginPath || '/auth/login';
+
+			// Register JWT login route
+			plugin.route({
+				method: 'POST',
+				url: loginUrl,
+				handler: <any>this.handleJwtLogin.bind(this),
+				schema: RoutesUtils.jwtLoginMeta ?
+					this.createFromRouteSchemas('POST', RoutesUtils.jwtLoginMeta.routeSchemas) : undefined
 			});
 
 		}

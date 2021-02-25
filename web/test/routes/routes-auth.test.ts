@@ -53,7 +53,7 @@ export class RoutesAuthTest extends AsserterService {
 			web: {
 				server: { port: 3002 },
 				auth: {
-					eanbled: true,
+					enabled: true,
 					securityInOas: ['jwt', 'basic']
 				}
 			}
@@ -62,7 +62,7 @@ export class RoutesAuthTest extends AsserterService {
 			web: {
 				server: { port: 3003 },
 				auth: {
-					eanbled: true,
+					enabled: true,
 					jwtLoginPath: '/auth/jwt',
 					securityInAllRoutes: ['jwt', 'basic']
 				},

@@ -23,7 +23,7 @@ export interface WebOasConfiguration {
 }
 
 export interface WebAuthConfiguration {
-	eanbled?: boolean;
+	enabled?: boolean;
 	securityInAllRoutes?: SupportedSecurityTypes | SupportedSecurityTypes[];
 	securityInOas?: SupportedSecurityTypes | SupportedSecurityTypes[];
 	jwtPrivateKey?: string;
