@@ -242,7 +242,6 @@ export class FsUtils {
 				if (err) {
 					reject(err);
 				} else {
-					console.log({ targetFile, file });
 					writeFile(targetFile, file, err2 => {
 						if (err) {
 							reject(err2);

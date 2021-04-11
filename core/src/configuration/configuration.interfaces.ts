@@ -1,12 +1,18 @@
 import { LoggerOptions } from 'pino';
 import { ClassParameter } from '../utils/typescript.utils';
 
+export interface IAdditionalProject {
+	module?: string;
+	path?: string;
+}
+
 /**
  * Configuration for initialization tasks, such as start the process to load
  * all dependencies
  */
 export interface IInitConfiguration {
-	distFolder: string;
+	distFolder?: string;
+	additionalProjects?: IAdditionalProject[];
 }
 
 export interface ConnectionConfiguration {

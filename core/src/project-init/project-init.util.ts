@@ -1,3 +1,4 @@
+import { isAbsolute, join } from 'node:path';
 import { ConfigurationLoader } from '../configuration/configuration.loader';
 import { ProjectConfigurationService } from '../configuration/configuration.service';
 import { Container } from '../dependecy-injection/di.container';
@@ -22,8 +23,30 @@ export class PorjectInitialization {
 	 */
 	public static start(projectFolder: string, configurationFolder: string) {
 		(async () => {
+
 			// 1: Project configuration
-			await this.setConfiguration(configurationFolder);
+			const cfg = await this.setConfiguration(configurationFolder);
+
+			// 2: Check if we have to load additional projects
+			if (cfg.init && cfg.init.additionalProjects) {
+				await Promise.all(cfg.init.additionalProjects.map(async (addProject) => {
+					if (addProject.module) {
+						const moduleBase = require.resolve(addProject.module);
+						await DiUtils.waitForFolder(
+							join(moduleBase, addProject.path || ''),
+							true
+						);
+					} else if (addProject.path) {
+						const baseFolder = isAbsolute(addProject.path) ? addProject.path : join(projectFolder, addProject.path);
+						await DiUtils.waitForFolder(
+							baseFolder,
+							true
+						);
+					}
+				}));
+			}
+
+			// 3: Load current project
 			await DiUtils.waitForFolder(projectFolder, true);
 
 		})().then(() => {
@@ -62,6 +85,8 @@ export class PorjectInitialization {
 
 		// Add the configuratio to di container
 		Container.set(ProjectConfigurationService, configurationService);
+
+		return configurationService;
 
 	}
 
