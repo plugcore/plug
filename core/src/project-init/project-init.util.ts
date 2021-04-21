@@ -1,4 +1,4 @@
-import { isAbsolute, join } from 'node:path';
+import { isAbsolute, join } from 'path';
 import { ConfigurationLoader } from '../configuration/configuration.loader';
 import { ProjectConfigurationService } from '../configuration/configuration.service';
 import { Container } from '../dependecy-injection/di.container';
@@ -33,7 +33,7 @@ export class PorjectInitialization {
 					if (addProject.module) {
 						const moduleBase = require.resolve(addProject.module);
 						await DiUtils.waitForFolder(
-							join(moduleBase, addProject.path || ''),
+							join(moduleBase, addProject.path || '', '..'),
 							true
 						);
 					} else if (addProject.path) {
