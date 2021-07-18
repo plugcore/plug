@@ -2,7 +2,7 @@
  
 # Plugcore Framework
  
-![plugcore.com](https://raw.githubusercontent.com/plugcore/plug/master/_docs/logo.png "plugcore.com")
+![plugcore.com](https://media.plugcore.com/img/60b690193ae6892bd0ba8753?width=520&quality=99&lossless=true&format=png "plugcore.com")
  
 The target of this framework is to help in all the needs of a full featured API REST, from top to bottom, and at the same time having the best possible performance and security.
  
